@@ -1,23 +1,3 @@
-class Fold:
-    def __init__(self):
-        self.final_path = {}
-
-    def get_protein(self, protein):
-
-        # checks if protein exists
-        if len(protein) != 0:
-            self.protein = protein.upper()
-
-            # checks if protein is valid
-            for i in range(len(self.protein)):
-                if self.protein[i] != "H" and self.protein[i] != "P" and  self.protein[i] !="C":
-                    return False
-
-            # set first amino
-            self.final_path[0] = [self.protein[0], 2, 0, 0, 0]
-            return True
-        return False
-
 class Placement:
     def __init__(self, protein, final_path):
         self.final_path = final_path
@@ -76,16 +56,3 @@ class Placement:
                     self.possible_coordinates.append([self.new_x, self.new_y])
 
         self.current_fold = self.new_fold
-
-
-if __name__ == "__main__":
-    while True:
-         protein = str(input("please enter your protein: "))
-         # print(protein)
-         fold = Fold()
-         if fold.get_protein(protein) == True:
-             # print(case.get_protein(protein))
-             # print("error")
-         placement = Placement(protein, fold.final_path)
-         if placement == True:
-             print("goed")
