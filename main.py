@@ -18,4 +18,4 @@ if __name__ == "__main__":
          if placement.check_empty(check.user_input):
             print(placement.random_amino)
             print(protein)
-            #print(protein.add_amino(placement.random_amino))
+            print(protein.add_amino(placement.random_amino))
