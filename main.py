@@ -1,13 +1,21 @@
-from code.classes import fold, placement, protein
+from code.classes import check, placement, protein
 
 if __name__ == "__main__":
     while True:
-         protein = str(input("please enter your protein: "))
-         # print(protein)
-         fold = Fold()
-         if fold.get_protein(protein) == True:
-             # print(case.get_protein(protein))
-             # print("error")
-         placement = Placement(protein, fold.final_path)
-         if placement == True:
-             print("goed")
+         user_input = input("please enter your protein: ")
+         protein = protein.Protein()
+         check = check.Check()
+
+         if check.get_protein(user_input) != False:
+            placement = placement.Placement(user_input, protein.final_placement)
+            protein = protein.add_amino(check.amino_0)
+            print(protein)
+
+         if placement.set_coordinates() == False:
+            # laat de visualisatie zien
+            print("End of protein ------------------->>>>> :) :) :) :)")
+
+         if placement.check_empty(check.user_input):
+            print(placement.random_amino)
+            print(protein)
+            #print(protein.add_amino(placement.random_amino))
