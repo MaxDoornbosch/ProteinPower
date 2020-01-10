@@ -5,8 +5,14 @@ import pandas as pd
 import seaborn as sns
 import csv
 
+"""
+TODO:
+Stability score meegeven in main.py en toevoegen aan de title
 
-def visualize(visualization_data, user_input):
+replace:
+def visualize(visualization_data, user_input, stability_score):
+"""
+def visualize(visualization_data, user_input, stability_score):
     x = []
     y = []
     colors = []
@@ -40,5 +46,9 @@ def visualize(visualization_data, user_input):
     plt.grid(linestyle='-')
     plt.xlabel('x')
     plt.ylabel('y')
-    plt.title('Protein\n' + user_input)
+
+"""
+UPDATE STABILITY SCORE!
+"""
+    plt.title('Protein ' + user_input + '\nStability score:')
     plt.show()
