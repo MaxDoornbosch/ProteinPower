@@ -34,8 +34,8 @@ class Placement:
         return True
 
     def check_empty(self, user_input):
-        # determine possible folds and coordinates
-        
+
+        # determines possible folds and coordinates
         for i in range(len(self.possible_folds)):
             self.new_fold = self.possible_folds[i]
 
@@ -53,6 +53,7 @@ class Placement:
                 self.new_x = self.current_x
 
             checker = True
+
             # checks and saves possible folds
             for i in (self.final_placement):
                 # print(i)
@@ -69,5 +70,4 @@ class Placement:
         self.current_fold = self.new_fold
         if len(user_input) - 1 == len(self.final_placement):
             self.random_amino = [user_input[len(self.final_placement)], 0, self.current_x, self.current_y]
-            return self.random_amino
         return self.random_amino

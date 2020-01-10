@@ -33,7 +33,7 @@ class Stability:
                 self.possible_stability_coordinates.clear()
 
 
-        # checks for adjacent aminozuur
+        # checks for adjacent amino acid
         for amino in range(len(user_input)):
             if user_input[amino] == "H":
 
