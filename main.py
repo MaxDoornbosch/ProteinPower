@@ -27,7 +27,7 @@ if __name__ == "__main__":
                csvwriter = Csv(protein.final_placement)
                csvwriter.write_csv()
                csvwriter.visualization()
-               visualize('data/visualization.csv', user_input)
+               visualize('data/visualization.csv', user_input, stability.definitive_stability_score)
                exit()
 
             if placement.check_empty(check.user_input):
