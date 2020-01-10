@@ -5,6 +5,7 @@ class Fold:
     def get_protein(self, protein):
 
         # checks if protein exists
+
         if len(protein) != 0:
             self.protein = protein.upper()
 
@@ -29,7 +30,7 @@ class Placement:
         self.current_fold = current_values[1]
         self.current_x = current_values[2]
         self.current_y = current_values[3]
-        
+
         if self.current_fold == 1:
             self.current_x += 1
         elif self.current_fold == -1:
@@ -48,12 +49,12 @@ class Placement:
 
 if __name__ == "__main__":
     while True:
-         protein = str(input("please enter your protein: "))
-         # print(protein)
+         protein = input("please enter your protein: ")
+         print(protein)
          fold = Fold()
          if fold.get_protein(protein) == True:
              # print(case.get_protein(protein))
              # print("error")
-         placement = Placement(protein, fold.final_path)
-         if placement == True:
-             print("goed")
+             placement = Placement(protein, fold.final_path)
+             if placement == True:
+                 print("goed")
