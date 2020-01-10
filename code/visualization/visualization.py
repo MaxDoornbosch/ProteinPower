@@ -6,10 +6,6 @@ import seaborn as sns
 import csv
 
 
-"""
-stability_overlap_x en stability_overlap_y
-"""
-
 def visualize(visualization_data, user_input, stability_score):
     x = []
     y = []
@@ -38,14 +34,14 @@ def visualize(visualization_data, user_input, stability_score):
     # connects the amino acids
     plt.plot(x,y,'-', label='Folds')
 
-    for i in range(len(stability_overlap_x)):
-        plt.plot(amino_stability[i],amino_stability[i], '--', label='Stability ' + str(i))
+    for i in range(len(amino_stability_x)):
+        plt.plot(amino_stability_x[i], amino_stability_y[i], '--', label='Stability ' + str(i))
 
     # assigns corresponding colors to individual amino acids
     for i in range(len(x)):
         plt.plot(x[i], y[i], 'o', color=colors[i])
 
-    # draw a line between each point
+    # draws a line between each point
     plt.grid(linestyle='-')
     plt.xlabel('x')
     plt.ylabel('y')

@@ -7,23 +7,25 @@ class Csv:
 
     def write_csv(self):
 
-        # Opens the file
+        # opens the file
         with open('data/folds.csv', 'w', newline='') as file:
             writer = csv.writer(file)
             writer.writerow(["Amino", "Fold"])
 
-            # Writes the information to the csv file
+            # writes the information to the csv file
             for fold in self.folds:
                 writer.writerow([fold[0], fold[1]])
+
             # p = Popen('data/folds.csv', shell=True)
         return True
 
-    def visualization(self):
-        # Opens the file
+    def visualization_csv(self):
+
+        # opens the file
         with open('data/visualization.csv', 'w', newline='') as file:
             writer = csv.writer(file)
 
-            # Writes the information to the csv file
+            # writes the information to the csv file
             for fold in self.folds:
                 writer.writerow([fold[0], fold[2], fold[3]])
         return True

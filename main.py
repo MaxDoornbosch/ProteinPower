@@ -26,7 +26,7 @@ if __name__ == "__main__":
                print(stability.score(protein.final_placement, user_input))
                csvwriter = Csv(protein.final_placement)
                csvwriter.write_csv()
-               csvwriter.visualization()
+               csvwriter.visualization_csv()
                visualize('data/visualization.csv', user_input, stability.definitive_stability_score)
                exit()
 
