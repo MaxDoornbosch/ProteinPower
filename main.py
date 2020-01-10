@@ -1,10 +1,15 @@
 from code.classes import check, placement, protein
 from code.classes.protein import Protein
-from code.visualization.visualization import visualization
+from code.classes.stability import Stability
+from code.classes.csvwriter import Csv
+from code.visualization.visualization import visualize
+
+
 
 
 if __name__ == "__main__":
     while True:
+         visualize('data/example.txt')
          user_input = input("please enter your protein: ")
          protein = Protein()
          check = check.Check()
@@ -19,6 +24,10 @@ if __name__ == "__main__":
                # laat de visualisatie zien
                print("End of protein ------------------->>>>> :) :) :) :)")
                # return False
+               stability = Stability()
+               print(stability.score(protein.final_placement, user_input))
+               csvwriter = Csv(protein.final_placement)
+               csvwriter.write_csv()
                exit()
 
             if placement.check_empty(check.user_input):
