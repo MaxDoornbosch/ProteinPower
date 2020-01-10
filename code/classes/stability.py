@@ -38,12 +38,14 @@ class Stability:
             if user_input[amino] == "H":
 
                 # checks if is beginning of the string
-                if amino == 0 and user_input[amino + 1]:
-                    self.amino_H -= 1
+                if amino == 0:
+                    if user_input[amino + 1] == "H":
+                        self.amino_H -= 1
 
                 # checks if is the end of the string
-                elif amino == len(user_input)-1 and user_input[amino - 1]:
-                    self.amino_H -= 1
+                elif amino == len(user_input)-1:
+                    if user_input[amino - 1] == "H":
+                        self.amino_H -= 1
                 else:
 
                     # looks for H
@@ -55,5 +57,5 @@ class Stability:
                         self.amino_H -= 1
         print(self.stability_score)
         print(self.amino_H)
-        definitieve_stability_score =  (self.stability_score - self.amino_H)/2
-        return definitieve_stability_score
+        self.definitive_stability_score =  (self.stability_score - self.amino_H)/2
+        return self.definitive_stability_score
