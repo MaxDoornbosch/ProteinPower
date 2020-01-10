@@ -1,5 +1,7 @@
 from code.classes import check, placement, protein
 from code.classes.protein import Protein
+from code.visualization.visualization import visualization
+
 
 if __name__ == "__main__":
     while True:
