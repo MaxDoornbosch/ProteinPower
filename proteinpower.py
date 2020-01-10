@@ -47,6 +47,8 @@ class Placement:
 
 
 
+
+
 if __name__ == "__main__":
     while True:
          protein = input("please enter your protein: ")
