@@ -53,11 +53,7 @@ class Stability:
                     # looks for H
                     if user_input[amino - 1] == "H":
                         self.amino_H -= 1
-
+        print(self.stability_score)
+        print(self.amino_H)
         definitieve_stability_score =  (self.stability_score - self.amino_H)/2
         return definitieve_stability_score
-
-if __name__ == "__main__":
-    lijst = [["P",2,0,0],["H",2,0,1],["H",1,0,2],["H",-2,1,2],["P",0,1,1]]
-    test = Stability()
-    print(test.score(lijst, "PHHHP"))

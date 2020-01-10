@@ -8,16 +8,22 @@ class Csv:
     def write_csv(self):
 
         # Opens the file
-        with open('folds.csv', 'w', newline='') as file:
+        with open('data/folds.csv', 'w', newline='') as file:
             writer = csv.writer(file)
-            writer.writerow(["Amino", "Fold", "X coordinate", "Y Coordinate"])
+            writer.writerow(["Amino", "Fold"])
 
             # Writes the information to the csv file
             for fold in self.folds:
-                writer.writerow([fold[0], fold[1], fold[2], fold[3]])
-            p = Popen('folds.csv', shell=True)
+                writer.writerow([fold[0], fold[1]])
+            # p = Popen('data/folds.csv', shell=True)
+        return True
 
-if __name__ == "__main__":
-    listcheck = [['P', 2, 0, 0], ['H', 2, 0 , 1]]
-    test = Csv(listcheck)
-    test.write_csv()
+    def visualization(self):
+        # Opens the file
+        with open('data/visualization.csv', 'w', newline='') as file:
+            writer = csv.writer(file)
+
+            # Writes the information to the csv file
+            for fold in self.folds:
+                writer.writerow([fold[0], fold[2], fold[3]])
+        return True

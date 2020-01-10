@@ -9,7 +9,7 @@ from code.visualization.visualization import visualize
 
 if __name__ == "__main__":
     while True:
-         visualize('data/example.txt')
+         # visualize('data/example.txt')
          user_input = input("please enter your protein: ")
          protein = Protein()
          check = check.Check()
@@ -22,12 +22,15 @@ if __name__ == "__main__":
          while True:
             if placement.set_coordinates() == False:
                # laat de visualisatie zien
+               
                print("End of protein ------------------->>>>> :) :) :) :)")
                # return False
                stability = Stability()
                print(stability.score(protein.final_placement, user_input))
                csvwriter = Csv(protein.final_placement)
                csvwriter.write_csv()
+               csvwriter.visualization()
+               visualize('data/visualization.csv')
                exit()
 
             if placement.check_empty(check.user_input):

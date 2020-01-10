@@ -52,12 +52,18 @@ class Placement:
                 self.new_y -= 1
                 self.new_x = self.current_x
 
+            checker = True
             # checks and saves possible folds
             for i in (self.final_placement):
                 # print(i)
-                if i[2] != self.new_x and i[3] != self.new_y:
-                    self.possible_coordinates.append([user_input[len(self.final_placement)], self.new_fold, self.current_x, self.current_y])
+                if i[2] == self.new_x and i[3] == self.new_y:
+                    checker = False
 
+            if checker == True:
+                self.possible_coordinates.append([user_input[len(self.final_placement)], self.new_fold, self.current_x, self.current_y])
+
+        print("/////////")
+        print(self.possible_coordinates)
         self.random_amino = random.choice(self.possible_coordinates)
         self.possible_coordinates.clear()
         self.current_fold = self.new_fold

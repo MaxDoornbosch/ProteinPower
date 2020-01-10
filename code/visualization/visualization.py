@@ -15,13 +15,13 @@ def visualize(visualization_data):
     with open(visualization_data,'r') as csvfile:
         plots = csv.reader(csvfile, delimiter=',')
         for row in plots:
-            x.append(int(row[0]))
-            y.append(int(row[1]))
-            print(row[2])
-            if row[2] == 'H':
+            if row[0] == 'H':
                 colors.append('red')
             else:
                 colors.append('blue')
+            x.append(int(row[1]))
+            y.append(int(row[2]))
+            
 
     # forces equal integer ticks
     ax = plt.figure().gca()
