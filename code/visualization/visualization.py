@@ -6,7 +6,7 @@ import seaborn as sns
 import csv
 
 
-def visualize(visualization_data):
+def visualize(visualization_data, user_input):
     x = []
     y = []
     colors = []
@@ -21,7 +21,7 @@ def visualize(visualization_data):
                 colors.append('blue')
             x.append(int(row[1]))
             y.append(int(row[2]))
-            
+
 
     # forces equal integer ticks
     ax = plt.figure().gca()
@@ -40,6 +40,5 @@ def visualize(visualization_data):
     plt.grid(linestyle='-')
     plt.xlabel('x')
     plt.ylabel('y')
-    plt.title('Protein\nHHHPPPPHHH')
-    plt.legend()
+    plt.title('Protein\n' + user_input)
     plt.show()
