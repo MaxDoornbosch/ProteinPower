@@ -7,7 +7,7 @@ from code.visualization.visualization import visualize
 
 if __name__ == "__main__":
     while True:
-        user_input = input("please enter your protein: ")
+        user_input = input("please enter your protein: ").upper()
         protein = Protein()
         check = check.Check()
 
@@ -27,7 +27,7 @@ if __name__ == "__main__":
                csvwriter = Csv(protein.final_placement)
                csvwriter.write_csv()
                csvwriter.visualization_csv()
-               visualize('data/visualization.csv', user_input, stability.definitive_stability_score)
+               visualize('data/visualization.csv', user_input, stability.definitive_stability_score, placement.amino_stability_x, placement.amino_stability_y)
                exit()
 
             # checks if user input is valid

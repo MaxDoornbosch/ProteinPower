@@ -6,7 +6,7 @@ class Check:
 
         # checks if user_input exists
         if len(user_input) != 0:
-            self.user_input = user_input.upper()
+            self.user_input = user_input
 
             # checks if user_input is valid
             for i in range(len(self.user_input)):

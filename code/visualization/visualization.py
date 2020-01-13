@@ -5,13 +5,12 @@ import pandas as pd
 import seaborn as sns
 import csv
 
-
-def visualize(visualization_data, user_input, stability_score):
+def visualize(visualization_data, user_input, stability_score, amino_stability_x, amino_stability_y):
     x = []
     y = []
     colors = []
-    amino_stability_x = [[0,1], [4,5]]
-    amino_stability_y = [[1,2], [4,5]]
+
+    print("VISUAL", amino_stability_x, amino_stability_y)
 
     # extracts amino acid x,y coordinates and determines corresponding colors
     with open(visualization_data,'r') as csvfile:
@@ -35,8 +34,8 @@ def visualize(visualization_data, user_input, stability_score):
     plt.plot(x,y,'-', label='Folds')
 
     # stability score visualisatie
-    #for i in range(len(amino_stability_x)):
-        #plt.plot(amino_stability_x[i], amino_stability_y[i], '--', label='Stability ' + str(i))
+    for i in range(len(amino_stability_x)):
+        plt.plot(amino_stability_x[i], amino_stability_y[i], '--', label='Stability ' + str(i) + " (-1)")
 
     # assigns corresponding colors to individual amino acids
     for i in range(len(x)):
