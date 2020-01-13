@@ -34,8 +34,9 @@ def visualize(visualization_data, user_input, stability_score):
     # connects the amino acids
     plt.plot(x,y,'-', label='Folds')
 
-    for i in range(len(amino_stability_x)):
-        plt.plot(amino_stability_x[i], amino_stability_y[i], '--', label='Stability ' + str(i))
+    # stability score visualisatie
+    #for i in range(len(amino_stability_x)):
+        #plt.plot(amino_stability_x[i], amino_stability_y[i], '--', label='Stability ' + str(i))
 
     # assigns corresponding colors to individual amino acids
     for i in range(len(x)):
