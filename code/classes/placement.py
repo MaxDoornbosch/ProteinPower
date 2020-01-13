@@ -36,6 +36,7 @@ class Placement:
         return True
 
     def check_empty(self, user_input):
+        self.possible_coordinates.clear()
 
         # determines possible folds and coordinates
         for i in range(len(self.possible_folds)):
@@ -78,9 +79,10 @@ class Placement:
 
         print("/////////")
         print(self.possible_coordinates)
+        if self.possible_coordinates == []:
+            return self.possible_coordinates
         self.random_amino = random.choice(self.possible_coordinates)
-        self.possible_coordinates.clear()
         self.current_fold = self.new_fold
         if len(user_input) - 1 == len(self.final_placement):
             self.random_amino = [user_input[len(self.final_placement)], 0, self.current_x, self.current_y]
-        return self.random_amino, self.amino_stability_x, self.amino_stability_y
+        return self.random_amino, self.amino_stability_x, self.amino_stability_y, self.possible_coordinates
