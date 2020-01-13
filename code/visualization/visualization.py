@@ -35,7 +35,7 @@ def visualize(visualization_data, user_input, stability_score, amino_stability_x
 
     # stability score visualisatie
     for i in range(len(amino_stability_x)):
-        plt.plot(amino_stability_x[i], amino_stability_y[i], '--', label='Stability ' + str(i) + " (-1)")
+        plt.plot(amino_stability_x[i], amino_stability_y[i], ':', color='r')
 
     # assigns corresponding colors to individual amino acids
     for i in range(len(x)):
