@@ -13,7 +13,7 @@ if __name__ == "__main__":
         protein = Protein()
         check = Check()
 
-            # (randomly) folds protein if user input is valid
+        # (randomly) folds protein if user input is valid
         if check.get_protein(user_input) != False:
             placement = Placement(user_input, protein.final_placement)
             protein.add_amino(check.amino_0)

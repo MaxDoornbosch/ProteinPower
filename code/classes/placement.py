@@ -13,6 +13,11 @@ class Placement:
         self.amino_stability_y = []
 
     def set_coordinates(self):
+        """
+        Sets current coordinates and calculates possible folds
+        """
+
+        # current x,y,fold are the latest addition to the final dictionary
         self.current_fold = self.final_placement[-1][1]
         self.current_x = self.final_placement[-1][2]
         self.current_y = self.final_placement[-1][3]
@@ -30,12 +35,15 @@ class Placement:
             self.current_y -= 1
             self.possible_folds = [-1, 1, -2]
 
-        # end of user_input is reached
+        # stops if end of user input is reached
         elif self.current_fold == 0:
             return False
         return True
 
     def check_empty(self, user_input):
+        """
+        Checks if possible folds are legal, sets possible coordinates, and picks random fold.
+        """
         self.possible_coordinates.clear()
 
         # determines possible folds and coordinates
