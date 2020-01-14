@@ -12,15 +12,30 @@ class Placement:
         self.amino_stability_x = []
         self.amino_stability_y = []
 
+    def set_current(self, n):
+        """
+        Recursive function to set current values
+        """
+
+        if n == 1:
+
+            # current x,y,fold are the latest addition to the final dictionary
+            self.current_fold = self.final_placement[-1][1]
+            self.current_x = self.final_placement[-1][2]
+            self.current_y = self.final_placement[-1][3]
+            print("11111111111111111111")
+            return 1
+
+        self.current_fold = self.final_placement[-1][1]
+        self.current_x = self.final_placement[-1][2]
+        self.current_y = self.final_placement[-1][3]
+        print("lalalalalalalalalla", n+1)
+        return set_current(n + 1)
+
     def set_coordinates(self):
         """
         Sets current coordinates and calculates possible folds
         """
-
-        # current x,y,fold are the latest addition to the final dictionary
-        self.current_fold = self.final_placement[-1][1]
-        self.current_x = self.final_placement[-1][2]
-        self.current_y = self.final_placement[-1][3]
 
         if self.current_fold == 1:
             self.current_x += 1

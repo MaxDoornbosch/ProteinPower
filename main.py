@@ -6,12 +6,14 @@ from code.classes.csvwriter import Csv
 from code.visualization.visualization import visualize
 
 
-
 if __name__ == "__main__":
     user_input = input("please enter your protein: ").upper()
+    current_n = 1
+
     while True:
         protein = Protein()
         check = Check()
+
 
         # (randomly) folds protein if user input is valid
         if check.get_protein(user_input) != False:
@@ -20,6 +22,7 @@ if __name__ == "__main__":
             print(protein)
 
         while True:
+            placement.set_current(current_n)
 
             # calculates stability score, adds values to csv and visualizes final product
             if placement.set_coordinates() == False:
