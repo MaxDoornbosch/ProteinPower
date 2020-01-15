@@ -110,60 +110,35 @@ class Three_Fold():
             # Loops over all the places amino's
             for i in (self.final_placement):
                 
-                # Loops over all the 
+                # Loops over all the coordinates and folds separately
                 for pos in range(4):
+
+                    # Checks if the coordinates aren't already taken
                     if i[2] == possible_folds[pos][2] and i[3] == possible_folds[pos][3]:
                         print(i[2], i[3])
                         print(possible_folds[pos][2], possible_folds[pos][3])
                         checker = False
 
+                    # Checks if the coordinates overlap
                     if pos != 0 and checker == True:
                         previous_fold = possible_folds[pos - 1][1]
-                        if previous_fold == -1:
-                            if i[2] == possible_folds[pos][2] - 1 and i[3] == possible_folds[pos][3]:
-                                if i[0] == "H" and possible_folds[pos][0]:
-                                    score -=1
-                            if i[2] == possible_folds[pos][2] and i[3] == possible_folds[pos][3] + 1:
-                                if i[0] == "H" and possible_folds[pos][0]:
-                                    score -=1
-                            if i[2] == possible_folds[pos][2] and i[3] == possible_folds[pos][3] - 1:
-                                if i[0] == "H" and possible_folds[pos][0]:
-                                    score -=1
-                                    
-                        if previous_fold == -2:
-                            if i[2] == possible_folds[pos][2] - 1 and i[3] == possible_folds[pos][3]:
-                                if i[0] == "H" and possible_folds[pos][0]:
-                                    score -=1
-                            if i[2] == possible_folds[pos][2] + 1 and i[3] == possible_folds[pos][3]:
-                                if i[0] == "H" and possible_folds[pos][0]:
-                                    score -=1
-                            if i[2] == possible_folds[pos][2] and i[3] == possible_folds[pos][3] - 1:
-                                if i[0] == "H" and possible_folds[pos][0]:
-                                    score -=1
 
-                        if previous_fold == 1: 
-                            if i[2] == possible_folds[pos][2] + 1 and i[3] == possible_folds[pos][3]:
-                                if i[0] == "H" and possible_folds[pos][0]:
-                                    score -=1
-                            if i[2] == possible_folds[pos][2] and i[3] == possible_folds[pos][3] + 1:
-                                if i[0] == "H" and possible_folds[pos][0]:
-                                    score -=1
-                            if i[2] == possible_folds[pos][2] and i[3] == possible_folds[pos][3] - 1:
-                                if i[0] == "H" and possible_folds[pos][0]:
-                                    score -=1
+                        # Looks for surrounding H amino's per fold and calculates the score
+                        if i[2] == possible_folds[pos][2] - 1 and i[3] == possible_folds[pos][3] and previous_fold != 1:
+                            if i[0] == "H" and possible_folds[pos][0]:
+                                score -=1
 
-                        if previous_fold == 2:
-                            if i[2] == possible_folds[pos][2] - 1 and i[3] == possible_folds[pos][3]:
-                                if i[0] == "H" and possible_folds[pos][0]:
-                                    score -=1
-                            if i[2] == possible_folds[pos][2] and i[3] == possible_folds[pos][3] + 1:
-                                if i[0] == "H" and possible_folds[pos][0]:
-                                    score -=1
-                            if i[2] == possible_folds[pos][2] + 1 and i[3] == possible_folds[pos][3]:
-                                if i[0] == "H" and possible_folds[pos][0]:
-                                    score -=1
-                        # save coordinates for visualization
-                            
+                        if i[2] == possible_folds[pos][2] and i[3] == possible_folds[pos][3] + 1 and previous_fold != -2:
+                            if i[0] == "H" and possible_folds[pos][0]:
+                                score -=1
+
+                        if i[2] == possible_folds[pos][2] and i[3] == possible_folds[pos][3] - 1 and previous_fold != 2:
+                            if i[0] == "H" and possible_folds[pos][0]:
+                                score -=1
+
+                        if i[2] == possible_folds[pos][2] + 1 and i[3] == possible_folds[pos][3] and previous_fold != -1:
+                            if i[0] == "H" and possible_folds[pos][0]:
+                                score -=1
 
             if checker == True:
                 self.possible_coordinates.append([possible_folds[0], possible_folds[1], possible_folds[2], score])
@@ -178,6 +153,7 @@ class Three_Fold():
         # if len(user_input) - 1 == len(self.final_placement):
             # self.random_amino = [user_input[len(self.final_placement)], 0, self.current_x, self.current_y]
         for value in self.possible_coordinates:
+            # print(min(value[3]))
             if value[3] != 0:
                 print("-------------------------------------------------")
                 print(value)
