@@ -1,4 +1,11 @@
 class Three_Fold():
+
+    """
+    Functies:
+    1. User input in stukken van 3 hakken (of 2 of 1 voor laatste)
+    2. Checken of het mag (niet bezet): prunen
+        Als je één richting niet op mag, mogen alle corresponderende moves ook niet berekend te worden
+    """
     def __init__(self):
         self.possible_three_folds = []
         self.possible_folds = []
@@ -13,11 +20,7 @@ class Three_Fold():
         self.x_coordinate = x_coordinate
         self.y_coordinate = y_coordinate
 
-        """
 
-        VRAAG
-        Hardcoden van mogelijke folds of deze loops laten staan? Wat is beter?
-        """
 
         # Checks the previous fold
         if current_fold == 1:
@@ -175,7 +178,7 @@ class Three_Fold():
         # finds lower bound
         for value in self.possible_options:
             if value[len(value) - 1] < lower_bound:
-                lower_bound = value[3]
+                lower_bound = value[len(value) - 1]
                 print(lower_bound)
 
         # saves options with lower bound
