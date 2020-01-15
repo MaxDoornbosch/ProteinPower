@@ -13,6 +13,12 @@ class Three_Fold():
         self.x_coordinate = x_coordinate
         self.y_coordinate = y_coordinate
 
+        """
+
+        VRAAG
+        Hardcoden van mogelijke folds of deze loops laten staan? Wat is beter?
+        """
+
         # Checks the previous fold
         if current_fold == 1:
             self.possible_folds.append([1, -2, 2])
@@ -98,7 +104,7 @@ class Three_Fold():
         Calculates the stability score for every three fold
         """
 
-        self.possible_coordinates = []
+        self.possible_options = []
         self.final_placement = final_placement
         print(self.information_folds)
 
@@ -109,7 +115,7 @@ class Three_Fold():
 
             # Loops over all the places amino's
             for i in (self.final_placement):
-                
+
                 # Loops over all the coordinates and folds separately
                 for pos in range(4):
 
@@ -140,24 +146,42 @@ class Three_Fold():
                             if i[0] == "H" and possible_folds[pos][0]:
                                 score -=1
 
+            # saves all possible options with corresponding stability scores
             if checker == True:
-                self.possible_coordinates.append([possible_folds[0], possible_folds[1], possible_folds[2], score])
+                self.possible_options.append([possible_folds[0], possible_folds[1], possible_folds[2], score])
 
         print("/////////")
-        print(self.possible_coordinates)
-        print(len(self.possible_coordinates))
-        # if self.possible_coordinates == []:
-        #     return self.possible_coordinates
-        # self.random_amino = random.choice(self.possible_coordinates)
+        print(self.possible_options)
+        print(len(self.possible_options))
+
+        # if self.possible_options == []:
+        #     return self.possible_options
+        # self.random_amino = random.choice(self.possible_options)
         # self.current_fold = self.new_fold
         # if len(user_input) - 1 == len(self.final_placement):
             # self.random_amino = [user_input[len(self.final_placement)], 0, self.current_x, self.current_y]
-        for value in self.possible_coordinates:
-            # print(min(value[3]))
-            if value[3] != 0:
-                print("-------------------------------------------------")
-                print(value)
+
+    def best_options(self):
+        """
+        Prunes possible options with lowest values
+        """
+        lower_bound = 0
+        self.best_options = []
+
+        # finds lower bound
+        for value in self.possible_options:
+            if value[3] < lower_bound:
+                lower_bound = value[3]
+                print(lower_bound)
+
+        # saves options with lower bound
+        for value in self.possible_options:
+            if value[3] == lower_bound:
+                self.best_options.append(value)
+
+        print(self.best_options)
         return True
+
 
 if __name__ == "__main__":
     test = Three_Fold()
@@ -165,3 +189,4 @@ if __name__ == "__main__":
     test.set_coordinates("P")
     final_placement = [["H", 2, 0, -1], ["H", 2, 0, 0]]
     test.stability_score(final_placement)
+    test.best_options()
