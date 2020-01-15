@@ -165,6 +165,7 @@ class Three_Fold():
         """
         Prunes possible options with lowest values
         """
+        
         lower_bound = 0
         self.best_options = []
 
@@ -172,7 +173,6 @@ class Three_Fold():
         for value in self.possible_options:
             if value[3] < lower_bound:
                 lower_bound = value[3]
-                print(lower_bound)
 
         # saves options with lower bound
         for value in self.possible_options:
