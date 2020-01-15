@@ -77,7 +77,7 @@ class Three_Fold():
             self.storage_list.append([current_amino, i[0], self.x_coordinate, self.y_coordinate])
 
             # Loops over the folds separately
-            for j in range(3):
+            for j in range(len(self.amino)):
 
                 # Changes the coordinates
                 if i[j] == 1:
@@ -90,12 +90,13 @@ class Three_Fold():
                     self.current_y -= 1
 
                 # Adds a dummy fold to the last coordinates
-                if j == 2:
+                if j >= len(self.amino) - 1:
                     self.storage_list.append([self.amino[j], 0, self.current_x, self.current_y])
-                else:
+                elif j < len(self.amino) - 1:
                     self.storage_list.append([self.amino[j], i[j + 1], self.current_x, self.current_y])
 
-            self.information_folds.append(self.storage_list)
+            if self.storage_list not in self.information_folds:
+                self.information_folds.append(self.storage_list)
         print(self.information_folds)
         print(len(self.information_folds))
 
@@ -117,7 +118,7 @@ class Three_Fold():
             for i in (self.final_placement):
 
                 # Loops over all the coordinates and folds separately
-                for pos in range(4):
+                for pos in range(len(self.amino)+1):
 
                     # Checks if the coordinates aren't already taken
                     if i[2] == possible_folds[pos][2] and i[3] == possible_folds[pos][3]:
@@ -148,7 +149,10 @@ class Three_Fold():
 
             # saves all possible options with corresponding stability scores
             if checker == True:
-                self.possible_options.append([possible_folds[0], possible_folds[1], possible_folds[2], score])
+                try:
+                    self.possible_options.append([possible_folds[0], possible_folds[1], possible_folds[2], score])
+                except IndexError:
+                    self.possible_options.append([possible_folds[0], possible_folds[1], score])
 
         print("/////////")
         print(self.possible_options)
@@ -165,18 +169,18 @@ class Three_Fold():
         """
         Prunes possible options with lowest values
         """
-        
         lower_bound = 0
         self.best_options = []
 
         # finds lower bound
         for value in self.possible_options:
-            if value[3] < lower_bound:
+            if value[len(value) - 1] < lower_bound:
                 lower_bound = value[3]
+                print(lower_bound)
 
         # saves options with lower bound
         for value in self.possible_options:
-            if value[3] == lower_bound:
+            if value[len(value) -1] == lower_bound:
                 self.best_options.append(value)
 
         print(self.best_options)
