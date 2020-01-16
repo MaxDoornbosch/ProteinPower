@@ -1,4 +1,9 @@
-class Three_Fold():
+def three_fold(final_placement):
+    possible_three_folds = []
+    possible_folds = []
+    information_folds = []
+    storage_list = []
+
 
     """
     Functies:
@@ -6,66 +11,61 @@ class Three_Fold():
     2. Checken of het mag (niet bezet): prunen
         Als je één richting niet op mag, mogen alle corresponderende moves ook niet berekend te worden
     """
-    def __init__(self):
-        self.possible_three_folds = []
-        self.possible_folds = []
-        self.information_folds = []
-        self.storage_list = []
 
     def define_folds(self, amino, current_fold, x_coordinate, y_coordinate):
         """
         Defines all possible folds for every move
         """
-        self.amino = amino
-        self.x_coordinate = x_coordinate
-        self.y_coordinate = y_coordinate
 
-
+        # Werkt dit? Andere variabele namen maken of gewoon gebruiken?
+        amino = amino
+        x_coordinate = x_coordinate
+        y_coordinate = y_coordinate
 
         # Checks the previous fold
         if current_fold == 1:
-            self.possible_folds.append([1, -2, 2])
+            possible_folds.append([1, -2, 2])
         elif current_fold == -1:
-           self.possible_folds.append([-1, -2, 2])
+            possible_folds.append([-1, -2, 2])
         elif current_fold == 2:
-            self.possible_folds.append([-1, 1, 2])
+            possible_folds.append([-1, 1, 2])
         elif current_fold == -2:
-            self.possible_folds.append([-1, 1, -2])
+            possible_folds.append([-1, 1, -2])
 
         # Loop over all the possible folds
-        for i in (self.possible_folds[0]):
+        for i in (possible_folds[0]):
 
             # Checks which folds are possible
             if i == 1:
-                self.possible_folds.append([1, -2, 2])
+                possible_folds.append([1, -2, 2])
             elif i == -1:
-                self.possible_folds.append([-1, -2, 2])
+                possible_folds.append([-1, -2, 2])
             elif i == 2:
-                self.possible_folds.append([-1, 1, 2])
+                possible_folds.append([-1, 1, 2])
             elif i == -2:
-                self.possible_folds.append([-1, 1, -2])
+                possible_folds.append([-1, 1, -2])
 
             # Loops over all the previous possible folds
-            for j in (self.possible_folds[1]):
+            for j in (possible_folds[1]):
 
                 # Adds the folds to a list
                 if j == 1:
-                    self.possible_three_folds.append([i, j, 1])
-                    self.possible_three_folds.append([i, j, -2])
-                    self.possible_three_folds.append([i, j, 2])
+                    possible_three_folds.append([i, j, 1])
+                    possible_three_folds.append([i, j, -2])
+                    possible_three_folds.append([i, j, 2])
                 elif j == -1:
-                    self.possible_three_folds.append([i, j, -1])
-                    self.possible_three_folds.append([i, j, -2])
-                    self.possible_three_folds.append([i, j, 2])
+                    possible_three_folds.append([i, j, -1])
+                    possible_three_folds.append([i, j, -2])
+                    possible_three_folds.append([i, j, 2])
                 elif j == 2:
-                    self.possible_three_folds.append([i, j, 1])
-                    self.possible_three_folds.append([i, j, -1])
-                    self.possible_three_folds.append([i, j, 2])
+                    possible_three_folds.append([i, j, 1])
+                    possible_three_folds.append([i, j, -1])
+                    possible_three_folds.append([i, j, 2])
                 elif j == -2:
-                    self.possible_three_folds.append([i, j, 1])
-                    self.possible_three_folds.append([i, j, -2])
-                    self.possible_three_folds.append([i, j, -1])
-            self.possible_folds.pop(1)
+                    possible_three_folds.append([i, j, 1])
+                    possible_three_folds.append([i, j, -2])
+                    possible_three_folds.append([i, j, -1])
+            possible_folds.pop(1)
 
     def set_coordinates(self, current_amino):
         """
@@ -73,55 +73,55 @@ class Three_Fold():
         """
 
         # Loops over all the possible three folds
-        for i in self.possible_three_folds:
-            self.current_x = self.x_coordinate
-            self.current_y = self.y_coordinate
-            self.storage_list = []
-            self.storage_list.append([current_amino, i[0], self.x_coordinate, self.y_coordinate])
+        for i in possible_three_folds:
+            current_x = x_coordinate
+            current_y = y_coordinate
+            storage_list = []
+            storage_list.append([current_amino, i[0], x_coordinate, y_coordinate])
 
             # Loops over the folds separately
-            for j in range(len(self.amino)):
+            for j in range(len(amino)):
 
                 # Changes the coordinates
                 if i[j] == 1:
-                    self.current_x += 1
+                    current_x += 1
                 elif i[j] == -1:
-                    self.current_x -= 1
+                    current_x -= 1
                 elif i[j]== 2:
-                    self.current_y += 1
+                    current_y += 1
                 elif i[j] == -2:
-                    self.current_y -= 1
+                    current_y -= 1
 
                 # Adds a dummy fold to the last coordinates
-                if j >= len(self.amino) - 1:
-                    self.storage_list.append([self.amino[j], 0, self.current_x, self.current_y])
-                elif j < len(self.amino) - 1:
-                    self.storage_list.append([self.amino[j], i[j + 1], self.current_x, self.current_y])
+                if j >= len(amino) - 1:
+                    storage_list.append([amino[j], 0, current_x, current_y])
+                elif j < len(amino) - 1:
+                    storage_list.append([amino[j], i[j + 1], current_x, current_y])
 
-            if self.storage_list not in self.information_folds:
-                self.information_folds.append(self.storage_list)
-        print(self.information_folds)
-        print(len(self.information_folds))
+            if storage_list not in information_folds:
+                information_folds.append(storage_list)
+        print(information_folds)
+        print(len(information_folds))
 
     def stability_score(self, final_placement):
         """
         Calculates the stability score for every three fold
         """
 
-        self.possible_options = []
-        self.final_placement = final_placement
-        print(self.information_folds)
+        possible_options = []
+        final_placement = final_placement
+        print(information_folds)
 
         # Loops over all the three folds
-        for possible_folds in self.information_folds:
+        for possible_folds in information_folds:
             checker = True
             score = 0
 
             # Loops over all the places amino's
-            for i in (self.final_placement):
+            for i in (final_placement):
 
                 # Loops over all the coordinates and folds separately
-                for pos in range(len(self.amino)+1):
+                for pos in range(len(amino)+1):
 
                     # Checks if the coordinates aren't already taken
                     if i[2] == possible_folds[pos][2] and i[3] == possible_folds[pos][3]:
@@ -153,47 +153,37 @@ class Three_Fold():
             # saves all possible options with corresponding stability scores
             if checker == True:
                 try:
-                    self.possible_options.append([possible_folds[0], possible_folds[1], possible_folds[2], score])
+                    possible_options.append([possible_folds[0], possible_folds[1], possible_folds[2], score])
                 except IndexError:
-                    self.possible_options.append([possible_folds[0], possible_folds[1], score])
+                    possible_options.append([possible_folds[0], possible_folds[1], score])
 
         print("/////////")
-        print(self.possible_options)
-        print(len(self.possible_options))
+        print(possible_options)
+        print(len(possible_options))
 
-        # if self.possible_options == []:
-        #     return self.possible_options
-        # self.random_amino = random.choice(self.possible_options)
-        # self.current_fold = self.new_fold
-        # if len(user_input) - 1 == len(self.final_placement):
-            # self.random_amino = [user_input[len(self.final_placement)], 0, self.current_x, self.current_y]
+        # if possible_options == []:
+        #     return possible_options
+        # random_amino = random.choice(possible_options)
+        # current_fold = new_fold
+        # if len(user_input) - 1 == len(final_placement):
+            # random_amino = [user_input[len(final_placement)], 0, current_x, current_y]
 
     def best_options(self):
         """
         Prunes possible options with lowest values
         """
         lower_bound = 0
-        self.best_options = []
+        best_options = []
 
         # finds lower bound
-        for value in self.possible_options:
+        for value in possible_options:
             if value[len(value) - 1] < lower_bound:
-                lower_bound = value[len(value) - 1]
+                lower_bound = value[len(value)- 1]
                 print(lower_bound)
 
         # saves options with lower bound
-        for value in self.possible_options:
+        for value in possible_options:
             if value[len(value) -1] == lower_bound:
-                self.best_options.append(value)
+                best_options.append(value)
 
-        print(self.best_options)
-        return True
-
-
-if __name__ == "__main__":
-    test = Three_Fold()
-    test.define_folds("HHH", 2, 0, 1)
-    test.set_coordinates("P")
-    final_placement = [["H", 2, 0, -1], ["H", 2, 0, 0]]
-    test.stability_score(final_placement)
-    test.best_options()
+        print(best_opti
