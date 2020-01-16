@@ -18,14 +18,15 @@ if __name__ == "__main__":
         while user_input[i] != "H" and user_input[i] != "P" and user_input[i] !="C":
             user_input = input("Please enter a valid protein (minimum length is 3): ").upper()
 
-    # sets first fold and adds to final list
+    # sets first fold and adds to final
     amino_0 = [user_input[0], 2, 0, 0]
     protein = Protein()
     protein.add_amino(amino_0)
 
 
     user_input_split = split_protein(user_input)
-    three_fold(protein.final_placement, user_input_split, 2, 0, 1, "H")
+    #three_fold(protein.final_placement, user_input_split, 2, amino_0[2], amino_0[3], user_input[0])
+    three_fold(protein.final_placement, user_input_split, 2, 0, 0, "H")
 
     #three_fold(final_placement, amino, current_fold, x_coordinate, y_coordinate, current_amino):
 

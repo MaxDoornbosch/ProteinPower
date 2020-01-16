@@ -17,6 +17,7 @@ def split_protein(user_input):
     """
 
     user_input_split = [user_input[i:i+3] for i in range(0, len(user_input), 3)]
+    print(user_input_split)
     return user_input_split
 
 def three_fold(final_placement, user_input_split, current_fold, x_coordinate, y_coordinate, current_amino):
@@ -39,50 +40,30 @@ def three_fold(final_placement, user_input_split, current_fold, x_coordinate, y_
             Defines all possible folds for every move within
             """
 
-            # dict --> tuple
+            corresponding_folds = {
+               1 : [1, -2, 2],
+               -1 : [-1, -2, 2],
+               2 : [-1, 1, 2],
+               -2 : [-1, 1, -2],
+            }
 
-            
+            # determines corresponding folds based on current fold
+            if current_fold in corresponding_folds.keys():
+                possible_folds.append(corresponding_folds.get(current_fold))
 
-            # determines possible folds based on current fold
-            if current_fold == 1:
-                possible_folds.append([1, -2, 2])
-            elif current_fold == -1:
-                possible_folds.append([-1, -2, 2])
-            elif current_fold == 2:
-                possible_folds.append([-1, 1, 2])
-            elif current_fold == -2:
-                possible_folds.append([-1, 1, -2])
-
-            # of all possible folds, detemines possible ones
             for i in (possible_folds[0]):
-                if i == 1:
-                    possible_folds.append([1, -2, 2])
-                elif i == -1:
-                    possible_folds.append([-1, -2, 2])
-                elif i == 2:
-                    possible_folds.append([-1, 1, 2])
-                elif i == -2:
-                    possible_folds.append([-1, 1, -2])
+                if i in corresponding_folds.keys():
+                    possible_folds.append(corresponding_folds.get(current_fold))
 
-                # of all possible folds, detemines possible ones
+                # saves every possible fold for each amino
                 for j in (possible_folds[1]):
-                    if j == 1:
-                        final_possible_folds.append([i, j, 1])
-                        final_possible_folds.append([i, j, -2])
-                        final_possible_folds.append([i, j, 2])
-                    elif j == -1:
-                        final_possible_folds.append([i, j, -1])
-                        final_possible_folds.append([i, j, -2])
-                        final_possible_folds.append([i, j, 2])
-                    elif j == 2:
-                        final_possible_folds.append([i, j, 1])
-                        final_possible_folds.append([i, j, -1])
-                        final_possible_folds.append([i, j, 2])
-                    elif j == -2:
-                        final_possible_folds.append([i, j, 1])
-                        final_possible_folds.append([i, j, -2])
-                        final_possible_folds.append([i, j, -1])
+                    if j in corresponding_folds.keys():
+                        final_possible_folds.append([i, j, corresponding_folds.get(current_fold)[0]])
+                        final_possible_folds.append([i, j, corresponding_folds.get(current_fold)[1]])
+                        final_possible_folds.append([i, j, corresponding_folds.get(current_fold)[2]])
+                print("possible folds", possible_folds)
                 possible_folds.pop(1)
+
 
         def set_coordinates():
             """
@@ -132,64 +113,65 @@ def three_fold(final_placement, user_input_split, current_fold, x_coordinate, y_
 
             possible_options = []
 
-
-            for possible_folds in information_folds:
+            for unit in information_folds:
                 checker = True
                 fold = True
                 score = 0
 
                 # Loops over all the places aminos
-                for i in (final_placement):
+                for i in final_placement:
+                    print("i", i)
 
                     # Loops over all the coordinates and folds separately
                     for pos in range(len(chunk) + 1):
+                        print("Hello??????")
 
                         # Checks if the coordinates aren't already taken
-                        if i[2] == possible_folds[pos][2] and i[3] == possible_folds[pos][3]:
+                        if i[2] == unit[pos][2] and i[3] == unit[pos][3]:
                             print(i[2], i[3])
-                            print(possible_folds[pos][2], possible_folds[pos][3])
+                            print(unit[pos][2], unit[pos][3])
                             checker = False
 
                         # Checks if the coordinates overlap
                         if pos != 0 and checker == True:
-                            previous_fold = possible_folds[pos - 1][1]
+                            previous_fold = unit[pos - 1][1]
 
                             # Looks for surrounding H aminos per fold and calculates the score
-                            if i[0] == "H" and possible_folds[pos][0] == "H":
-                                if i[2] == possible_folds[pos][2] - 1 and i[3] == possible_folds[pos][3] and previous_fold != 1:
+                            if i[0] == "H" and unit[pos][0] == "H":
+                                if i[2] == unit[pos][2] - 1 and i[3] == unit[pos][3] and previous_fold != 1:
                                     score -=1
 
-                                if i[2] == possible_folds[pos][2] and i[3] == possible_folds[pos][3] + 1 and previous_fold != -2:
+                                if i[2] == unit[pos][2] and i[3] == unit[pos][3] + 1 and previous_fold != -2:
                                     score -=1
 
-                                if i[2] == possible_folds[pos][2] and i[3] == possible_folds[pos][3] - 1 and previous_fold != 2:
+                                if i[2] == unit[pos][2] and i[3] == unit[pos][3] - 1 and previous_fold != 2:
                                     score -=1
 
-                                if i[2] == possible_folds[pos][2] + 1 and i[3] == possible_folds[pos][3] and previous_fold != -1:
+                                if i[2] == unit[pos][2] + 1 and i[3] == unit[pos][3] and previous_fold != -1:
                                     score -=1
 
                             if pos == 3 and fold == True:
                                 fold = False
-                                if possible_folds[pos][0] == "H" and possible_folds[0][0] == "H":
-                                    if possible_folds[pos][2] + 1 == possible_folds[0][2] and possible_folds[pos][3] == possible_folds[0][3]:
+                                if unit[pos][0] == "H" and unit[0][0] == "H":
+                                    if unit[pos][2] + 1 == unit[0][2] and unit[pos][3] == unit[0][3]:
                                         score -= 1
 
-                                    if possible_folds[pos][2] - 1 == possible_folds[0][2] and possible_folds[pos][3] == possible_folds[0][3]:
+                                    if unit[pos][2] - 1 == unit[0][2] and unit[pos][3] == unit[0][3]:
                                         score -= 1
 
-                                    if possible_folds[pos][2] == possible_folds[0][2] and possible_folds[pos][3] + 1 == possible_folds[0][3]:
+                                    if unit[pos][2] == unit[0][2] and unit[pos][3] + 1 == unit[0][3]:
                                         score -= 1
 
-                                    if possible_folds[pos][2] == possible_folds[0][2] and possible_folds[pos][3] - 1 == possible_folds[0][3]:
+                                    if unit[pos][2] == unit[0][2] and unit[pos][3] - 1 == unit[0][3]:
                                         score -= 1
 
 
                 # saves all possible options with corresponding stability scores
                 if checker == True:
                     try:
-                        possible_options.append([possible_folds[0], possible_folds[1], possible_folds[2], score])
+                        possible_options.append([unit[0], unit[1], unit[2], score])
                     except IndexError:
-                        possible_options.append([possible_folds[0], possible_folds[1], score])
+                        possible_options.append([unit[0], unit[1], score])
 
             print("////////////////")
             print("All possible options: ", possible_options)
