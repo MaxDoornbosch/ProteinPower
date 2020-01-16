@@ -28,13 +28,12 @@ if __name__ == "__main__":
     user_input_split = split_protein(user_input)
 
 
-    current_amino = protein.final_placement[-1][0]
     current_fold = protein.final_placement[-1][1]
     current_x = protein.final_placement[-1][2]
     current_y = protein.final_placement[-1][3]
 
     #three_fold(protein.final_placement, user_input_split, 2, amino_0[2], amino_0[3], user_input[0])
-    three_fold(protein.final_placement, user_input_split, current_fold, current_x, current_y, current_amino)
+    three_fold(protein.final_placement, user_input_split, current_fold, current_x, current_y, user_input[len(protein.final_placement) + 1])
 
     #three_fold(final_placement, amino, current_fold, x_coordinate, y_coordinate, current_amino):
 
