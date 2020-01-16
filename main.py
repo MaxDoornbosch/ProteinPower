@@ -3,14 +3,14 @@ from code.classes.protein import Protein
 from code.classes.stability import Stability
 from code.classes.csvwriter import Csv
 from code.visualization.visualization import visualize
-from code.algorithms.threefold import three_fold
+from code.algorithms.threefold import *
 
 
 if __name__ == "__main__":
     user_input = input("Please enter your protein (minimum length is 3): ").upper()
 
     # minimum length of protein
-    while len(user_input) <= 3:
+    while len(user_input) < 3:
         user_input = input("Please enter a valid protein (minimum length is 3): ").upper()
 
     # checks if user_input is valid
@@ -18,18 +18,24 @@ if __name__ == "__main__":
         while user_input[i] != "H" and user_input[i] != "P" and user_input[i] !="C":
             user_input = input("Please enter a valid protein (minimum length is 3): ").upper()
 
+    # sets first fold and adds to final list
     amino_0 = [user_input[0], 2, 0, 0]
     protein = Protein()
     protein.add_amino(amino_0)
-    print(protein)
-    current_n = 1
-    three_fold(protein.final_placement, "HPH", 2, 0, 1, "H")
+
+
+    user_input_split = split_protein(user_input)
+    three_fold(protein.final_placement, user_input_split, 2, 0, 1, "H")
 
     #three_fold(final_placement, amino, current_fold, x_coordinate, y_coordinate, current_amino):
 
 
 
+# To do
+# - Uiteindelijke stability berekenen!
+
 """
+    current_n = 1
 
     while True:
         placement.set_current(current_n)
