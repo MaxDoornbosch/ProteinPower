@@ -1,9 +1,8 @@
-def three_fold(final_placement):
+def three_fold(final_placement, amino, current_fold, x_coordinate, y_coordinate, current_amino):
     possible_three_folds = []
     possible_folds = []
     information_folds = []
     storage_list = []
-
 
     """
     Functies:
@@ -12,15 +11,10 @@ def three_fold(final_placement):
         Als je één richting niet op mag, mogen alle corresponderende moves ook niet berekend te worden
     """
 
-    def define_folds(self, amino, current_fold, x_coordinate, y_coordinate):
+    def define_folds():
         """
         Defines all possible folds for every move
         """
-
-        # Werkt dit? Andere variabele namen maken of gewoon gebruiken?
-        amino = amino
-        x_coordinate = x_coordinate
-        y_coordinate = y_coordinate
 
         # Checks the previous fold
         if current_fold == 1:
@@ -67,7 +61,7 @@ def three_fold(final_placement):
                     possible_three_folds.append([i, j, -1])
             possible_folds.pop(1)
 
-    def set_coordinates(self, current_amino):
+    def set_coordinates():
         """
         Takes possible folds and attaches corresponding coordinates
         """
@@ -103,13 +97,12 @@ def three_fold(final_placement):
         print(information_folds)
         print(len(information_folds))
 
-    def stability_score(self, final_placement):
+    def stability_score():
         """
         Calculates the stability score for every three fold
         """
 
         possible_options = []
-        final_placement = final_placement
         print(information_folds)
 
         # Loops over all the three folds
@@ -168,22 +161,31 @@ def three_fold(final_placement):
         # if len(user_input) - 1 == len(final_placement):
             # random_amino = [user_input[len(final_placement)], 0, current_x, current_y]
 
-    def best_options(self):
-        """
-        Prunes possible options with lowest values
-        """
-        lower_bound = 0
-        best_options = []
+        def best_options():
+            """
+            Prunes possible options with lowest values
+            """
+            lower_bound = 0
+            best_options = []
 
-        # finds lower bound
-        for value in possible_options:
-            if value[len(value) - 1] < lower_bound:
-                lower_bound = value[len(value)- 1]
-                print(lower_bound)
+            # finds lower bound
+            for value in possible_options:
+                if value[len(value) - 1] < lower_bound:
+                    lower_bound = value[len(value)- 1]
+                    print(lower_bound)
 
-        # saves options with lower bound
-        for value in possible_options:
-            if value[len(value) -1] == lower_bound:
-                best_options.append(value)
+            # saves options with lower bound
+            for value in possible_options:
+                if value[len(value) -1] == lower_bound:
+                    best_options.append(value)
 
-        print(best_opti
+            print(best_options)
+
+        best_options()
+
+
+
+
+    define_folds()
+    set_coordinates()
+    stability_score()

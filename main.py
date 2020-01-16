@@ -3,7 +3,7 @@ from code.classes.protein import Protein
 from code.classes.stability import Stability
 from code.classes.csvwriter import Csv
 from code.visualization.visualization import visualize
-from code.algorithms.threefold import Three_Fold
+from code.algorithms.threefold import three_fold
 
 
 if __name__ == "__main__":
@@ -23,15 +23,14 @@ if __name__ == "__main__":
     protein.add_amino(amino_0)
     print(protein)
     current_n = 1
-    three_fold = Three_Fold()
-    three_fold.define_folds("HHH", 2, 0, 1)
-    three_fold.set_coordinates("P")
-    three_fold.stability_score(protein.final_placement)
-    three_fold.best_options()
+    three_fold(protein.final_placement, "HHH", 2, 0, 1, "P")
+
+    #three_fold(final_placement, amino, current_fold, x_coordinate, y_coordinate, current_amino):
 
 
 
 """
+
     while True:
         placement.set_current(current_n)
 
