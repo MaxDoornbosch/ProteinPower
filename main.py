@@ -23,7 +23,7 @@ if __name__ == "__main__":
     protein.add_amino(amino_0)
     print(protein)
     current_n = 1
-    three_fold(protein.final_placement, "HHH", 2, 0, 1, "P")
+    three_fold(protein.final_placement, "HPH", 2, 0, 1, "H")
 
     #three_fold(final_placement, amino, current_fold, x_coordinate, y_coordinate, current_amino):
 

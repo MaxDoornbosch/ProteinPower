@@ -108,6 +108,7 @@ def three_fold(final_placement, amino, current_fold, x_coordinate, y_coordinate,
         # Loops over all the three folds
         for possible_folds in information_folds:
             checker = True
+            fold = True
             score = 0
 
             # Loops over all the places amino's
@@ -127,21 +128,34 @@ def three_fold(final_placement, amino, current_fold, x_coordinate, y_coordinate,
                         previous_fold = possible_folds[pos - 1][1]
 
                         # Looks for surrounding H amino's per fold and calculates the score
-                        if i[2] == possible_folds[pos][2] - 1 and i[3] == possible_folds[pos][3] and previous_fold != 1:
-                            if i[0] == "H" and possible_folds[pos][0]:
-                                score -=1
+                        if i[0] == "H" and possible_folds[pos][0] == "H":
+                            if i[2] == possible_folds[pos][2] - 1 and i[3] == possible_folds[pos][3] and previous_fold != 1:
+                                    score -=1
 
-                        if i[2] == possible_folds[pos][2] and i[3] == possible_folds[pos][3] + 1 and previous_fold != -2:
-                            if i[0] == "H" and possible_folds[pos][0]:
-                                score -=1
+                            if i[2] == possible_folds[pos][2] and i[3] == possible_folds[pos][3] + 1 and previous_fold != -2:
+                                    score -=1
 
-                        if i[2] == possible_folds[pos][2] and i[3] == possible_folds[pos][3] - 1 and previous_fold != 2:
-                            if i[0] == "H" and possible_folds[pos][0]:
-                                score -=1
+                            if i[2] == possible_folds[pos][2] and i[3] == possible_folds[pos][3] - 1 and previous_fold != 2:
+                                    score -=1
 
-                        if i[2] == possible_folds[pos][2] + 1 and i[3] == possible_folds[pos][3] and previous_fold != -1:
-                            if i[0] == "H" and possible_folds[pos][0]:
-                                score -=1
+                            if i[2] == possible_folds[pos][2] + 1 and i[3] == possible_folds[pos][3] and previous_fold != -1:
+                                    score -=1
+
+                        if pos == 3 and fold == True:
+                            fold = False
+                            if possible_folds[pos][0] == "H" and possible_folds[0][0] == "H":
+                                if possible_folds[pos][2] + 1 == possible_folds[0][2] and possible_folds[pos][3] == possible_folds[0][3]:
+                                    score -= 1
+
+                                if possible_folds[pos][2] - 1 == possible_folds[0][2] and possible_folds[pos][3] == possible_folds[0][3]:
+                                    score -= 1
+
+                                if possible_folds[pos][2] == possible_folds[0][2] and possible_folds[pos][3] + 1 == possible_folds[0][3]:
+                                    score -= 1
+
+                                if possible_folds[pos][2] == possible_folds[0][2] and possible_folds[pos][3] - 1 == possible_folds[0][3]:
+                                    score -= 1
+
 
             # saves all possible options with corresponding stability scores
             if checker == True:
@@ -150,9 +164,9 @@ def three_fold(final_placement, amino, current_fold, x_coordinate, y_coordinate,
                 except IndexError:
                     possible_options.append([possible_folds[0], possible_folds[1], score])
 
-        print("/////////")
-        print(possible_options)
-        print(len(possible_options))
+        print("////////////////")
+        print("All possible options: ", possible_options)
+        print("Length of all possible options: ", len(possible_options))
 
         # if possible_options == []:
         #     return possible_options
@@ -165,6 +179,7 @@ def three_fold(final_placement, amino, current_fold, x_coordinate, y_coordinate,
             """
             Prunes possible options with lowest values
             """
+
             lower_bound = 0
             best_options = []
 
@@ -172,19 +187,15 @@ def three_fold(final_placement, amino, current_fold, x_coordinate, y_coordinate,
             for value in possible_options:
                 if value[len(value) - 1] < lower_bound:
                     lower_bound = value[len(value)- 1]
-                    print(lower_bound)
+                    print("Lower bound is: ", lower_bound)
 
             # saves options with lower bound
             for value in possible_options:
-                if value[len(value) -1] == lower_bound:
+                if value[len(value) - 1] == lower_bound:
                     best_options.append(value)
 
-            print(best_options)
-
+            print("Best options: ", best_options)
         best_options()
-
-
-
 
     define_folds()
     set_coordinates()
