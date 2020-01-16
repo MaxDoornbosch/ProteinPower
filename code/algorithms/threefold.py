@@ -16,6 +16,8 @@ def split_protein(user_input):
     Splits user input protein into chunks of (max) three amino acids
     """
 
+
+    # Zorg dat deze de eerste amino overslaat!!!
     user_input_split = [user_input[i:i+3] for i in range(0, len(user_input), 3)]
     print(user_input_split)
     return user_input_split
