@@ -78,9 +78,10 @@ if __name__ == "__main__":
             current_x, current_y = coordinate_update.update_coordinates(protein.final_placement)
 
         # checks if last amino of sequence is reached
-        if len(protein.final_placement) == (len(user_input) - 1) or protein.final_placement[-1][1] == 0:
+        if len(protein.final_placement) == (len(user_input) - 1):
             protein.add_last_amino_of_chunk(current_x, current_y, user_input)
-
+            
+        if protein.final_placement[-1][1] == 0:
             print("End of protein ------------------->>>>> :) :) :) :)")
             stability = Stability()
             print(stability.score(protein.final_placement, user_input))

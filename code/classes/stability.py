@@ -26,11 +26,14 @@ class Stability:
                 stability_y_min = amino_properties[3] - 1
                 self.possible_stability_coordinates.append([amino_properties[2],stability_y_min])
 
+                # print(self.possible_stability_coordinates)
+
                 # total connections
-                for  coordinates in final_placement:
+                for coordinates in final_placement:
 
                     # checks if it is the same amino
                     if amino_properties[0] == coordinates[0]:
+                        # print(self.possible_stability_coordinates)s
                         for possible_coordinates in self.possible_stability_coordinates:
 
                             # checks if the coordinates are the same

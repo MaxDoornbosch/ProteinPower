@@ -102,7 +102,7 @@ def three_fold(final_placement, amino, current_fold, x_coordinate, y_coordinate,
         Calculates the stability score for every three fold
         """
 
-        possible_options = []
+        
         print(information_folds)
 
         # Loops over all the three folds
@@ -110,6 +110,7 @@ def three_fold(final_placement, amino, current_fold, x_coordinate, y_coordinate,
             checker = True
             fold = True
             score = 0
+            possible_options = []
 
             # Loops over all the places amino's
             for i in (final_placement):
