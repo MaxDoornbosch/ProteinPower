@@ -44,6 +44,9 @@ if __name__ == "__main__":
 
     print(user_input_split[0])
 
+    amino_stability_x = []
+    amino_stability_y = []
+
     for i in range(len(user_input_split)):
 
         current_x, current_y  = coordinate_update.update_coordinates(protein.final_placement)
@@ -61,15 +64,27 @@ if __name__ == "__main__":
         print(user_input_split)
 
         best_option = three_fold(protein.final_placement, user_input_split, current_fold, current_x, current_y, current_amino, i)
-        for i in range(len(best_option) - 1):
+
+        amino_stability_x.append(best_option[-2])
+        amino_stability_y.append(best_option[-1])
+
+        for i in range(len(best_option) - 3):
             protein.add_amino_info(best_option[i])
 
-        current_x, current_y = coordinate_update.update_coordinates(protein.final_placement)
+        if current_fold != 0:
+            current_x, current_y = coordinate_update.update_coordinates(protein.final_placement)
 
         # checks if last amino of sequence is reached
         if len(protein.final_placement) == (len(user_input) - 1):
             protein.add_last_amino_of_chunk(current_x, current_y, user_input)
-            print("FINAL!!!!!")
+
+            print("End of protein ------------------->>>>> :) :) :) :)")
+            stability = Stability()
+            print(stability.score(protein.final_placement, user_input))
+            csvwriter = Csv(protein.final_placement)
+            csvwriter.write_csv()
+            csvwriter.visualization_csv()
+            visualize('data/visualization.csv', user_input, stability.definitive_stability_score, amino_stability_x, amino_stability_y)
 
     print("check final placement", protein.final_placement)
 

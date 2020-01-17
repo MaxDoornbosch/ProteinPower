@@ -28,7 +28,4 @@ class CoordinateUpdate:
         elif self.current_fold == -2:
             self.current_y -= 1
 
-        # stops if end of user input is reached
-        elif self.current_fold == 0:
-            return False
         return self.current_x, self.current_y

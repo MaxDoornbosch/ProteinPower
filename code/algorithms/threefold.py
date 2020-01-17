@@ -91,7 +91,7 @@ def set_coordinates(final_possible_folds, x_coordinate, y_coordinate, current_am
             if abs(i[j]) == 1:
                 current_x += i[j]
             elif abs(i[j]) == 2:
-                current_y += i[j] / 2
+                current_y += i[j] // 2
 
             # adds a dummy fold of 0 to the last coordinates
             if j >= len(chunk) - 1:
@@ -115,6 +115,8 @@ def stability_score(possible_options, final_placement, chunk):
     """
 
     possible_options_score = []
+    temporary_amino_stability_x = []
+    temporary_amino_stability_y = []
 
     for unit in possible_options:
         checker = True
@@ -141,38 +143,56 @@ def stability_score(possible_options, final_placement, chunk):
                     if i[0] == "H" and unit[pos][0] == "H":
                         if i[2] == unit[pos][2] - 1 and i[3] == unit[pos][3] and previous_fold != 1:
                             score -=1
+                            temporary_amino_stability_x.append([i[2], unit[pos][2]])
+                            temporary_amino_stability_y.append([i[3], unit[pos][3]])
 
                         if i[2] == unit[pos][2] and i[3] == unit[pos][3] + 1 and previous_fold != -2:
                             score -=1
+                            temporary_amino_stability_x.append([i[2], unit[pos][2]])
+                            temporary_amino_stability_y.append([i[3], unit[pos][3]])
 
                         if i[2] == unit[pos][2] and i[3] == unit[pos][3] - 1 and previous_fold != 2:
                             score -=1
+                            temporary_amino_stability_x.append([i[2], unit[pos][2]])
+                            temporary_amino_stability_y.append([i[3], unit[pos][3]])
 
                         if i[2] == unit[pos][2] + 1 and i[3] == unit[pos][3] and previous_fold != -1:
                             score -=1
+                            temporary_amino_stability_x.append([i[2], unit[pos][2]])
+                            temporary_amino_stability_y.append([i[3], unit[pos][3]])
 
+                    # checks whether the last amino connects to itself
                     if pos == 3 and fold == True:
                         fold = False
                         if unit[pos][0] == "H" and unit[0][0] == "H":
                             if unit[pos][2] + 1 == unit[0][2] and unit[pos][3] == unit[0][3]:
                                 score -= 1
+                                temporary_amino_stability_x.append([unit[pos][2], unit[0][2]])
+                                temporary_amino_stability_y.append([unit[pos][3], unit[0][3]])
 
                             if unit[pos][2] - 1 == unit[0][2] and unit[pos][3] == unit[0][3]:
                                 score -= 1
+                                temporary_amino_stability_x.append([unit[pos][2], unit[0][2]])
+                                temporary_amino_stability_y.append([unit[pos][3], unit[0][3]])
 
                             if unit[pos][2] == unit[0][2] and unit[pos][3] + 1 == unit[0][3]:
                                 score -= 1
+                                temporary_amino_stability_x.append([unit[pos][2], unit[0][2]])
+                                temporary_amino_stability_y.append([unit[pos][3], unit[0][3]])
 
                             if unit[pos][2] == unit[0][2] and unit[pos][3] - 1 == unit[0][3]:
                                 score -= 1
+                                temporary_amino_stability_x.append([unit[pos][2], unit[0][2]])
+                                temporary_amino_stability_y.append([unit[pos][3], unit[0][3]])
 
 
         # saves all possible options with corresponding stability scores
         if checker == True:
             try:
-                possible_options_score.append([unit[0], unit[1], unit[2], score])
+                possible_options_score.append([unit[0], unit[1], unit[2], score, temporary_amino_stability_x, temporary_amino_stability_y])
+
             except IndexError:
-                possible_options_score.append([unit[0], unit[1], score])
+                possible_options_score.append([unit[0], unit[1], score, temporary_amino_stability_x, temporary_amino_stability_y])
 
     print("////////////////")
     print("Length of all possible options: ", len(possible_options_score))
@@ -197,13 +217,13 @@ def best_options(possible_options_score):
 
     # finds lower bound
     for value in possible_options_score:
-        if value[len(value) - 1] < lowest_stability_score:
-            lowest_stability_score = value[len(value)- 1]
+        if value[len(value) - 3] < lowest_stability_score:
+            lowest_stability_score = value[len(value) - 3]
             print("Lowest stability score is: ", lowest_stability_score)
 
     # saves options with lower bound
     for value in possible_options_score:
-        if value[len(value) - 1] == lowest_stability_score:
+        if value[len(value) - 3] == lowest_stability_score:
             best_options.append(value)
 
     print("Length of best options: ", len(best_options))
