@@ -115,13 +115,14 @@ def stability_score(possible_options, final_placement, chunk):
     """
 
     possible_options_score = []
-    temporary_amino_stability_x = []
-    temporary_amino_stability_y = []
+
 
     for unit in possible_options:
         checker = True
         fold = True
         score = 0
+        temporary_amino_stability_x = []
+        temporary_amino_stability_y = []
 
         # Loops over all the places aminos
         for i in final_placement:

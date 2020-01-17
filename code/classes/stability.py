@@ -45,12 +45,12 @@ class Stability:
 
                 # checks if is beginning of the string
                 if amino == 0:
-                    if user_input[amino + 1] == "H":
+                    if user_input[amino + 1] == "H" and user_input[amino] == "H":
                         self.amino_H -= 1
 
                 # checks if is the end of the string
                 elif amino == len(user_input)-1:
-                    if user_input[amino - 1] == "H":
+                    if user_input[amino - 1] == "H" and user_input[amino] == "H":
                         self.amino_H -= 1
                 else:
 

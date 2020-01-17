@@ -65,8 +65,11 @@ if __name__ == "__main__":
 
         best_option = three_fold(protein.final_placement, user_input_split, current_fold, current_x, current_y, current_amino, i)
 
-        amino_stability_x.append(best_option[-2])
-        amino_stability_y.append(best_option[-1])
+        # ensures no empty lists are appended
+        if best_option[-2]:
+            amino_stability_x.extend(best_option[-2])
+        if best_option[-1]:
+            amino_stability_y.extend(best_option[-1])
 
         for i in range(len(best_option) - 3):
             protein.add_amino_info(best_option[i])
@@ -75,7 +78,7 @@ if __name__ == "__main__":
             current_x, current_y = coordinate_update.update_coordinates(protein.final_placement)
 
         # checks if last amino of sequence is reached
-        if len(protein.final_placement) == (len(user_input) - 1):
+        if len(protein.final_placement) == (len(user_input) - 1) or protein.final_placement[-1][1] == 0:
             protein.add_last_amino_of_chunk(current_x, current_y, user_input)
 
             print("End of protein ------------------->>>>> :) :) :) :)")
