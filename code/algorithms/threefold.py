@@ -6,24 +6,25 @@ Functies TO DO:
 1. Checken of het mag (niet bezet): prunen
     Als je één richting niet op mag, mogen alle corresponderende moves ook niet berekend te worden
 2. Als meerdere mogelijkheden: kiezen (welke is beter??)
-3. Aller beste optie toevoegen aan final_placement
 """
 
+import random
 
-def three_fold(final_placement, user_input_split, current_fold, x_coordinate, y_coordinate, current_amino):
+
+def three_fold(final_placement, user_input_split, current_fold, x_coordinate, y_coordinate, current_amino, i):
     """
     Determines best possible folds and coordinates for each amino (in each chunk)
     """
-    
-    storage_list = []
 
-    for i in range(len(user_input_split)):
-        possible_options = []
-        chunk = user_input_split[i]
-        print(chunk)
-        possible_folds, final_possible_folds, possible_options = define_folds(current_fold, x_coordinate, y_coordinate, current_amino, possible_options, storage_list, chunk)
-        possible_options_score = stability_score(possible_options, final_placement, chunk)
-        best_options(possible_options_score)
+    storage_list = []
+    possible_options = []
+
+    chunk = user_input_split[i]
+    print(chunk)
+    possible_folds, final_possible_folds, possible_options = define_folds(current_fold, x_coordinate, y_coordinate, current_amino, possible_options, storage_list, chunk)
+    possible_options_score = stability_score(possible_options, final_placement, chunk)
+    best_option = best_options(possible_options_score)
+    return best_option
 
 
 def split_protein(user_input):
@@ -32,7 +33,7 @@ def split_protein(user_input):
     the first amino as the first fold and coordinates are predefined.
     """
 
-    user_input = user_input[1:]
+    user_input = user_input[2:]
     user_input_split = [user_input[i:i+3] for i in range(0, len(user_input), 3)]
     return user_input_split
 
@@ -207,3 +208,14 @@ def best_options(possible_options_score):
 
     print("Length of best options: ", len(best_options))
     print("Best options: ", best_options)
+    best_option = choose_best_option(best_options)
+    return best_option
+
+
+def choose_best_option(best_options):
+    """
+    Chooses random option from best options
+    """
+    best_option = random.choice(best_options)
+    print("Random best option:", best_option)
+    return best_option

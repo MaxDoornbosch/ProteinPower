@@ -36,21 +36,43 @@ if __name__ == "__main__":
 
     # updates x,y coordinates based on most recently determined fold
     coordinate_update = CoordinateUpdate(protein.final_placement)
-    coordinate_update.update_coordinates()
+    coordinate_update.update_coordinates(protein.final_placement)
 
     # quits updating once end of sequence has been reached
     if coordinate_update == False:
         exit()
 
-    # extracts most recently added fold and amino and performs three fold algorithm
-    current_fold = protein.final_placement[-1][1]
-
-    # -1 want user input begint bij 0 en len van lijst niet
-    current_amino = user_input[len(protein.final_placement) - 1]
     print(user_input_split[0])
 
-    three_fold(protein.final_placement, user_input_split, current_fold,
-               coordinate_update.current_x, coordinate_update.current_y, current_amino)
+    for i in range(len(user_input_split)):
+
+        current_x, current_y  = coordinate_update.update_coordinates(protein.final_placement)
+
+        print(len(protein.final_placement))
+        print(len(user_input)-1)
+
+
+        # extracts most recently added fold and amino and performs three fold algorithm
+        current_fold = protein.final_placement[-1][1]
+
+        # -1 want user input begint bij 0 en len van lijst niet
+        current_amino = user_input[len(protein.final_placement)]
+
+        print(user_input_split)
+
+        best_option = three_fold(protein.final_placement, user_input_split, current_fold, current_x, current_y, current_amino, i)
+        for i in range(len(best_option) - 1):
+            protein.add_amino_info(best_option[i])
+
+        current_x, current_y = coordinate_update.update_coordinates(protein.final_placement)
+
+        # checks if last amino of sequence is reached
+        if len(protein.final_placement) == (len(user_input) - 1):
+            protein.add_last_amino_of_chunk(current_x, current_y, user_input)
+            print("FINAL!!!!!")
+
+    print("check final placement", protein.final_placement)
+
 
 
 """
