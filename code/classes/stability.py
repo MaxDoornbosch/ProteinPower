@@ -1,3 +1,9 @@
+"""
+stability.py
+
+Calculates stability score based on the final protein sequence list.
+"""
+
 class Stability:
     def __init__(self):
         self.possible_stability_coordinates = []

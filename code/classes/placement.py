@@ -1,3 +1,9 @@
+"""
+placement.py
+
+
+"""
+
 import random
 
 
