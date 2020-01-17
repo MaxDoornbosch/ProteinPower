@@ -47,6 +47,7 @@ if __name__ == "__main__":
 
     # -1 want user input begint bij 0 en len van lijst niet
     current_amino = user_input[len(protein.final_placement) - 1]
+    print(user_input_split[0])
 
     three_fold(protein.final_placement, user_input_split, current_fold,
                coordinate_update.current_x, coordinate_update.current_y, current_amino)

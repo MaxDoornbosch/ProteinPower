@@ -14,11 +14,13 @@ def three_fold(final_placement, user_input_split, current_fold, x_coordinate, y_
     """
     Determines best possible folds and coordinates for each amino (in each chunk)
     """
-    possible_options = []
+    
     storage_list = []
 
     for i in range(len(user_input_split)):
+        possible_options = []
         chunk = user_input_split[i]
+        print(chunk)
         possible_folds, final_possible_folds, possible_options = define_folds(current_fold, x_coordinate, y_coordinate, current_amino, possible_options, storage_list, chunk)
         possible_options_score = stability_score(possible_options, final_placement, chunk)
         best_options(possible_options_score)
@@ -52,11 +54,13 @@ def define_folds(current_fold, x_coordinate, y_coordinate, current_amino, possib
         possible_folds.append(corresponding_folds.get(current_fold))
 
     for i in (possible_folds[0]):
+        current_fold = i
         if i in corresponding_folds.keys():
             possible_folds.append(corresponding_folds.get(current_fold))
 
         # saves every possible fold for each amino
         for j in (possible_folds[1]):
+            current_fold = j
             if j in corresponding_folds.keys():
                 final_possible_folds.append([i, j, corresponding_folds.get(current_fold)[0]])
                 final_possible_folds.append([i, j, corresponding_folds.get(current_fold)[1]])
@@ -71,6 +75,8 @@ def set_coordinates(final_possible_folds, x_coordinate, y_coordinate, current_am
     """
     Takes possible folds and attaches corresponding coordinates
     """
+
+    print("QQQQQQQQQQQQQQQ", chunk)
 
     # saves all possible folds with corresponding amino and coordinates
     for i in final_possible_folds:
