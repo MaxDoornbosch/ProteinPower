@@ -1,5 +1,5 @@
 """
-threefold.py
+fourfold.py
 
 
 Functies TO DO:
@@ -11,7 +11,7 @@ Functies TO DO:
 import random
 
 
-def three_fold(final_placement, user_input_split, current_fold, x_coordinate, y_coordinate, current_amino, i):
+def four_fold(final_placement, user_input_split, current_fold, x_coordinate, y_coordinate, current_amino, i):
     """
     Determines best possible folds and coordinates for each amino (in each chunk)
     """
@@ -33,7 +33,7 @@ def split_protein(user_input):
     """
 
     user_input = user_input[2:]
-    user_input_split = [user_input[i:i+3] for i in range(0, len(user_input), 3)]
+    user_input_split = [user_input[i:i+3] for i in range(0, len(user_input), 4)]
     return user_input_split
 
 def define_folds(current_fold, x_coordinate, y_coordinate, current_amino, possible_options, storage_list, chunk):
@@ -82,14 +82,14 @@ def set_coordinates(final_possible_folds, x_coordinate, y_coordinate, current_am
         storage_list = []
         storage_list.append([current_amino, i[0], x_coordinate, y_coordinate])
 
-        # finds the folds
+        # Simpeler maken !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! (class???)
         for j in range(len(chunk)):
             if abs(i[j]) == 1:
                 current_x += i[j]
             elif abs(i[j]) == 2:
                 current_y += i[j] // 2
 
-            # adds a zero to the last coordinates
+            # adds a dummy fold of 0 to the last coordinates
             if j >= len(chunk) - 1:
                 storage_list.append([chunk[j], 0, current_x, current_y])
             elif j < len(chunk) - 1:
@@ -203,7 +203,6 @@ def stability_score(possible_options, final_placement, chunk):
                     # checks whether the last amino connects to itself
                     if pos == 3 and fold == True:
                         fold = False
-                        
                         if unit[pos][0] == "H" and unit[0][0] == "H":
                             if unit[pos][2] + 1 == unit[0][2] and unit[pos][3] == unit[0][3]:
                                 score -= 1

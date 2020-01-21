@@ -18,6 +18,8 @@ def visualize(visualization_data, user_input, stability_score, amino_stability_x
         for row in plots:
             if row[0] == 'H':
                 colors.append('red')
+            elif row[0] == "C":
+                colors.append('green')
             else:
                 colors.append('blue')
             x.append(int(row[1]))
