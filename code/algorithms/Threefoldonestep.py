@@ -1,6 +1,5 @@
 import random
 
-
 def three_fold(final_placement, user_input_split, current_fold, x_coordinate, y_coordinate, current_amino, i):
     """
     Determines best possible folds and coordinates for each amino (in each chunk)
@@ -223,28 +222,47 @@ def choose_best_fold(best_options):
     Chooses the most common fold
     """
     counter = 0
-    best_option = best_options[0][0][1]
+
+    # checks if there are any possibilities left
+    try:
+        best_option = best_options[0][0][1]
+    except:
+        best_option = False
+        return best_option
+
     best_folds = []
+
+    # creates a list with all the possible folds
     for option in best_options:
         best_folds.append(option[0][1])
+
+    # seeks the most common fold
     for option in best_folds:
         current_frequency = best_folds.count(option)
         if (current_frequency > counter):
             counter = current_frequency 
             best_option = option
-    print("The best fold is ", best)
-    best_option = choose_best_option(best_options)
+    print("The best fold is ", best_option)
+    best_option = fold_with_stability(best_options, best_option)
     return best_option
 
 def fold_with_stability(best_options, best_fold):
     """
     Adds the stability to the fold
     """
+
+    # removes the folds which aren't the most common fold
     for option in best_options:
-        if option[1] != best_fold:
+        if option[0][1] != best_fold:
+            print(option)
             best_options.remove(option)
-        
-    best_option_fold = random.choice(best_options)
+
+    # checks if there are any choices left
+    try:
+        best_option_fold = random.choice(best_options)
+    except:
+        best_option = False
+        return best_option
     best_option = []
     best_option.append(best_option_fold[0][1])
     best_option.append(best_option_fold[-2])
