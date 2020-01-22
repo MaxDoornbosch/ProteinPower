@@ -53,7 +53,7 @@ class PossibleOptions:
         Checks if possible options aren't already taken
         """
 
-        self.final_possible_options = []
+        final_possible_options = []
 
         for option in self.possible_options:
             is_possible = True
@@ -69,6 +69,6 @@ class PossibleOptions:
 
             # saves all possible options with corresponding stability scores
             if is_possible == True:
-                self.final_possible_options.append([option[0], option[1], option[2], option[3]])
+                final_possible_options.append([option[0], option[1], option[2], option[3]])
 
-        return self.final_possible_options
+        return final_possible_options

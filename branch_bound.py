@@ -49,23 +49,23 @@ class DepthFirst:
 
         possible.define_folds(self.final_placement, current_amino, user_input)
         possible.define_coordinates(current_x, current_y, current_amino)
-        self.final_possible_options = possible.check_empty()
+        final_possible_options = possible.check_empty()
 
-        return self.final_possible_options
+        return final_possible_options
 
-    def pseudo_stability_score(self, h_coordinates, c_coordinates):
+    def pseudo_stability_score(self, final_possible_options, h_coordinates, c_coordinates):
         """
         Calculates stability scores of every possible option and appends score to list
         """
 
-        self.possible_options_score = []
+        possible_options_score = []
         current_score = self.final_placement[-1][4]
 
-        for option in self.final_possible_options:
+        for option in final_possible_options:
 
             # if two H aminos are connected or current amino is a P, keep previous score
             if option[0] == "H" and self.final_placement[-1][0] == "H" or option[0] == "P" or option[0] == "C" and self.final_placement[-1][0] == "C":
-                self.possible_options_score.append([option[0], option[1], option[2], option[3], current_score])
+                possible_options_score.append([option[0], option[1], option[2], option[3], current_score])
 
             # else, checks for surrounding H aminos and calculate score
             elif option[0] == "H" or option[0] == "C":
@@ -81,21 +81,79 @@ class DepthFirst:
                     elif coordinates in c_coordinates:
                         current_score =- 5
 
-                self.possible_options_score.append([option[0], option[1], option[2], option[3], current_score])
+                possible_options_score.append([option[0], option[1], option[2], option[3], current_score])
 
-        return self.possible_options_score
+        return possible_options_score
 
 
-    def average_score_thus_far(self):
+    def average_score_thus_far(self, possible_options_score):
         """
         if option[4] exists:
             sum of option[4]
         """
+        average_score = 0
 
-        for option in self.possible_options_score:
-            self.average_score += option[4]
+        for option in possible_options_score:
+            average_score += option[4]
 
-        self.average_score /= len(self.possible_options_score)
+        average_score /= len(possible_options_score)
+
+        return average_score
+
+
+    def coordinates_of_H_aminos(self, key):
+        """
+        Extracts coordinates of all H aminos from key (i.e. current path)
+
+        key = [[amino, fold, x, y, score]] : [a][b][c]
+        key = [[amino, fold, x, y, ?], [amino, fold, x, y, ?]]
+        key = [[amino, fold, x, y, ?], [amino, fold, x, y, ?], [amino, fold, x, y, ?]]
+        key = [etc.]
+
+        h_coordinates = []
+
+        for k in key:
+            if k[0] == "H":
+                h_coordinates.append([k[2], k[3]])
+
+        return h_coordinates
+        """
+
+
+        self.h_coordinates = []
+
+        if amino_info[0] == "H":
+            self.h_coordinates.append([amino_info[2], amino_info[3]])
+
+        print("H COOORDINATES", self.h_coordinates)
+        return self.h_coordinates
+
+
+    def coordinates_of_C_aminos(self, key):
+        """
+        Extracts coordinates of all H aminos from key (i.e. current path)
+
+        key = [[amino, fold, x, y, ?]]
+        key = [[amino, fold, x, y, ?], [amino, fold, x, y, ?]]
+        key = [[amino, fold, x, y, ?], [amino, fold, x, y, ?], [amino, fold, x, y, ?]]
+        key = [etc.]
+
+        c_coordinates = []
+
+        for k in key:
+            if k[0] == "C":
+                c_coordinates.append([k[2], k[3]])
+
+        return c_coordinates
+        """
+
+        self.c_coordinates = []
+
+        self.c_coordinates.append([amino_info[2], amino_info[3]])
+
+        print("C COOORDINATES", self.c_coordinates)
+        return self.c_coordinates
+
 
 
 
@@ -107,21 +165,28 @@ class DepthFirst:
         - Onthoud mogelijkheid en ga vanuit daar verder: ga nog eentje dieper en kijk dan welke score het laagst is. Dan door
         """
 
-        # if last amino is reached, fold is 0
-        # if i == len(self.user_input[1:]) - 1:
-
         print("i: ", len(user_input), user_input)
 
-        multiple_best_options = []
+        paths = {}
 
-        self.determine_possible_options(user_input)
-        self.pseudo_stability_score(self.protein.h_coordinates, self.protein.c_coordinates)
-        self.average_score_thus_far()
 
+
+        #multiple_best_options = []
+
+        final_possible_options = self.determine_possible_options(user_input)
+        possible_options_score = self.pseudo_stability_score(final_possible_options, self.protein.h_coordinates, self.protein.c_coordinates)
+        average_score = self.average_score_thus_far(possible_options_score)
 
         # while there are still options left
-        if len(self.possible_options_score) > 0:
-            for option in self.possible_options_score:
+        if len(possible_options_score) > 0:
+            for option in possible_options_score:
+                final_possible_options = self.determine_possible_options(user_input)
+                possible_options_score = self.pseudo_stability_score(final_possible_options, self.protein.h_coordinates, self.protein.c_coordinates)
+
+
+
+
+
                 current_score = option[4]
 
                 if len(user_input) == 1:
@@ -129,7 +194,7 @@ class DepthFirst:
                     print("End of protein. FINAL PLACEMENT: ", self.protein.final_placement)
                     exit()
 
-                if option[0] == "H":
+                if option[0] == "H" or option[0] == "C":
                     print("current score = ", current_score)
 
                     # if current score is best score yet, place option
@@ -141,7 +206,7 @@ class DepthFirst:
                         return self.run(current_score, user_input[1:])
 
                     # if current score is worse than average, low possibility (20%) of it being a good option
-                    elif current_score > self.average_score:
+                    elif current_score > average_score:
                         r = random.uniform(0, 1)
 
                         # low possibility (20%) of it being a good option
@@ -150,7 +215,7 @@ class DepthFirst:
                             return self.run(current_score, user_input[1:])
 
                     # if current score is between the best and average score, 50% chance
-                    elif self.best_score < current_score < self.average_score:
+                    elif self.best_score < current_score < average_score:
                         r = random.uniform(0, 1)
 
                         # higher possibility (50%) of it being a good option
