@@ -6,8 +6,8 @@ Returns coordinates based on folds
 
 
 class CoordinateUpdate:
-    def __init__(self, final_placement):
-        self.final_placement = final_placement
+    def __init__(self):
+        pass
 
     def update_coordinates(self, final_placement):
         """

@@ -71,3 +71,12 @@ class Protein:
 
         print("C COOORDINATES", self.c_coordinates)
         return self.c_coordinates
+
+    def add_last_amino_of_chunk_without_score(self, x_coordinate, y_coordinate, user_input):
+        """
+        Fold of last amino is always 0
+        """
+        fold = 0
+
+        last_amino = [user_input[-1], fold, x_coordinate, y_coordinate]
+        self.final_placement.append(last_amino)
