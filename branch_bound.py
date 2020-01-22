@@ -24,6 +24,17 @@ class DepthFirst:
         self.protein = Protein(user_input)
         self.final_placement = self.protein.final_placement
         self.user_input = user_input
+        self.depth_first_dict = {}
+        first = user_input[0], 2, 0, 0, 0
+
+        # creates initial tree
+        final_possible_options = self.determine_possible_options(user_input)
+        possible_options_score = self.pseudo_stability_score(final_possible_options, self.protein.h_coordinates, self.protein.c_coordinates)
+        for option in possible_options_score:
+            self.depth_first_dict.setdefault(first, []).append(option)
+
+        print("!!!!",self.depth_first_dict)
+
 
         # lower bound
         self.best_score = 0
@@ -167,7 +178,6 @@ class DepthFirst:
 
         print("i: ", len(user_input), user_input)
 
-        paths = {}
 
 
 
@@ -180,6 +190,7 @@ class DepthFirst:
         # while there are still options left
         if len(possible_options_score) > 0:
             for option in possible_options_score:
+
                 final_possible_options = self.determine_possible_options(user_input)
                 possible_options_score = self.pseudo_stability_score(final_possible_options, self.protein.h_coordinates, self.protein.c_coordinates)
 
