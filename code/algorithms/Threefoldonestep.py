@@ -89,9 +89,6 @@ def set_coordinates(final_possible_folds, x_coordinate, y_coordinate, current_am
             if storage_list not in possible_options:
                 possible_options.append(storage_list)
 
-    # print("Length of possible_options: ", len(possible_options))
-    # print("All possible options (possible_options): ", possible_options)
-
     return possible_options
 
 
@@ -101,7 +98,6 @@ def stability_score(possible_options, final_placement, chunk):
     """
 
     possible_options_score = []
-
 
     for unit in possible_options:
         checker = True
@@ -124,8 +120,8 @@ def stability_score(possible_options, final_placement, chunk):
                 if pos != 0 and checker == True:
                     previous_fold = unit[pos - 1][1]
 
-                    # Looks for surrounding H aminos per fold and calculates the score
-                    if i[0] == "H" and unit[pos][0] == "H":
+                    # Looks for surrounding HH and CH aminos per fold and calculates the score
+                    if (i[0] == "H" and unit[pos][0] == "H") or (i[0] == "C" and unit[pos][0] == "H") or (i[0] == "H" and unit[pos][0] == "C"):
                         if i[2] == unit[pos][2] - 1 and i[3] == unit[pos][3] and previous_fold != 1:
                             score -=1
                             if pos == 1:
@@ -150,7 +146,7 @@ def stability_score(possible_options, final_placement, chunk):
                                 temporary_amino_stability_x.append([i[2], unit[pos][2]])
                                 temporary_amino_stability_y.append([i[3], unit[pos][3]])
 
-                    # Looks for surrounding C aminos per fold and calculates the score
+                    # Looks for surrounding CC aminos per fold and calculates the score
                     if i[0] == "C" and unit[pos][0] == "C":
                         if i[2] == unit[pos][2] - 1 and i[3] == unit[pos][3] and previous_fold != 1:
                             score -= 5
@@ -176,36 +172,12 @@ def stability_score(possible_options, final_placement, chunk):
                                 temporary_amino_stability_x.append([i[2], unit[pos][2]])
                                 temporary_amino_stability_y.append([i[3], unit[pos][3]])
 
-                    # Looks for surrounding CH aminos per fold and calculates the score
-                    if (i[0] == "C" and unit[pos][0] == "H") or (i[0] == "H" and unit[pos][0] == "C"):
-                        if i[2] == unit[pos][2] - 1 and i[3] == unit[pos][3] and previous_fold != 1:
-                            score -=1
-                            if pos == 1:
-                                temporary_amino_stability_x.append([i[2], unit[pos][2]])
-                                temporary_amino_stability_y.append([i[3], unit[pos][3]])
-
-                        if i[2] == unit[pos][2] and i[3] == unit[pos][3] + 1 and previous_fold != -2:
-                            score -=1
-                            if pos == 1:
-                                temporary_amino_stability_x.append([i[2], unit[pos][2]])
-                                temporary_amino_stability_y.append([i[3], unit[pos][3]])
-
-                        if i[2] == unit[pos][2] and i[3] == unit[pos][3] - 1 and previous_fold != 2:
-                            score -=1
-                            if pos == 1:
-                                temporary_amino_stability_x.append([i[2], unit[pos][2]])
-                                temporary_amino_stability_y.append([i[3], unit[pos][3]])
-
-                        if i[2] == unit[pos][2] + 1 and i[3] == unit[pos][3] and previous_fold != -1:
-                            score -=1
-                            if pos == 1:
-                                temporary_amino_stability_x.append([i[2], unit[pos][2]])
-                                temporary_amino_stability_y.append([i[3], unit[pos][3]])
-
                     # checks whether the last amino connects to itself
                     if pos == 3 and fold == True:
                         fold = False
-                        if unit[pos][0] == "H" and unit[0][0] == "H":
+
+                        # Looks for surrounding HH and CH aminos per fold and calculates the score
+                        if (unit[pos][0] == "H" and unit[0][0] == "H") or (unit[pos][0] == "C" and unit[0][0] == "H") or (unit[pos][0] == "H" and unit[0][0] == "C"):
                             if unit[pos][2] + 1 == unit[0][2] and unit[pos][3] == unit[0][3]:
                                 score -= 1
 
@@ -218,6 +190,7 @@ def stability_score(possible_options, final_placement, chunk):
                             if unit[pos][2] == unit[0][2] and unit[pos][3] - 1 == unit[0][3]:
                                 score -= 1
 
+                        # Looks for surrounding CC aminos per fold and calculates the score
                         if unit[pos][0] == "C" and unit[0][0] == "C":
                             if unit[pos][2] + 1 == unit[0][2] and unit[pos][3] == unit[0][3]:
                                 score -= 5
@@ -231,19 +204,6 @@ def stability_score(possible_options, final_placement, chunk):
                             if unit[pos][2] == unit[0][2] and unit[pos][3] - 1 == unit[0][3]:
                                 score -= 5
 
-                        if (unit[pos][0] == "C" and unit[0][0] == "H") or (unit[pos][0] == "H" and unit[0][0] == "C"):
-                            if unit[pos][2] + 1 == unit[0][2] and unit[pos][3] == unit[0][3]:
-                                score -= 1
-
-                            if unit[pos][2] - 1 == unit[0][2] and unit[pos][3] == unit[0][3]:
-                                score -= 1
-
-                            if unit[pos][2] == unit[0][2] and unit[pos][3] + 1 == unit[0][3]:
-                                score -= 1
-
-                            if unit[pos][2] == unit[0][2] and unit[pos][3] - 1 == unit[0][3]:
-                                score -= 1
-
         # saves all possible options with corresponding stability scores
         if checker == True:
             try:
@@ -252,17 +212,7 @@ def stability_score(possible_options, final_placement, chunk):
             except IndexError:
                 possible_options_score.append([unit[0], unit[1], score, temporary_amino_stability_x, temporary_amino_stability_y])
 
-    # print("Length of all possible options: ", len(possible_options_score))
-    # print("All possible options with stability score: ", possible_options_score)
-
     return possible_options_score
-
-    # if possible_options_score == []:
-    #     return possible_options_score
-    # random_amino = random.choice(possible_options_score)
-    # current_fold = new_fold
-    # if len(user_input) - 1 == len(final_placement):
-        # random_amino = [user_input[len(final_placement)], 0, current_x, current_y]
 
 def best_options(possible_options_score):
     """
@@ -276,15 +226,12 @@ def best_options(possible_options_score):
     for value in possible_options_score:
         if value[len(value) - 3] < lowest_stability_score:
             lowest_stability_score = value[len(value) - 3]
-            # print("Lowest stability score is: ", lowest_stability_score)
 
     # saves options with lower bound
     for value in possible_options_score:
         if value[len(value) - 3] == lowest_stability_score:
             best_options.append(value)
 
-    # print("Length of best options: ", len(best_options))
-    # print("Best options: ", best_options)
     best_option = choose_best_fold(best_options)
     return best_option
 
@@ -333,6 +280,7 @@ def fold_with_stability(best_options, best_fold):
     except:
         best_option = False
         return best_option
+        
     best_option = []
     best_option.append(best_option_fold[0][1])
     best_option.append(best_option_fold[-2])
