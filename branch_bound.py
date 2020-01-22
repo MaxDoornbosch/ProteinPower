@@ -25,25 +25,24 @@ class DepthFirst:
         self.final_placement = self.protein.final_placement
         self.user_input = user_input
         self.depth_first_dict = {}
-        first = user_input[0], 2, 0, 0, 0
 
-        # creates initial tree
-        final_possible_options = self.determine_possible_options(user_input)
+        # ensures first key has a length of 1
+        first = tuple([user_input[0], 2, 0, 0, 0]),
+
+        # creates first branch (first amino with three options)
+        final_possible_options = self.determine_possible_options(user_input, self.final_placement)
         possible_options_score = self.pseudo_stability_score(final_possible_options, self.protein.h_coordinates, self.protein.c_coordinates)
         for option in possible_options_score:
             self.depth_first_dict.setdefault(first, []).append(option)
 
-        print("!!!!",self.depth_first_dict)
-
+        # average of all scores of all options thus far
+        self.average_score = 0
 
         # lower bound
         self.best_score = 0
 
-        # average of all scores of all options thus far
-        self.average_score = 0
 
-
-    def determine_possible_options(self, user_input):
+    def determine_possible_options(self, user_input, pseudo_placement):
         """
         Determines possible options for every move
         """
@@ -52,13 +51,13 @@ class DepthFirst:
         coordinate_update = CoordinateUpdate()
 
         # update coordinates for next amino based on current fold
-        current_x, current_y = coordinate_update.update_coordinates(self.final_placement)
+        current_x, current_y = coordinate_update.update_coordinates(pseudo_placement)
 
         # current amino
         user_input = self.user_input[1:]
         current_amino = user_input[0]
 
-        possible.define_folds(self.final_placement, current_amino, user_input)
+        possible.define_folds(pseudo_placement, current_amino, user_input)
         possible.define_coordinates(current_x, current_y, current_amino)
         final_possible_options = possible.check_empty()
 
@@ -172,79 +171,163 @@ class DepthFirst:
         """
         Runs algorithm until end of sequence is reached
 
+
+        - Error: er zit een extra list (door list comprehension) over de eerste amino waardoor hij niet gecheckt kan worden
+
         - Eerst alle opties overwegen: meerdere beste scores?
         - Onthoud mogelijkheid en ga vanuit daar verder: ga nog eentje dieper en kijk dan welke score het laagst is. Dan door
         """
 
-        print("i: ", len(user_input), user_input)
 
 
+        current_depth = len(self.user_input) - len(user_input)
+        three_options = []
+        current_keys = []
+
+
+
+        #print("depth:", current_depth, "amino:",user_input)
+
+
+
+        """
+        Of all the keys of this current length, the current key is the last amino of the key
+        """
+        # for key in self.depth_first_dict.keys():
+        #     if len(key) == current_depth:
+        #         current_key = list(key[-1])
+
+
+
+
+
+        # get all keys of current depth and save all options for each key
+        for key in self.depth_first_dict.keys():
+            if len(key) == current_depth:
+                print("Every current key: ", list(key[-1]))
+                three_options.extend(self.depth_first_dict.get(key))
+                current_keys.append(key)
+
+        print("Current key(s):", current_keys)
+        print("three options of this key:", three_options)
+
+        pseudo_placement = []
+
+        # every path
+        for key in current_keys:
+
+            print("!!!", [list(i) for i in key], key)
+
+            # removes outer list brackets of key
+            print("????", [val for sublist in key for val in sublist])
+            pseudo_placement.append([list(i) for i in key])
+
+            # for every option, generate three new options
+            for option in three_options:
+                current_score = option[-1]
+
+                if len(user_input) == 1:
+
+                    # x, y, score is same for every option, so the first one will do
+                    self.depth_first_dict[tuple([self.user_input[-1], option[2], option[3], current_score])] = []
+                    print("---->>>> End of protein. FINAL PLACEMENT: ", self.depth_first_dict)
+                    exit()
+
+                # pseudo place current path
+                """
+                pseudo placement of first key
+                TODO:
+                - Place all keys in current_key by default
+                """
+                #pseudo_placement = [list(i) for i in current_keys[0]]
+                pseudo_placement.append(option)
+                print("pseudo placement final placement", pseudo_placement)
+
+                final_possible_options = self.determine_possible_options(user_input, pseudo_placement)
+                possible_options_score = self.pseudo_stability_score(final_possible_options, self.protein.h_coordinates, self.protein.c_coordinates)
+                #average_score = self.average_score_thus_far(possible_options_score)
+
+                # new key is current path + each of the options
+                new_key = tuple(tuple(x) for x in pseudo_placement)
+
+                # saves current path with corresponding next three options in new tuple
+                for new_option in possible_options_score:
+                    self.depth_first_dict.setdefault(new_key, []).append(new_option)
+
+                    print("KEYS: ", self.depth_first_dict.keys())
+
+        return self.run(current_score, user_input[1:])
+
+
+
+        """
+        new_key = (user_input[0], 6, 0, 0, 0),
+        new_key += previous_key
+
+        first = (user_input[0], 2, 0, 0, 0),
+        sec = (user_input[0], 6, 0, 0, 0),
+        first = first + sec + first
+        """
+
+
+            # current_score = option[-1]
+            #
+            # if len(user_input) == 1:
+            #     self.protein.add_last_amino_of_chunk(option[2], option[3], current_score, self.user_input)
+            #     print("End of protein. FINAL PLACEMENT: ", self.protein.final_placement)
+            #     exit()
+            #
+            # if option[0] == "H" or option[0] == "C":
+            #     #print("current score = ", current_score)
+            #
+            #     # if current score is best score yet, place option
+            #     if current_score <= self.best_score:
+            #         self.best_score = current_score
+            #         #multiple_best_options.append(option)
+            #
+            #         self.protein.add_amino_info(option)
+            #         return self.run(current_score, user_input[1:])
+            #
+            #     # if current score is worse than average, low possibility (20%) of it being a good option
+            #     elif current_score > average_score:
+            #         r = random.uniform(0, 1)
+            #
+            #         # low possibility (20%) of it being a good option
+            #         if r > 0.8:
+            #             protein.add_amino_info(option)
+            #             return self.run(current_score, user_input[1:])
+            #
+            #     # if current score is between the best and average score, 50% chance
+            #     elif self.best_score < current_score < average_score:
+            #         r = random.uniform(0, 1)
+            #
+            #         # higher possibility (50%) of it being a good option
+            #         if r > 0.5:
+            #             protein.add_amino_info(option)
+            #             return self.run(current_score, user_input[1:])
+            #
+            #     else:
+            #         continue
+            #
+            #
+            #
+            # # if amino is P, or else
+            # else:
+            #     self.protein.add_amino_info(option)
+            #     return self.run(current_score, user_input[1:])
+            #
+            #
+            #
 
 
         #multiple_best_options = []
 
-        final_possible_options = self.determine_possible_options(user_input)
-        possible_options_score = self.pseudo_stability_score(final_possible_options, self.protein.h_coordinates, self.protein.c_coordinates)
-        average_score = self.average_score_thus_far(possible_options_score)
+        #
+        # final_possible_options = self.determine_possible_options(user_input)
+        # possible_options_score = self.pseudo_stability_score(final_possible_options, self.protein.h_coordinates, self.protein.c_coordinates)
+        # average_score = self.average_score_thus_far(possible_options_score)
 
         # while there are still options left
-        if len(possible_options_score) > 0:
-            for option in possible_options_score:
-
-                final_possible_options = self.determine_possible_options(user_input)
-                possible_options_score = self.pseudo_stability_score(final_possible_options, self.protein.h_coordinates, self.protein.c_coordinates)
-
-
-
-
-
-                current_score = option[4]
-
-                if len(user_input) == 1:
-                    self.protein.add_last_amino_of_chunk(option[2], option[3], current_score, self.user_input)
-                    print("End of protein. FINAL PLACEMENT: ", self.protein.final_placement)
-                    exit()
-
-                if option[0] == "H" or option[0] == "C":
-                    print("current score = ", current_score)
-
-                    # if current score is best score yet, place option
-                    if current_score <= self.best_score:
-                        self.best_score = current_score
-                        #multiple_best_options.append(option)
-
-                        self.protein.add_amino_info(option)
-                        return self.run(current_score, user_input[1:])
-
-                    # if current score is worse than average, low possibility (20%) of it being a good option
-                    elif current_score > average_score:
-                        r = random.uniform(0, 1)
-
-                        # low possibility (20%) of it being a good option
-                        if r > 0.8:
-                            protein.add_amino_info(option)
-                            return self.run(current_score, user_input[1:])
-
-                    # if current score is between the best and average score, 50% chance
-                    elif self.best_score < current_score < average_score:
-                        r = random.uniform(0, 1)
-
-                        # higher possibility (50%) of it being a good option
-                        if r > 0.5:
-                            protein.add_amino_info(option)
-                            return self.run(current_score, user_input[1:])
-
-                    else:
-                        continue
-
-
-
-                # if amino is P, or else
-                else:
-                    self.protein.add_amino_info(option)
-                    return self.run(current_score, user_input[1:])
-
-
 
 
 """
