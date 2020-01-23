@@ -12,9 +12,9 @@ TODO:
 - Check of het uberhaupt mag?
 """
 
-from code.classes.protein import Protein
-from code.classes.coordinateupdate import CoordinateUpdate
-from code.classes.possible_options import PossibleOptions
+from classes.protein import Protein
+from classes.coordinateupdate import CoordinateUpdate
+from classes.possible_options import PossibleOptions
 
 import random
 
@@ -165,6 +165,28 @@ class DepthFirst:
         return self.c_coordinates
 
 
+    def get_current_keys(self, current_depth):
+        """
+        Gets all keys of current depth
+        """
+
+        current_keys = []
+        pseudo_placement = []
+
+        for key in self.depth_first_dict.keys():
+            if len(key) == current_depth:
+
+                # saves all keys of current depth
+                current_keys.append(key)
+
+                # pseudo_placement of every key as part of current path
+                for k in key:
+                    print("lalalalalal", k)
+                    pseudo_placement.append([val for sublist in key for val in sublist])
+
+        #print("pseudo_placement:::::::", pseudo_placement)
+
+        return current_keys, pseudo_placement
 
 
     def run(self, current_score, user_input):
@@ -172,18 +194,11 @@ class DepthFirst:
         Runs algorithm until end of sequence is reached
 
 
-        - Error: er zit een extra list (door list comprehension) over de eerste amino waardoor hij niet gecheckt kan worden
-
-        - Eerst alle opties overwegen: meerdere beste scores?
+        - Eerst alle opties overwegen: meerdere beste scores? dan gewoon alles.
         - Onthoud mogelijkheid en ga vanuit daar verder: ga nog eentje dieper en kijk dan welke score het laagst is. Dan door
         """
 
-
-
         current_depth = len(self.user_input) - len(user_input)
-        three_options = []
-        current_keys = []
-
 
 
         #print("depth:", current_depth, "amino:",user_input)
@@ -199,62 +214,92 @@ class DepthFirst:
 
 
 
+        current_keys, pseudo_placement = self.get_current_keys(current_depth)
 
 
-        # get all keys of current depth and save all options for each key
-        for key in self.depth_first_dict.keys():
-            if len(key) == current_depth:
-                print("Every current key: ", list(key[-1]))
-                three_options.extend(self.depth_first_dict.get(key))
-                current_keys.append(key)
-
-        print("Current key(s):", current_keys)
-        print("three options of this key:", three_options)
-
-        pseudo_placement = []
-
-        # every path
+        # for every key in current path
         for key in current_keys:
 
-            print("!!!", [list(i) for i in key], key)
+            # to get the last key of current path????? not necessary???
+            #current_keys.append(list(key[-1]))
+            #print("Every current key: ", list(key[-1]))
 
-            # removes outer list brackets of key
-            print("????", [val for sublist in key for val in sublist])
-            pseudo_placement.append([list(i) for i in key])
 
             # for every option, generate three new options
-            for option in three_options:
-                current_score = option[-1]
+            for option in self.depth_first_dict.get(key):
 
-                if len(user_input) == 1:
+                if option[0] == "H" or option[0] == "C":
+                    current_score = option[-1]
 
-                    # x, y, score is same for every option, so the first one will do
-                    self.depth_first_dict[tuple([self.user_input[-1], option[2], option[3], current_score])] = []
-                    print("---->>>> End of protein. FINAL PLACEMENT: ", self.depth_first_dict)
-                    exit()
+                    if len(user_input) == 1:
 
-                # pseudo place current path
-                """
-                pseudo placement of first key
-                TODO:
-                - Place all keys in current_key by default
-                """
-                #pseudo_placement = [list(i) for i in current_keys[0]]
-                pseudo_placement.append(option)
-                print("pseudo placement final placement", pseudo_placement)
+                        # x, y, score is same for every option, so the first one will do
+                        self.depth_first_dict[tuple([self.user_input[-1], 0, option[2], option[3], current_score])] = []
+                        print("---->>>> End of protein. FINAL PLACEMENT: ", self.depth_first_dict)
+                        for y in self.depth_first_dict.keys():
+                            print("---->>>> FINAL PLACEMENT KEYS: ", y)
+                        for z in self.depth_first_dict.values():
+                            print("---->>>> FINAL PLACEMENT VALUES: ", z)
+                        exit()
 
-                final_possible_options = self.determine_possible_options(user_input, pseudo_placement)
-                possible_options_score = self.pseudo_stability_score(final_possible_options, self.protein.h_coordinates, self.protein.c_coordinates)
-                #average_score = self.average_score_thus_far(possible_options_score)
+                    # pseudo place current path
+                    """
+                    pseudo placement of first key
+                    TODO:
+                    - Place all keys in current_key by default
+                    """
 
-                # new key is current path + each of the options
-                new_key = tuple(tuple(x) for x in pseudo_placement)
+    #
+    #                 if current_score < self.best_score:
+    #                     self.best_score = current_score
+    #                     #multiple_best_options.append(option)
+    #
+    #                     self.protein.add_amino_info(option)
+    #                     return self.run(current_score, user_input[1:])
+    #
+    #                 # if current score is worse than average, low possibility (20%) of it being a good option
+    #                 elif current_score > average_score:
+    #                     r = random.uniform(0, 1)
+    #
+    #                     # low possibility (20%) of it being a good option
+    #                     if r > 0.8:
+    #                         protein.add_amino_info(option)
+    #                         return self.run(current_score, user_input[1:])
+    #
+    #                 # if current score is between the best and average score, 50% chance
+    #                 elif self.best_score < current_score < average_score:
+    #                     r = random.uniform(0, 1)
+    #
+    #                     # higher possibility (50%) of it being a good option
+    #                     if r > 0.5:
+    #                         protein.add_amino_info(option)
+    #                         return self.run(current_score, user_input[1:])
+    #
+    #             else:
+    #                 continue
+    #
+    # def pseudo_place(self, pseudo_placement):
+    #
 
-                # saves current path with corresponding next three options in new tuple
-                for new_option in possible_options_score:
-                    self.depth_first_dict.setdefault(new_key, []).append(new_option)
 
-                    print("KEYS: ", self.depth_first_dict.keys())
+                    #pseudo_placement = [list(i) for i in current_keys[0]]
+                    pseudo_placement.append(option)
+                    print("pseudo placement final placement", pseudo_placement)
+
+                    final_possible_options = self.determine_possible_options(user_input, pseudo_placement)
+                    print("Final possible optionsss00000000000>>>", final_possible_options)
+                    possible_options_score = self.pseudo_stability_score(final_possible_options, self.protein.h_coordinates, self.protein.c_coordinates)
+                    #average_score = self.average_score_thus_far(possible_options_score)
+
+                    # new key is current path + each of the options
+                    new_key = tuple(tuple(x) for x in pseudo_placement)
+
+                    # saves current path with corresponding next three options in new tuple
+                    for new_option in possible_options_score:
+                        self.depth_first_dict.setdefault(new_key, []).append(new_option)
+
+                    # ensures this option is not part of next path
+                    pseudo_placement.remove(option)
 
         return self.run(current_score, user_input[1:])
 

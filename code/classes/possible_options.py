@@ -62,6 +62,7 @@ class PossibleOptions:
 
             # loops over all already placed aminos
             for placed_amino in self.final_placement:
+                print(">>>>>", self.final_placement, ">>>>", placed_amino)
 
                 # checks whether coordinates already exist
                 if placed_amino[2] == option[2] and placed_amino[3] == option[3]:
