@@ -64,6 +64,7 @@ def define_folds(current_fold, x_coordinate, y_coordinate, current_amino, possib
             if j in corresponding_folds.keys():
                 possible_folds.append(corresponding_folds.get(current_fold))
             for k in possible_folds[2]:
+                current_fold = k
                 if k in corresponding_folds.keys():
                     final_possible_folds.append([i, j, k, corresponding_folds.get(current_fold)[0]])
                     final_possible_folds.append([i, j, k, corresponding_folds.get(current_fold)[1]])
@@ -93,7 +94,7 @@ def set_coordinates(final_possible_folds, x_coordinate, y_coordinate, current_am
             elif abs(i[j]) == 2:
                 current_y += i[j] // 2
 
-            # adds a zero to the last coordinates
+            # adds a zero fold to the last coordinates
             if j >= len(chunk) - 1:
                 storage_list.append([chunk[j], 0, current_x, current_y])
             elif j < len(chunk) - 1:
@@ -129,6 +130,9 @@ def stability_score(possible_options, final_placement, chunk):
 
                 # Checks if the coordinates aren't already taken
                 if i[2] == unit[pos][2] and i[3] == unit[pos][3]:
+                    checker = False
+
+                if pos > 0 and ((unit[0][2] == unit[pos][2] and unit[0][3] == unit[pos][3])) :
                     checker = False
 
                 # Checks if the coordinates overlap

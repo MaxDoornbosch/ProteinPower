@@ -79,7 +79,7 @@ def set_coordinates(final_possible_folds, x_coordinate, y_coordinate, current_am
             elif abs(i[j]) == 2:
                 current_y += i[j] // 2
 
-            # adds a zero to the last coordinates
+            # adds a zero fold to the last coordinates
             if j >= len(chunk) - 1:
                 storage_list.append([chunk[j], 0, current_x, current_y])
             elif j < len(chunk) - 1:
@@ -280,13 +280,9 @@ def fold_with_stability(best_options, best_fold):
     except:
         best_option = False
         return best_option
-        
+
     best_option = []
     best_option.append(best_option_fold[0][1])
     best_option.append(best_option_fold[-2])
     best_option.append(best_option_fold[-1])
     return best_option
-
-            
-
-

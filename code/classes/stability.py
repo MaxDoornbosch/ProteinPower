@@ -111,7 +111,6 @@ class Stability:
                     # looks for CC connections
                     if user_input[amino - 1] == "C":
                         self.amino_value -= 5
-        print(self.stability_score)
-        print(self.amino_value)
+
         self.definitive_stability_score =  (self.stability_score - self.amino_value)/2
         return self.definitive_stability_score
