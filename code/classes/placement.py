@@ -35,7 +35,6 @@ class Placement:
         self.current_fold = self.final_placement[-1][1]
         self.current_x = self.final_placement[-1][2]
         self.current_y = self.final_placement[-1][3]
-        print("lalalalalalalalalla", n+1)
         return set_current(n + 1)
 
     def set_coordinates(self):
@@ -95,19 +94,15 @@ class Placement:
                     checker = False
 
                     # save coordinates for visualization
-                    if i[0] == "H" and user_input[len(self.final_placement)] == "H":
+                    if (i[0] == "H" or i[0] == "C") and (user_input[len(self.final_placement)] == "H" or user_input[len(self.final_placement)] == "C"):
                         stability_x = [self.current_x, i[2]]
                         stability_y = [self.current_y, i[3]]
                         self.amino_stability_x.append(stability_x)
                         self.amino_stability_y.append(stability_y)
-                        print("APPEEEEEEENNNDNDNDNDNDNDNDN")
-                        print(self.amino_stability_x, self.amino_stability_y)
 
             if checker == True:
                 self.possible_coordinates.append([user_input[len(self.final_placement)], self.new_fold, self.current_x, self.current_y])
 
-        print("/////////")
-        print(self.possible_coordinates)
         if self.possible_coordinates == []:
             return self.possible_coordinates
         self.random_amino = random.choice(self.possible_coordinates)
