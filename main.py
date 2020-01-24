@@ -13,15 +13,17 @@ from code.classes.coordinateupdate import CoordinateUpdate
 from code.classes.csvwriter import Csv
 from code.visualization.visualization import visualize
 
+# asks the user for an algorithm
 algorithm = 0
 while algorithm < 1 or algorithm > 4:
     while True:
         try:
-            algorithm = int(input("Which algorithm would you like to use? Enter 1 for three fold one step, 2 for three fold three steps, 3 for four fold four steps and 4 for random algorithm: "))
+            algorithm = int(input("Which algorithm would you like to use? Enter 1 for random algorithm, 2 for three fold one step, 3 for three fold three steps and 4 for four fold algorithm: "))
             break
         except:
             print("Invalid input")
 
+# asks the user for the runamount
 runamount = 0
 while runamount < 1:
     while True:
@@ -43,6 +45,65 @@ for i in range(len(user_input)):
         user_input = input("Please enter your protein (minimum length is 3): ").upper()
 
 if algorithm == 1:
+    """
+    Random algorithm
+    """
+    start = timeit.default_timer()
+    score = 0
+    for z in range(runamount):
+
+        done = False
+
+        # restarts when there aren't any options left for the next amino
+        while done == False:
+            current_n = 1
+            protein = Protein(user_input)
+            placement = Placement(user_input, protein.final_placement)
+            finished = False
+            while finished == False:
+                
+                placement.set_current(current_n)
+
+                # calculates stability score, adds values to csv and visualizes final product
+                if placement.set_coordinates() == False:
+                    done = True
+                    print("End of protein ------------------->>>>> :) :) :) :)")
+                    stability = Stability()
+                    stability_score = stability.score(protein.final_placement, user_input)
+                    if stability_score < score:
+                        score = stability_score
+                        best_placement = protein.final_placement
+                        best_stability = stability.definitive_stability_score
+                        best_amino_stability_x = placement.amino_stability_x
+                        best_amino_stability_y = placement.amino_stability_y
+                    # csvwriter = Csv(protein.final_placement)
+                    # csvwriter.write_csv()
+                    # csvwriter.visualization_csv()
+                    # visualize('data/visualization.csv', user_input, stability.definitive_stability_score, placement.amino_stability_x, placement.amino_stability_y)
+                    finished = True
+                
+                # checks if the last amino has been placed
+                if finished == False:
+                
+                    placement.check_empty(user_input)
+
+                    # checks if there aren't any possible coordinates left
+                    if len(placement.possible_coordinates) == 0:
+                        break
+                        
+                    print(placement.random_amino)
+                    print(protein.add_amino_info(placement.random_amino))
+                    print(protein.final_placement)
+
+    print("Best score: ", score)
+    stop = timeit.default_timer()
+    print('Time: ', stop - start)
+    csvwriter = Csv(best_placement)
+    csvwriter.write_csv()
+    csvwriter.visualization_csv()
+    visualize('data/visualization.csv', user_input, best_stability, best_amino_stability_x, best_amino_stability_y)
+
+if algorithm == 2:
     """
     Threefold one step
     """
@@ -82,7 +143,7 @@ if algorithm == 1:
                 # extracts most recently added fold and amino and performs three fold algorithm
                 current_fold = protein.final_placement[-1][1]
 
-                # -1 want user input begint bij 0 en len van lijst niet
+                # gets the current amino
                 current_amino = user_input[len(protein.final_placement)]
 
                 best_option = three_fold(protein.final_placement, user_input_split, current_fold, current_x, current_y, current_amino, i)
@@ -132,7 +193,7 @@ if algorithm == 1:
     csvwriter.visualization_csv()
     visualize('data/visualization.csv', user_input, best_stability, best_amino_stability_x, best_amino_stability_y)
     
-if algorithm == 2:
+if algorithm == 3:
     """
     Threefold algorithm
     """
@@ -172,12 +233,12 @@ if algorithm == 2:
                 # extracts most recently added fold and amino and performs three fold algorithm
                 current_fold = protein.final_placement[-1][1]
 
-                # -1 want user input begint bij 0 en len van lijst niet
+                # gets the current amino
                 current_amino = user_input[len(protein.final_placement)]
 
                 best_option = three_fold(protein.final_placement, user_input_split, current_fold, current_x, current_y, current_amino, i)
 
-                #checks if an error has occured
+                # checks if an error has occured
                 if best_option == False:
                     break
 
@@ -223,7 +284,7 @@ if algorithm == 2:
     csvwriter.visualization_csv()
     visualize('data/visualization.csv', user_input, best_stability, best_amino_stability_x, best_amino_stability_y)
 
-if algorithm == 3:
+if algorithm == 4:
     """
     Fourfold algorithm
     """
@@ -262,7 +323,7 @@ if algorithm == 3:
                 # extracts most recently added fold and amino and performs three fold algorithm
                 current_fold = protein.final_placement[-1][1]
 
-                # -1 want user input begint bij 0 en len van lijst niet
+                # gets the current amino
                 current_amino = user_input[len(protein.final_placement)]
 
                 best_option = four_fold(protein.final_placement, user_input_split, current_fold, current_x, current_y, current_amino, i)
@@ -306,64 +367,6 @@ if algorithm == 3:
                     # visualize('data/visualization.csv', user_input, stability.definitive_stability_score, amino_stability_x, amino_stability_y)
 
             print("check final placement", protein.final_placement)
-
-    print("Best score: ", score)
-    stop = timeit.default_timer()
-    print('Time: ', stop - start)
-    csvwriter = Csv(best_placement)
-    csvwriter.write_csv()
-    csvwriter.visualization_csv()
-    visualize('data/visualization.csv', user_input, best_stability, best_amino_stability_x, best_amino_stability_y)
-
-if algorithm == 4:
-    """
-    Random algorithm
-    """
-    start = timeit.default_timer()
-    score = 0
-    for z in range(runamount):
-
-        done = False
-        while done == False:
-            current_n = 1
-            protein = Protein(user_input)
-            placement = Placement(user_input, protein.final_placement)
-            finished = False
-            while finished == False:
-                
-                placement.set_current(current_n)
-                print(protein.final_placement)
-
-                # calculates stability score, adds values to csv and visualizes final product
-                if placement.set_coordinates() == False:
-                    done = True
-                    print("End of protein ------------------->>>>> :) :) :) :)")
-                    stability = Stability()
-                    stability_score = stability.score(protein.final_placement, user_input)
-                    if stability_score < score:
-                        score = stability_score
-                        best_placement = protein.final_placement
-                        best_stability = stability.definitive_stability_score
-                        best_amino_stability_x = placement.amino_stability_x
-                        best_amino_stability_y = placement.amino_stability_y
-                    # csvwriter = Csv(protein.final_placement)
-                    # csvwriter.write_csv()
-                    # csvwriter.visualization_csv()
-                    # visualize('data/visualization.csv', user_input, stability.definitive_stability_score, placement.amino_stability_x, placement.amino_stability_y)
-                    finished = True
-                if finished == False:
-                
-                    # checks if user input is valid
-                    placement.check_empty(user_input)
-                    print(placement.possible_coordinates)
-                    print("testttttttt")
-                    # checks if there aren't any possible coordinates left
-                    if len(placement.possible_coordinates) == 0:
-                        print("test")
-                        break
-                    print(placement.random_amino)
-                    print(protein.add_amino_info(placement.random_amino))
-                    print(protein.final_placement)
 
     print("Best score: ", score)
     stop = timeit.default_timer()
