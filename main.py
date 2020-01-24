@@ -13,7 +13,7 @@ from code.classes.coordinateupdate import CoordinateUpdate
 from code.classes.csvwriter import Csv
 from code.visualization.visualization import visualize
 
-# asks the user for an algorithm
+# prompts the user for an algorithm
 algorithm = 0
 while algorithm < 1 or algorithm > 4:
     while True:
@@ -23,7 +23,7 @@ while algorithm < 1 or algorithm > 4:
         except:
             print("Invalid input")
 
-# asks the user for the runamount
+# prompts the user for the runamount
 runamount = 0
 while runamount < 1:
     while True:
@@ -64,22 +64,20 @@ if algorithm == 1:
                 
                 placement.set_current(current_n)
 
-                # calculates stability score, adds values to csv and visualizes final product
+                # end of protein has been reached
                 if placement.set_coordinates() == False:
                     done = True
-                    print("End of protein ------------------->>>>> :) :) :) :)")
                     stability = Stability()
                     stability_score = stability.score(protein.final_placement, user_input)
+
+                    # checks if current score is lower than the current lowest score
                     if stability_score < score:
                         score = stability_score
                         best_placement = protein.final_placement
                         best_stability = stability.definitive_stability_score
                         best_amino_stability_x = placement.amino_stability_x
                         best_amino_stability_y = placement.amino_stability_y
-                    # csvwriter = Csv(protein.final_placement)
-                    # csvwriter.write_csv()
-                    # csvwriter.visualization_csv()
-                    # visualize('data/visualization.csv', user_input, stability.definitive_stability_score, placement.amino_stability_x, placement.amino_stability_y)
+            
                     finished = True
                 
                 # checks if the last amino has been placed
@@ -91,10 +89,11 @@ if algorithm == 1:
                     if len(placement.possible_coordinates) == 0:
                         break
                         
-                    print(placement.random_amino)
-                    print(protein.add_amino_info(placement.random_amino))
-                    print(protein.final_placement)
+                    placement.random_amino
+                    protein.add_amino_info(placement.random_amino)
+                    protein.final_placement
 
+    print("final placement: ", best_placement)
     print("Best score: ", score)
     stop = timeit.default_timer()
     print('Time: ', stop - start)
@@ -128,10 +127,6 @@ if algorithm == 2:
             # updates x,y coordinates based on most recently determined fold
             coordinate_update = CoordinateUpdate()
             coordinate_update.update_coordinates(protein.final_placement)
-
-            # quits updating once end of sequence has been reached
-            if coordinate_update == False:
-                exit()
 
             amino_stability_x = []
             amino_stability_y = []
@@ -168,23 +163,21 @@ if algorithm == 2:
                 if len(protein.final_placement) == (len(user_input) - 1):
                     protein.add_last_amino_of_chunk_without_score(current_x, current_y, user_input)
                     
+                # end of protein has been reached
                 if protein.final_placement[-1][1] == 0:
                     done = True
-                    print("End of protein ------------------->>>>> :) :) :) :)")
                     stability = Stability()
                     stability_score = stability.score(protein.final_placement, user_input)
+
+                    # checks if current score is lower than the current lowest score
                     if stability_score < score:
                             score = stability_score
                             best_placement = protein.final_placement
                             best_stability = stability.definitive_stability_score
                             best_amino_stability_x = amino_stability_x
                             best_amino_stability_y = amino_stability_y
-                    # csvwriter = Csv(protein.final_placement)
-                    # csvwriter.write_csv()
-                    # csvwriter.visualization_csv()
-                    # visualize('data/visualization.csv', user_input, stability.definitive_stability_score, amino_stability_x, amino_stability_y)
 
-            print("check final placement", protein.final_placement)
+    print("final placement: ", best_placement)
     print("Best score: ", score)
     stop = timeit.default_timer()
     print('Time: ', stop - start)
@@ -218,10 +211,6 @@ if algorithm == 3:
             # updates x,y coordinates based on most recently determined fold
             coordinate_update = CoordinateUpdate()
             coordinate_update.update_coordinates(protein.final_placement)
-
-            # quits updating once end of sequence has been reached
-            if coordinate_update == False:
-                exit()
 
             amino_stability_x = []
             amino_stability_y = []
@@ -258,24 +247,21 @@ if algorithm == 3:
                 if len(protein.final_placement) == (len(user_input) - 1):
                     protein.add_last_amino_of_chunk_without_score(current_x, current_y, user_input)
 
+                # end of protein has been reached
                 if protein.final_placement[-1][1] == 0:
                     done = True
-                    print("End of protein ------------------->>>>> :) :) :) :)")
                     stability = Stability()
                     stability_score = stability.score(protein.final_placement, user_input)
+
+                    # checks if current score is lower than the current lowest score
                     if stability_score < score:
                             score = stability_score
                             best_placement = protein.final_placement
                             best_stability = stability.definitive_stability_score
                             best_amino_stability_x = amino_stability_x
                             best_amino_stability_y = amino_stability_y
-                    print(stability_score)
-                    # csvwriter = Csv(protein.final_placement)
-                    # csvwriter.write_csv()
-                    # csvwriter.visualization_csv()
-                    # visualize('data/visualization.csv', user_input, stability.definitive_stability_score, amino_stability_x, amino_stability_y)
 
-            print("check final placement", protein.final_placement)
+    print("final placement: ", best_placement)
     print("Best score: ", score)
     stop = timeit.default_timer()
     print('Time: ', stop - start)
@@ -304,14 +290,10 @@ if algorithm == 4:
 
             # splits protein sequence into chunks of three amino acids
             user_input_split = split_protein(user_input)
-            print(protein.final_placement)
+
             # updates x,y coordinates based on most recently determined fold
             coordinate_update = CoordinateUpdate()
             coordinate_update.update_coordinates(protein.final_placement)
-
-            # quits updating once end of sequence has been reached
-            if coordinate_update == False:
-                exit()
 
             amino_stability_x = []
             amino_stability_y = []
@@ -348,11 +330,13 @@ if algorithm == 4:
                 if len(protein.final_placement) == (len(user_input) - 1):
                     protein.add_last_amino_of_chunk_without_score(current_x, current_y, user_input)
 
+                # end of protein has been reached
                 if protein.final_placement[-1][1] == 0:
                     done = True
-                    print("End of protein ------------------->>>>> :) :) :) :)")
                     stability = Stability()
                     stability_score = stability.score(protein.final_placement, user_input)
+
+                    # checks if current score is lower than the current lowest score
                     if stability_score < score:
                         score = stability_score
                         best_placement = protein.final_placement
@@ -360,14 +344,7 @@ if algorithm == 4:
                         best_amino_stability_x = amino_stability_x
                         best_amino_stability_y = amino_stability_y
 
-                    print(stability_score)
-                    # csvwriter = Csv(protein.final_placement)
-                    # csvwriter.write_csv()
-                    # csvwriter.visualization_csv()
-                    # visualize('data/visualization.csv', user_input, stability.definitive_stability_score, amino_stability_x, amino_stability_y)
-
-            print("check final placement", protein.final_placement)
-
+    print("final placement: ", best_placement)
     print("Best score: ", score)
     stop = timeit.default_timer()
     print('Time: ', stop - start)

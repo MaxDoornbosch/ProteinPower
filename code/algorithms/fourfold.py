@@ -63,6 +63,7 @@ def define_folds(current_fold, x_coordinate, y_coordinate, current_amino, possib
             current_fold = j
             if j in corresponding_folds.keys():
                 possible_folds.append(corresponding_folds.get(current_fold))
+
             for k in possible_folds[2]:
                 current_fold = k
                 if k in corresponding_folds.keys():
@@ -114,7 +115,7 @@ def stability_score(possible_options, final_placement, chunk):
 
     possible_options_score = []
 
-
+    # Loops over all the possible options
     for unit in possible_options:
         checker = True
         score = 0
@@ -283,7 +284,6 @@ def stability_score(possible_options, final_placement, chunk):
             except IndexError:
                 try:
                     possible_options_score.append([unit[0], unit[1], unit[2], score, temporary_amino_stability_x, temporary_amino_stability_y])
-
                 except IndexError:
                     possible_options_score.append([unit[0], unit[1], score, temporary_amino_stability_x, temporary_amino_stability_y])
 

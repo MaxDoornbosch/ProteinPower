@@ -109,7 +109,7 @@ def stability_score(possible_options, final_placement, chunk):
 
     possible_options_score = []
 
-
+    # Loops over all the possible options
     for unit in possible_options:
         checker = True
         fold = True
