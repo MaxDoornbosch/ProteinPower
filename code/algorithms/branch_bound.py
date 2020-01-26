@@ -182,11 +182,13 @@ class BranchBound:
         evaluated; determines best fold.
         """
         current_best_score = 0
-        self.cumulative_score = 0
-        i = 0
+        self.cumulative_score = []
 
         while self.stack:
             current_path = self.get_next_path()
+
+            if len(current_path) == 1:
+                self.cumulative_score = []
 
             # calculates stability score for each protein
             if len(current_path) == len(self.user_input):
@@ -199,8 +201,8 @@ class BranchBound:
 
             elif len(current_path) < len(self.user_input):
                 score, stability_connections = self.stability(current_path)
-                average_score = self.average_score_thus_far(score, i)
-                print("average score is ", average_score)
+                average_score = self.average_score_thus_far(score)
+                #print("average score is ", average_score)
                 print("best score is ", current_best_score)
 
                 # keep all branches if score is same or better than best score
@@ -242,15 +244,19 @@ class BranchBound:
             self.amino_stability_y.append([i[0][1], i[1][1]])
 
 
-    def average_score_thus_far(self, score, i):
+    def average_score_thus_far(self, score):
         """
         Calculates average score
         """
-        i += 1
-        self.cumulative_score += score
-        average_score = self.cumulative_score / i
 
+        self.cumulative_score.append(score)
+        sum = 0
+        for i in self.cumulative_score:
+            sum += i
+
+        average_score = sum // len(self.cumulative_score)
         return average_score
+
 
 
 
