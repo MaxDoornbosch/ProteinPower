@@ -1,378 +1,308 @@
 """
-depth_first.py
+branch_bound.py
 
 TODO:
-- Recursive functie werkend maken
-- Werkend maken
-- Iteraties tellen (state space?)
-- Upper bound?
 - Een versie maken zonder probability
-- Set coordinates, define folds, etc. in classes stoppen
-- Dingen boven de functie hieronder in main?
-- Check of het uberhaupt mag?
 """
 
 from classes.protein import Protein
 from classes.coordinateupdate import CoordinateUpdate
 from classes.possible_options import PossibleOptions
+from classes.csvwriter import Csv
 
+
+import copy
 import random
+from timeit import default_timer as timer
 
-class DepthFirst:
+
+import matplotlib.pyplot as plt
+from matplotlib.ticker import MaxNLocator
+import numpy as np
+import pandas as pd
+import seaborn as sns
+import csv
+
+class BranchBound:
+    """
+    Depth first search algorithm that folds a given protein
+    3 ^ (length of user input) times to find the best possible stability score.
+    """
 
     def __init__(self, user_input):
-        self.protein = Protein(user_input)
-        self.final_placement = self.protein.final_placement
+
         self.user_input = user_input
-        self.depth_first_dict = {}
 
-        # ensures first key has a length of 1
-        first = tuple([user_input[0], 2, 0, 0, 0]),
+        # format: [amino, fold, x, y]
+        first_amino = [[self.user_input[0], 2, 0, 0]]
+        self.stack = []
+        self.stack.append(first_amino)
 
-        # creates first branch (first amino with three options)
-        final_possible_options = self.determine_possible_options(user_input, self.final_placement)
-        possible_options_score = self.pseudo_stability_score(final_possible_options, self.protein.h_coordinates, self.protein.c_coordinates)
-        for option in possible_options_score:
-            self.depth_first_dict.setdefault(first, []).append(option)
-
-        # average of all scores of all options thus far
-        self.average_score = 0
-
-        # lower bound
-        self.best_score = 0
+        self.best_score = 1
 
 
-    def determine_possible_options(self, user_input, pseudo_placement):
+    def get_next_path(self):
         """
-        Determines possible options for every move
+        Gets the current path out of the stack of paths: the (partial) protein with
+        corresponding information (fold and x,y coordinates).
         """
 
-        possible = PossibleOptions()
+        current_path = self.stack.pop()
+        return current_path
+
+
+    def stability(self, current_path):
+        """
+        Calculates stability score of protein.
+        """
+
+        # finds coordinates of C and H amino acids
+        self.coordinates_of_C_H_aminos(current_path)
+
+        score = 0
+        i = 0
+        stability_connections = []
+
+        for amino in current_path:
+            if amino[0] == "H" or amino[0] == "C":
+                surrounding_coordinates, x, y = self.surrounding_coordinates(amino, current_path, i)
+
+                # checks and calculates score
+                for coordinates in surrounding_coordinates:
+                    potential_connection = [coordinates, [x, y]]
+
+                    # ensures stability connections aren't calculated twice
+                    score, stability_connections = self.calculate_score(amino, stability_connections, potential_connection, coordinates, score)
+
+            i += 1
+
+        return score, stability_connections
+
+
+    def surrounding_coordinates(self, amino, current_path, i):
+        """
+        Returns surrounding coordinates of a given amino acid, whilst excluding
+        the coordinates of connected amino acids.
+        """
+
+        x = amino[2]
+        y = amino[3]
+        surrounding_coordinates = [[x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]]
+
+        if amino != current_path[0]:
+            connected_x = current_path[i - 1][2]
+            connected_y = current_path[i - 1][3]
+            surrounding_coordinates.remove([connected_x, connected_y])
+
+        if amino != current_path[-1]:
+            connected_x = current_path[i + 1][2]
+            connected_y = current_path[i + 1][3]
+            surrounding_coordinates.remove([connected_x, connected_y])
+
+        return surrounding_coordinates, x, y
+
+
+    def calculate_score(self, amino, stability_connections, potential_connection, coordinates, score):
+        """
+        Calculates score and ensures stability connections aren't calculated twice.
+        """
+
+        if self.already_calculated(stability_connections, potential_connection, score):
+            return score, stability_connections
+
+        if amino[0] == "H":
+            if coordinates in self.h_coordinates or coordinates in self.c_coordinates:
+                score -= 1
+                stability_connections.append(potential_connection)
+
+        elif amino[0] == "C":
+            if coordinates in self.h_coordinates:
+                score -= 1
+                stability_connections.append(potential_connection)
+            elif coordinates in self.c_coordinates:
+                score -= 5
+                stability_connections.append(potential_connection)
+
+        return score, stability_connections
+
+
+    def already_calculated(self, stability_connections, potential_connection, score):
+        """
+        True if stability between two amino acids was already calculated.
+        """
+
+        if stability_connections:
+            for connection in stability_connections:
+                if sorted(connection) == sorted(potential_connection):
+                    return True
+
+        return False
+
+
+    def coordinates_of_C_H_aminos(self, current_path):
+        """
+        Extracts coordinates of all H and C aminos from current path.
+        """
+        self.h_coordinates = []
+        self.c_coordinates = []
+
+        for path in current_path:
+            if path[0] == "H" and [path[2], path[3]] not in self.h_coordinates:
+                self.h_coordinates.append([path[2], path[3]])
+            elif path[0] == "C" and [path[2], path[3]] not in self.c_coordinates:
+                self.c_coordinates.append([path[2], path[3]])
+
+
+    def add_new_options_to_stack(self, current_path):
+        """
+        Determines possible options for every amino acid and appends them to stack.
+        """
+
+        possible = PossibleOptions(self.user_input)
         coordinate_update = CoordinateUpdate()
 
         # update coordinates for next amino based on current fold
-        current_x, current_y = coordinate_update.update_coordinates(pseudo_placement)
+        current_x, current_y = coordinate_update.update_coordinates_path(current_path)
 
-        # current amino
-        user_input = self.user_input[1:]
-        current_amino = user_input[0]
-
-        possible.define_folds(pseudo_placement, current_amino, user_input)
-        possible.define_coordinates(current_x, current_y, current_amino)
+        possible.define_folds(current_path)
+        possible.define_coordinates(current_x, current_y)
         final_possible_options = possible.check_empty()
 
-        return final_possible_options
-
-    def pseudo_stability_score(self, final_possible_options, h_coordinates, c_coordinates):
-        """
-        Calculates stability scores of every possible option and appends score to list
-        """
-
-        possible_options_score = []
-        current_score = self.final_placement[-1][4]
-
         for option in final_possible_options:
+            new_path = copy.deepcopy(current_path)
+            new_path.append(option)
 
-            # if two H aminos are connected or current amino is a P, keep previous score
-            if option[0] == "H" and self.final_placement[-1][0] == "H" or option[0] == "P" or option[0] == "C" and self.final_placement[-1][0] == "C":
-                possible_options_score.append([option[0], option[1], option[2], option[3], current_score])
-
-            # else, checks for surrounding H aminos and calculate score
-            elif option[0] == "H" or option[0] == "C":
-                x_coordinate = option[2]
-                y_coordinate = option[3]
-                surrounding_coordinates = [[x_coordinate + 1, y_coordinate], [x_coordinate - 1, y_coordinate],
-                                           [x_coordinate, y_coordinate + 1], [x_coordinate, y_coordinate - 1], [0, 0]]
-
-                # updates score
-                for coordinates in surrounding_coordinates:
-                    if coordinates in h_coordinates:
-                        current_score =- 1
-                    elif coordinates in c_coordinates:
-                        current_score =- 5
-
-                possible_options_score.append([option[0], option[1], option[2], option[3], current_score])
-
-        return possible_options_score
+            if new_path not in self.stack:
+                self.stack.append(new_path)
 
 
-    def average_score_thus_far(self, possible_options_score):
+    def run(self):
         """
-        if option[4] exists:
-            sum of option[4]
+        Runs depth-first algorithm until all possible protein folds have between
+        evaluated; determines best fold.
         """
-        average_score = 0
+        current_best_score = 0
+        self.cumulative_score = 0
+        i = 0
 
-        for option in possible_options_score:
-            average_score += option[4]
+        while self.stack:
+            current_path = self.get_next_path()
 
-        average_score /= len(possible_options_score)
+            # calculates stability score for each protein
+            if len(current_path) == len(self.user_input):
+                score, stability_connections = self.stability(current_path)
+
+                if score < self.best_score:
+                    self.stability_coordinates = stability_connections
+                    self.best_score = score
+                    self.best_protein = current_path
+
+            elif len(current_path) < len(self.user_input):
+                score, stability_connections = self.stability(current_path)
+                average_score = self.average_score_thus_far(score, i)
+                print("average score is ", average_score)
+                print("best score is ", current_best_score)
+
+                # keep all branches if score is same or better than best score
+                if score <= current_best_score:
+                    current_best_score = score
+                    self.add_new_options_to_stack(current_path)
+
+                # if current score is between the best and average score, 50% chance
+                elif score > average_score:
+                    r = random.uniform(0, 1)
+
+                    # low possibility (20%) of it being a good option
+                    if r > 0.8:
+                        self.add_new_options_to_stack(current_path)
+
+                # if current score is between the best and average score, 50% chance
+                elif current_best_score < score < average_score:
+                    r = random.uniform(0, 1)
+
+                    # higher possibility (50%) of it being a good option
+                    if r > 0.5:
+                        self.add_new_options_to_stack(current_path)
+
+        print(">> ")
+
+        self.stability_score_coordinates(self.stability_coordinates)
+
+
+    def stability_score_coordinates(self, stability_coordinates):
+        """
+        Creates coordinate lists for the visualisation of the stability score.
+        """
+
+        self.amino_stability_x = []
+        self.amino_stability_y = []
+
+        for i in stability_coordinates:
+            self.amino_stability_x.append([i[0][0], i[1][0]])
+            self.amino_stability_y.append([i[0][1], i[1][1]])
+
+
+    def average_score_thus_far(self, score, i):
+        """
+        Calculates average score
+        """
+        i += 1
+        self.cumulative_score += score
+        average_score = self.cumulative_score / i
 
         return average_score
 
 
-    def coordinates_of_H_aminos(self, key):
-        """
-        Extracts coordinates of all H aminos from key (i.e. current path)
 
-        key = [[amino, fold, x, y, score]] : [a][b][c]
-        key = [[amino, fold, x, y, ?], [amino, fold, x, y, ?]]
-        key = [[amino, fold, x, y, ?], [amino, fold, x, y, ?], [amino, fold, x, y, ?]]
-        key = [etc.]
 
-        h_coordinates = []
 
-        for k in key:
-            if k[0] == "H":
-                h_coordinates.append([k[2], k[3]])
 
-        return h_coordinates
-        """
+def visualize(visualization_data, user_input, stability_score, amino_stability_x, amino_stability_y):
+    x = []
+    y = []
+    colors = []
 
+    print("VISUAL", amino_stability_x, amino_stability_y)
 
-        self.h_coordinates = []
+    # extracts amino acid x,y coordinates and determines corresponding colors
+    with open(visualization_data,'r') as csvfile:
+        plots = csv.reader(csvfile, delimiter=',')
+        for row in plots:
+            if row[0] == 'H':
+                colors.append('red')
+            elif row[0] == "C":
+                colors.append('green')
+            else:
+                colors.append('blue')
+            x.append(int(row[1]))
+            y.append(int(row[2]))
 
-        if amino_info[0] == "H":
-            self.h_coordinates.append([amino_info[2], amino_info[3]])
 
-        print("H COOORDINATES", self.h_coordinates)
-        return self.h_coordinates
+    # forces equal integer ticks
+    ax = plt.figure().gca()
+    ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+    ax.yaxis.set_major_locator(MaxNLocator(integer=True))
+    plt.axis('equal')
 
+    # connects the amino acids
+    plt.plot(x,y,'-', label='Folds')
 
-    def coordinates_of_C_aminos(self, key):
-        """
-        Extracts coordinates of all H aminos from key (i.e. current path)
+    # stability score visualisatie
+    for i in range(len(amino_stability_x)):
+        plt.plot(amino_stability_x[i], amino_stability_y[i], ':', color='r')
 
-        key = [[amino, fold, x, y, ?]]
-        key = [[amino, fold, x, y, ?], [amino, fold, x, y, ?]]
-        key = [[amino, fold, x, y, ?], [amino, fold, x, y, ?], [amino, fold, x, y, ?]]
-        key = [etc.]
+    # assigns corresponding colors to individual amino acids
+    for i in range(len(x)):
+        plt.plot(x[i], y[i], 'o', color=colors[i])
 
-        c_coordinates = []
+    # draws a line between each point
+    plt.grid(linestyle='-')
+    plt.xlabel('x')
+    plt.ylabel('y')
+    plt.title('Protein: ' + user_input.upper() + '\nStability score: ' + str(stability_score))
+    plt.legend()
+    plt.show()
 
-        for k in key:
-            if k[0] == "C":
-                c_coordinates.append([k[2], k[3]])
-
-        return c_coordinates
-        """
-
-        self.c_coordinates = []
-
-        self.c_coordinates.append([amino_info[2], amino_info[3]])
-
-        print("C COOORDINATES", self.c_coordinates)
-        return self.c_coordinates
-
-
-    def get_current_keys(self, current_depth):
-        """
-        Gets all keys of current depth
-        """
-
-        current_keys = []
-        pseudo_placement = []
-
-        for key in self.depth_first_dict.keys():
-            if len(key) == current_depth:
-
-                # saves all keys of current depth
-                current_keys.append(key)
-
-                # pseudo_placement of every key as part of current path
-                for k in key:
-                    print("lalalalalal", k)
-                    pseudo_placement.append([val for sublist in key for val in sublist])
-
-        #print("pseudo_placement:::::::", pseudo_placement)
-
-        return current_keys, pseudo_placement
-
-
-    def run(self, current_score, user_input):
-        """
-        Runs algorithm until end of sequence is reached
-
-
-        - Eerst alle opties overwegen: meerdere beste scores? dan gewoon alles.
-        - Onthoud mogelijkheid en ga vanuit daar verder: ga nog eentje dieper en kijk dan welke score het laagst is. Dan door
-        """
-
-        current_depth = len(self.user_input) - len(user_input)
-
-
-        #print("depth:", current_depth, "amino:",user_input)
-
-
-
-        """
-        Of all the keys of this current length, the current key is the last amino of the key
-        """
-        # for key in self.depth_first_dict.keys():
-        #     if len(key) == current_depth:
-        #         current_key = list(key[-1])
-
-
-
-        current_keys, pseudo_placement = self.get_current_keys(current_depth)
-
-
-        # for every key in current path
-        for key in current_keys:
-
-            # to get the last key of current path????? not necessary???
-            #current_keys.append(list(key[-1]))
-            #print("Every current key: ", list(key[-1]))
-
-
-            # for every option, generate three new options
-            for option in self.depth_first_dict.get(key):
-
-                if option[0] == "H" or option[0] == "C":
-                    current_score = option[-1]
-
-                    if len(user_input) == 1:
-
-                        # x, y, score is same for every option, so the first one will do
-                        self.depth_first_dict[tuple([self.user_input[-1], 0, option[2], option[3], current_score])] = []
-                        print("---->>>> End of protein. FINAL PLACEMENT: ", self.depth_first_dict)
-                        for y in self.depth_first_dict.keys():
-                            print("---->>>> FINAL PLACEMENT KEYS: ", y)
-                        for z in self.depth_first_dict.values():
-                            print("---->>>> FINAL PLACEMENT VALUES: ", z)
-                        exit()
-
-                    # pseudo place current path
-                    """
-                    pseudo placement of first key
-                    TODO:
-                    - Place all keys in current_key by default
-                    """
-
-    #
-    #                 if current_score < self.best_score:
-    #                     self.best_score = current_score
-    #                     #multiple_best_options.append(option)
-    #
-    #                     self.protein.add_amino_info(option)
-    #                     return self.run(current_score, user_input[1:])
-    #
-    #                 # if current score is worse than average, low possibility (20%) of it being a good option
-    #                 elif current_score > average_score:
-    #                     r = random.uniform(0, 1)
-    #
-    #                     # low possibility (20%) of it being a good option
-    #                     if r > 0.8:
-    #                         protein.add_amino_info(option)
-    #                         return self.run(current_score, user_input[1:])
-    #
-    #                 # if current score is between the best and average score, 50% chance
-    #                 elif self.best_score < current_score < average_score:
-    #                     r = random.uniform(0, 1)
-    #
-    #                     # higher possibility (50%) of it being a good option
-    #                     if r > 0.5:
-    #                         protein.add_amino_info(option)
-    #                         return self.run(current_score, user_input[1:])
-    #
-    #             else:
-    #                 continue
-    #
-    # def pseudo_place(self, pseudo_placement):
-    #
-
-
-                    #pseudo_placement = [list(i) for i in current_keys[0]]
-                    pseudo_placement.append(option)
-                    print("pseudo placement final placement", pseudo_placement)
-
-                    final_possible_options = self.determine_possible_options(user_input, pseudo_placement)
-                    print("Final possible optionsss00000000000>>>", final_possible_options)
-                    possible_options_score = self.pseudo_stability_score(final_possible_options, self.protein.h_coordinates, self.protein.c_coordinates)
-                    #average_score = self.average_score_thus_far(possible_options_score)
-
-                    # new key is current path + each of the options
-                    new_key = tuple(tuple(x) for x in pseudo_placement)
-
-                    # saves current path with corresponding next three options in new tuple
-                    for new_option in possible_options_score:
-                        self.depth_first_dict.setdefault(new_key, []).append(new_option)
-
-                    # ensures this option is not part of next path
-                    pseudo_placement.remove(option)
-
-        return self.run(current_score, user_input[1:])
-
-
-
-        """
-        new_key = (user_input[0], 6, 0, 0, 0),
-        new_key += previous_key
-
-        first = (user_input[0], 2, 0, 0, 0),
-        sec = (user_input[0], 6, 0, 0, 0),
-        first = first + sec + first
-        """
-
-
-            # current_score = option[-1]
-            #
-            # if len(user_input) == 1:
-            #     self.protein.add_last_amino_of_chunk(option[2], option[3], current_score, self.user_input)
-            #     print("End of protein. FINAL PLACEMENT: ", self.protein.final_placement)
-            #     exit()
-            #
-            # if option[0] == "H" or option[0] == "C":
-            #     #print("current score = ", current_score)
-            #
-            #     # if current score is best score yet, place option
-            #     if current_score <= self.best_score:
-            #         self.best_score = current_score
-            #         #multiple_best_options.append(option)
-            #
-            #         self.protein.add_amino_info(option)
-            #         return self.run(current_score, user_input[1:])
-            #
-            #     # if current score is worse than average, low possibility (20%) of it being a good option
-            #     elif current_score > average_score:
-            #         r = random.uniform(0, 1)
-            #
-            #         # low possibility (20%) of it being a good option
-            #         if r > 0.8:
-            #             protein.add_amino_info(option)
-            #             return self.run(current_score, user_input[1:])
-            #
-            #     # if current score is between the best and average score, 50% chance
-            #     elif self.best_score < current_score < average_score:
-            #         r = random.uniform(0, 1)
-            #
-            #         # higher possibility (50%) of it being a good option
-            #         if r > 0.5:
-            #             protein.add_amino_info(option)
-            #             return self.run(current_score, user_input[1:])
-            #
-            #     else:
-            #         continue
-            #
-            #
-            #
-            # # if amino is P, or else
-            # else:
-            #     self.protein.add_amino_info(option)
-            #     return self.run(current_score, user_input[1:])
-            #
-            #
-            #
-
-
-        #multiple_best_options = []
-
-        #
-        # final_possible_options = self.determine_possible_options(user_input)
-        # possible_options_score = self.pseudo_stability_score(final_possible_options, self.protein.h_coordinates, self.protein.c_coordinates)
-        # average_score = self.average_score_thus_far(possible_options_score)
-
-        # while there are still options left
 
 
 """
@@ -392,12 +322,30 @@ for i in range(len(user_input)):
 
 
 
+
+
+
 """
 Initialization for main.py
 """
 
+depth = BranchBound(user_input)
+try:
+    depth.run()
+except (KeyboardInterrupt, SystemExit):
+    print("\nKeyboard Interrupt.\n")
 
 
-depth = DepthFirst(user_input)
-current_score = 0
-depth.run(current_score, user_input[1:])
+if depth.best_score == 0:
+    print("\nLowest score: 0")
+    #print("\nTime: ", depth.time)
+else:
+    print("\nLowest score: ", depth.best_score)
+    print("\nBest protein: ", depth.best_protein)
+    #print("\nTime: ", depth.time)
+
+# csvwriter = Csv(depth.best_protein)
+# csvwriter.write_csv()
+# csvwriter.visualization_csv()
+#
+# visualize('data/visualization.csv', user_input, depth.best_score, depth.amino_stability_x, depth.amino_stability_y)
