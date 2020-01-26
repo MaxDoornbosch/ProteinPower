@@ -5,10 +5,6 @@ Florien Altena, Emily van Veen, Max Doornbosch
 UvA, minor Programmeren
 2020
 
-
-TODO:
-time
-
 """
 
 from classes.protein import Protein
@@ -20,8 +16,6 @@ from classes.csvwriter import Csv
 import copy
 import random
 from timeit import default_timer as timer
-
-
 
 
 import matplotlib.pyplot as plt
@@ -206,6 +200,7 @@ class DepthFirst:
             else:
                 self.add_new_options_to_stack(current_path)
 
+
         self.stability_score_coordinates(self.stability_coordinates)
 
 
@@ -295,18 +290,23 @@ Initialization for main.py
 """
 
 depth = DepthFirst(user_input)
-depth.run()
+
+try:
+    depth.run()
+except (KeyboardInterrupt, SystemExit):
+    print("\nKeyboard Interrupt.\n")
+
 
 if depth.best_score == 0:
     print("\nLowest score: 0")
-    #print("\nTime: ", depth.time)
 else:
     print("\nLowest score: ", depth.best_score)
     print("\nBest protein: ", depth.best_protein)
-    #print("\nTime: ", depth.time)
 
-csvwriter = Csv(depth.best_protein)
-csvwriter.write_csv()
-csvwriter.visualization_csv()
 
-visualize('data/visualization.csv', user_input, depth.best_score, depth.amino_stability_x, depth.amino_stability_y)
+
+# csvwriter = Csv(depth.best_protein)
+# csvwriter.write_csv()
+# csvwriter.visualization_csv()
+#
+# visualize('data/visualization.csv', user_input, depth.best_score, depth.amino_stability_x, depth.amino_stability_y)
