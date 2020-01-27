@@ -1,7 +1,7 @@
 from code.classes.protein import Protein
 from code.classes.coordinateupdate import CoordinateUpdate
 from code.classes.placement import Placement
-from code.classes.stability import Stability
+from code.classes.stability_score import Stability
 
 
 import timeit
@@ -16,27 +16,12 @@ class Random:
         self.runamount = runamount
         self.best_placement = []
 
-
-
-        self.stability = Stability()
-
-        score, stability_connections = self.stability.get_stability_score(self.final_placement)
-        self.stability_coordinates = stability_connections
-        self.stability.stability_score_coordinates(self.stability_coordinates)
-        self.amino_stability_x = self.stability.amino_stability_x
-        self.amino_stability_y = self.stability.amino_stability_y
-
-
-        #visualize('data/visualization.csv', user_input, depth.best_score, depth.amino_stability_x, depth.amino_stability_y)
-
-
-
     def run(self):
         """
         Runs random algorithm
         """
         start = timeit.default_timer()
-        score = 0
+        score = 1
         for z in range(self.runamount):
 
             done = False
@@ -54,16 +39,21 @@ class Random:
                     # end of protein has been reached
                     if placement.set_coordinates() == False:
                         done = True
-                        stability = Stability()
-                        stability_score = stability.score(protein.final_placement, self.user_input)
+                        self.stability = Stability()
+
+                        stability_score, stability_connections = self.stability.get_stability_score(protein.final_placement)
+                        self.stability_coordinates = stability_connections
+                        self.stability.stability_score_coordinates(self.stability_coordinates)
+                        self.amino_stability_x = self.stability.amino_stability_x
+                        self.amino_stability_y = self.stability.amino_stability_y
 
                         # checks if current score is lower than the current lowest score
                         if stability_score < score:
                             score = stability_score
                             self.best_placement = protein.final_placement
-                            best_stability = stability.definitive_stability_score
-                            best_amino_stability_x = placement.amino_stability_x
-                            best_amino_stability_y = placement.amino_stability_y
+                            self.best_stability = stability_score
+                            self.best_amino_stability_x = placement.amino_stability_x
+                            self.best_amino_stability_y = placement.amino_stability_y
 
                         finished = True
 
