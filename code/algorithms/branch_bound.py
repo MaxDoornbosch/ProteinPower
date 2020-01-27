@@ -63,28 +63,6 @@ class BranchBound:
         current_path = self.stack.pop()
         return current_path
 
-    # def add_new_options_to_stack(self, current_path):
-    #     """
-    #     Determines possible options for every amino acid and appends them to stack.
-    #     """
-    #
-    #     possible = PossibleOptions(self.user_input)
-    #     coordinate_update = CoordinateUpdate()
-    #
-    #     # update coordinates for next amino based on current fold
-    #     current_x, current_y = coordinate_update.update_coordinates(current_path)
-    #
-    #     possible.define_folds(current_path)
-    #     possible.define_coordinates(current_x, current_y)
-    #     final_possible_options = possible.check_empty()
-    #
-    #     for option in final_possible_options:
-    #         new_path = copy.deepcopy(current_path)
-    #         new_path.append(option)
-    #
-    #         if new_path not in self.stack:
-    #             self.stack.append(new_path)
-
 
     def run(self):
         """
@@ -116,6 +94,7 @@ class BranchBound:
                     print("!!!>>>>", self.best_protein)
 
             elif len(current_path) < len(self.user_input):
+                print("YES!@@22")
                 score, stability_connections = self.stability.get_stability_score(current_path)
                 average_score = self.average_score_thus_far(score)
                 print("average score is ", average_score)
