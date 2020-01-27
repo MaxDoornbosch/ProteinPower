@@ -11,8 +11,8 @@ from code.classes.stability import Stability
 from code.classes.coordinateupdate import CoordinateUpdate
 from code.classes.csvwriter import Csv
 from code.visualization.visualization import visualize
-
-
+from code.algorithms.fourfold import *
+from code.algorithms.threefold import *
 from code.algorithms.Threefoldonestep import *
 from code.algorithms.threefold import *
 from code.algorithms.random import *
@@ -61,261 +61,67 @@ if algorithm == 1:
     """
     random = Random(user_input, runamount)
     random.run()
-    visualisation = random
 
     print("Final random placement: ", random.random_placement)
     # print("Best score: ", score)
     # stop = timeit.default_timer()
     # print('Time: ', stop - start)
+    csvwriter = Csv(random.best_placement)
+    csvwriter.write_csv()
+    csvwriter.visualization_csv()
+    visualize('data/visualization.csv', user_input, random.best_stability, random.best_amino_stability_x, random.best_amino_stability_y)
 
-#elif algorithm == 2:
+elif algorithm == 2:
     """
     Threefold one step
     """
 
-    start = timeit.default_timer()
-    score = 0
-    for z in range(runamount):
+    three_fold_one_step = ThreeFoldOneStep(user_input, runamount)
+    three_fold_one_step.run()
 
-        done = False
-
-        # Restarts the program if an error occurs
-        while done == False:
-
-            # sets first fold and adds to final
-            protein = Protein(user_input)
-
-
-            # splits protein sequence into chunks of three amino acids
-            user_input_split = split_protein(user_input)
-
-            # updates x,y coordinates based on most recently determined fold
-            coordinate_update = CoordinateUpdate()
-            coordinate_update.update_coordinates(protein.final_placement)
-
-            amino_stability_x = []
-            amino_stability_y = []
-
-            for i in range(len(user_input_split)):
-
-                current_x, current_y  = coordinate_update.update_coordinates(protein.final_placement)
-
-                # extracts most recently added fold and amino and performs three fold algorithm
-                current_fold = protein.final_placement[-1][1]
-
-                # gets the current amino
-                current_amino = user_input[len(protein.final_placement)]
-
-                best_option = three_fold(protein.final_placement, user_input_split, current_fold, current_x, current_y, current_amino, i)
-
-                # checks if an error has occured
-                if best_option == False:
-                    break
-
-                # ensures no empty lists are appended
-                if best_option[-2]:
-                    amino_stability_x.extend(best_option[-2])
-                if best_option[-1]:
-                    amino_stability_y.extend(best_option[-1])
-
-                placement = [current_amino, best_option[0], current_x, current_y]
-                protein.add_amino_info(placement)
-
-                if current_fold != 0:
-                    current_x, current_y = coordinate_update.update_coordinates(protein.final_placement)
-
-                # checks if last amino of sequence is reached
-                if len(protein.final_placement) == (len(user_input) - 1):
-                    protein.add_last_amino_of_chunk_without_score(current_x, current_y, user_input)
-
-                # end of protein has been reached
-                if protein.final_placement[-1][1] == 0:
-                    done = True
-                    stability = Stability()
-                    stability_score = stability.score(protein.final_placement, user_input)
-
-                    # checks if current score is lower than the current lowest score
-                    if stability_score < score:
-                            score = stability_score
-                            best_placement = protein.final_placement
-                            best_stability = stability.definitive_stability_score
-                            best_amino_stability_x = amino_stability_x
-                            best_amino_stability_y = amino_stability_y
-
-    print("final placement: ", best_placement)
-    print("Best score: ", score)
-    stop = timeit.default_timer()
-    print('Time: ', stop - start)
-    csvwriter = Csv(best_placement)
+    print("final placement: ", three_fold_one_step.best_placement)
+    # print("Best score: ", score)
+    # stop = timeit.default_timer()
+    # print('Time: ', stop - start)
+    csvwriter = Csv(three_fold_one_step.best_placement)
     csvwriter.write_csv()
     csvwriter.visualization_csv()
-    visualize('data/visualization.csv', user_input, best_stability, best_amino_stability_x, best_amino_stability_y)
+    visualize('data/visualization.csv', user_input, three_fold_one_step.best_stability, three_fold_one_step.best_amino_stability_x, three_fold_one_step.best_amino_stability_y)
 
-#elif algorithm == 3:
+elif algorithm == 3:
     """
     Threefold algorithm
     """
 
+    three_fold = ThreeFold(user_input, runamount)
+    three_fold.run()    
 
-    start = timeit.default_timer()
-    score = 0
-    for z in range(runamount):
-
-        done = False
-
-        # Restarts the program if an error occurs
-        while done == False:
-
-            # sets first fold and adds to final
-            protein = Protein(user_input)
-
-
-            # splits protein sequence into chunks of three amino acids
-            user_input_split = split_protein(user_input)
-
-            # updates x,y coordinates based on most recently determined fold
-            coordinate_update = CoordinateUpdate()
-            coordinate_update.update_coordinates(protein.final_placement)
-
-            amino_stability_x = []
-            amino_stability_y = []
-
-            for i in range(len(user_input_split)):
-
-                current_x, current_y  = coordinate_update.update_coordinates(protein.final_placement)
-
-                # extracts most recently added fold and amino and performs three fold algorithm
-                current_fold = protein.final_placement[-1][1]
-
-                # gets the current amino
-                current_amino = user_input[len(protein.final_placement)]
-
-                best_option = three_fold(protein.final_placement, user_input_split, current_fold, current_x, current_y, current_amino, i)
-
-                # checks if an error has occured
-                if best_option == False:
-                    break
-
-                # ensures no empty lists are appended
-                if best_option[-2]:
-                    amino_stability_x.extend(best_option[-2])
-                if best_option[-1]:
-                    amino_stability_y.extend(best_option[-1])
-
-                for i in range(len(best_option) - 3):
-                    protein.add_amino_info(best_option[i])
-
-                if current_fold != 0:
-                    current_x, current_y = coordinate_update.update_coordinates(protein.final_placement)
-
-                # checks if last amino of sequence is reached
-                if len(protein.final_placement) == (len(user_input) - 1):
-                    protein.add_last_amino_of_chunk_without_score(current_x, current_y, user_input)
-
-                # end of protein has been reached
-                if protein.final_placement[-1][1] == 0:
-                    done = True
-                    stability = Stability()
-                    stability_score = stability.score(protein.final_placement, user_input)
-
-                    # checks if current score is lower than the current lowest score
-                    if stability_score < score:
-                            score = stability_score
-                            best_placement = protein.final_placement
-                            best_stability = stability.definitive_stability_score
-                            best_amino_stability_x = amino_stability_x
-                            best_amino_stability_y = amino_stability_y
-
-    print("final placement: ", best_placement)
-    print("Best score: ", score)
-    stop = timeit.default_timer()
-    print('Time: ', stop - start)
-    csvwriter = Csv(best_placement)
+    print("final placement: ", three_fold.best_placement)
+    # print("Best score: ", score)
+    # stop = timeit.default_timer()
+    # print('Time: ', stop - start)
+    csvwriter = Csv(three_fold.best_placement)
     csvwriter.write_csv()
     csvwriter.visualization_csv()
-    visualize('data/visualization.csv', user_input, best_stability, best_amino_stability_x, best_amino_stability_y)
+    visualize('data/visualization.csv', user_input, three_fold.best_stability, three_fold.best_amino_stability_x, three_fold.best_amino_stability_y)
 
-#elif algorithm == 4:
+elif algorithm == 4:
     """
     Fourfold algorithm
     """
+    
+    four_fold = FourFold(user_input, runamount)
+    four_fold.run() 
 
-    start = timeit.default_timer()
-    score = 0
-    for z in range(runamount):
-        done = False
-
-        # Restarts the program if an error occurs
-        while done == False:
-
-            # sets first fold and adds to final
-            protein = Protein(user_input)
-
-
-            # splits protein sequence into chunks of three amino acids
-            user_input_split = split_protein(user_input)
-
-            # updates x,y coordinates based on most recently determined fold
-            coordinate_update = CoordinateUpdate()
-            coordinate_update.update_coordinates(protein.final_placement)
-
-            amino_stability_x = []
-            amino_stability_y = []
-
-            for i in range(len(user_input_split)):
-
-                current_x, current_y  = coordinate_update.update_coordinates(protein.final_placement)
-
-                # extracts most recently added fold and amino and performs three fold algorithm
-                current_fold = protein.final_placement[-1][1]
-
-                # gets the current amino
-                current_amino = user_input[len(protein.final_placement)]
-
-                best_option = four_fold(protein.final_placement, user_input_split, current_fold, current_x, current_y, current_amino, i)
-
-                #checks if an error has occured
-                if best_option == False:
-                    break
-
-                # ensures no empty lists are appended
-                if best_option[-2]:
-                    amino_stability_x.extend(best_option[-2])
-                if best_option[-1]:
-                    amino_stability_y.extend(best_option[-1])
-
-                for i in range(len(best_option) - 3):
-                    protein.add_amino_info(best_option[i])
-
-                if current_fold != 0:
-                    current_x, current_y = coordinate_update.update_coordinates(protein.final_placement)
-
-                # checks if last amino of sequence is reached
-                if len(protein.final_placement) == (len(user_input) - 1):
-                    protein.add_last_amino_of_chunk_without_score(current_x, current_y, user_input)
-
-                # end of protein has been reached
-                if protein.final_placement[-1][1] == 0:
-                    done = True
-                    stability = Stability()
-                    stability_score = stability.score(protein.final_placement, user_input)
-
-                    # checks if current score is lower than the current lowest score
-                    if stability_score < score:
-                        score = stability_score
-                        best_placement = protein.final_placement
-                        best_stability = stability.definitive_stability_score
-                        best_amino_stability_x = amino_stability_x
-                        best_amino_stability_y = amino_stability_y
-
-    print("final placement: ", best_placement)
-    print("Best score: ", score)
-    stop = timeit.default_timer()
-    print('Time: ', stop - start)
-    csvwriter = Csv(best_placement)
+    print("final placement: ", four_fold.best_placement)
+    # print("Best score: ", score)
+    # stop = timeit.default_timer()
+    # print('Time: ', stop - start)
+    csvwriter = Csv(four_fold.best_placement)
     csvwriter.write_csv()
     csvwriter.visualization_csv()
-    visualize('data/visualization.csv', user_input, best_stability, best_amino_stability_x, best_amino_stability_y)
+    visualize('data/visualization.csv', user_input, four_fold.best_stability, four_fold.best_amino_stability_x, four_fold.best_amino_stability_y)
+
 
 
 elif algorithm == 5:
