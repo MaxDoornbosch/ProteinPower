@@ -21,7 +21,7 @@ from code.algorithms.depth_first import DepthFirst
 # prompts the user for an algorithm
 algorithm = 0
 
-while algorithm < 1 or algorithm > 5:
+while algorithm < 1 or algorithm > 6:
     while True:
         try:
             algorithm = int(input("Which algorithm would you like to use? Enter 1 for random algorithm, 2 for three fold one step, 3 for three fold three steps and 4 for four fold algorithm: "))
@@ -50,6 +50,9 @@ for i in range(len(user_input)):
     while user_input[i] != "H" and user_input[i] != "P" and user_input[i] !="C":
         user_input = input("Please enter your protein (minimum length is 3): ").upper()
 
+if algorithm == 6:
+    branch_bound = BranchBound()
+    branch_bound.run()
 
 if algorithm == 5:
     """
