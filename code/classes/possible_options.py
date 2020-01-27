@@ -1,9 +1,10 @@
 class PossibleOptions:
     """
-    Determines possible folds based on current fold
-
+    Determines possible options based on current amino acid
     """
-    def __init__(self):
+
+    def __init__(self, user_input):
+        self.user_input = user_input
 
         # fold and coordinates of first amino are predetermined
         self.possible_folds = []
@@ -16,36 +17,40 @@ class PossibleOptions:
            -2 : [-1, 1, -2]
         }
 
-    def define_folds(self, final_placement, current_amino, user_input):
+    def define_folds(self, current_path):
         """
         Defines folds
         """
 
-        self.user_input = user_input
-        self.final_placement = final_placement
-        current_fold = self.final_placement[-1][1]
+        self.current_path = current_path
+        current_fold = self.current_path[-1][1]
+
+        # last amino of sequence has a fold of 0
+        if len(current_path) == len(self.user_input) - 1:
+            self.possible_folds = [0, 0, 0]
 
         # determines corresponding folds based on current fold
-        if current_fold in self.corresponding_folds.keys():
+        elif current_fold in self.corresponding_folds.keys():
             self.possible_folds.extend(self.corresponding_folds.get(current_fold))
 
-        return self.possible_folds
 
-
-    def define_coordinates(self, x_coordinate, y_coordinate, current_amino):
+    def define_coordinates(self, x_coordinate, y_coordinate):
+        """
+        Determines x, y coordinates based on possible folds
+        """
 
         self.possible_options = []
         self.x_coordinate = x_coordinate
         self.y_coordinate = y_coordinate
 
+        current_amino = self.user_input[len(self.current_path)]
+
         # saves all possible folds with corresponding amino and coordinates
-        for i in self.possible_folds:
+        for fold in self.possible_folds:
 
             # prevents duplicates and saves aminos with corresponding information
-            if [current_amino, i, self.x_coordinate, self.y_coordinate] not in self.possible_options:
-                self.possible_options.append([current_amino, i, self.x_coordinate, self.y_coordinate])
-
-        return self.possible_options
+            if [current_amino, fold, self.x_coordinate, self.y_coordinate] not in self.possible_options:
+                self.possible_options.append([current_amino, fold, self.x_coordinate, self.y_coordinate])
 
 
     def check_empty(self):
@@ -54,21 +59,23 @@ class PossibleOptions:
         """
 
         final_possible_options = []
+        full_coordinates = []
+
+        for path in self.current_path:
+            full_coordinates.append([path[2], path[3]])
 
         for option in self.possible_options:
             is_possible = True
             fold = True
             score = 0
 
-            # loops over all already placed aminos
-            for placed_amino in self.final_placement:
-                print(">>>>>", self.final_placement, ">>>>", placed_amino)
+            option_coordinates = [option[2], option[3]]
 
-                # checks whether coordinates already exist
-                if placed_amino[2] == option[2] and placed_amino[3] == option[3]:
-                    is_possible = False
+            # checks whether coordinates already exist
+            if option_coordinates in full_coordinates:
+                is_possible = False
 
-            # saves all possible options with corresponding stability scores
+            # saves all possible options: amino, fold, x, y
             if is_possible == True:
                 final_possible_options.append([option[0], option[1], option[2], option[3]])
 

@@ -13,14 +13,20 @@ from code.classes.coordinateupdate import CoordinateUpdate
 from code.classes.csvwriter import Csv
 from code.visualization.visualization import visualize
 
+
+from code.algorithms.Threefoldonestep import *
+from code.algorithms.random import *
+from code.algorithms.depth_first import DepthFirst
+
 # prompts the user for an algorithm
 algorithm = 0
-while algorithm < 1 or algorithm > 4:
+
+while algorithm < 1 or algorithm > 5:
     while True:
         try:
             algorithm = int(input("Which algorithm would you like to use? Enter 1 for random algorithm, 2 for three fold one step, 3 for three fold three steps and 4 for four fold algorithm: "))
             break
-        except:
+        except ValueError:
             print("Invalid input")
 
 # prompts the user for the runamount
@@ -44,70 +50,53 @@ for i in range(len(user_input)):
     while user_input[i] != "H" and user_input[i] != "P" and user_input[i] !="C":
         user_input = input("Please enter your protein (minimum length is 3): ").upper()
 
-if algorithm == 1:
+
+if algorithm == 5:
+    """
+    Runs depth first algorithm
+    """
+    depth = DepthFirst(user_input)
+
+    try:
+        depth.run()
+    except (KeyboardInterrupt, SystemExit):
+        print("\nKeyboard Interrupt.\n")
+
+
+    if depth.best_score == 0:
+        print("\nLowest score: 0")
+    else:
+        print("\nLowest score: ", depth.best_score)
+        print("\nBest protein: ", depth.best_protein)
+
+    csvwriter = Csv(depth.best_protein)
+    csvwriter.write_csv()
+    csvwriter.visualization_csv()
+    visualize('data/visualization.csv', user_input, depth.best_score, depth.amino_stability_x, depth.amino_stability_y)
+
+
+elif algorithm == 1:
     """
     Random algorithm
     """
-    start = timeit.default_timer()
-    score = 0
-    for z in range(runamount):
+    random = Random(user_input, runamount)
+    random.run()
 
-        done = False
+    print("final placement: ", random.best_placement)
+    # print("Best score: ", score)
+    # stop = timeit.default_timer()
+    # print('Time: ', stop - start)
+    # csvwriter = Csv(best_placement)
+    # csvwriter.write_csv()
+    # csvwriter.visualization_csv()
+    # visualize('data/visualization.csv', user_input, best_stability, best_amino_stability_x, best_amino_stability_y)
 
-        # restarts when there aren't any options left for the next amino
-        while done == False:
-            current_n = 1
-            protein = Protein(user_input)
-            placement = Placement(user_input, protein.final_placement)
-            finished = False
-            while finished == False:
-                
-                placement.set_current(current_n)
-
-                # end of protein has been reached
-                if placement.set_coordinates() == False:
-                    done = True
-                    stability = Stability()
-                    stability_score = stability.score(protein.final_placement, user_input)
-
-                    # checks if current score is lower than the current lowest score
-                    if stability_score < score:
-                        score = stability_score
-                        best_placement = protein.final_placement
-                        best_stability = stability.definitive_stability_score
-                        best_amino_stability_x = placement.amino_stability_x
-                        best_amino_stability_y = placement.amino_stability_y
-            
-                    finished = True
-                
-                # checks if the last amino has been placed
-                if finished == False:
-                
-                    placement.check_empty(user_input)
-
-                    # checks if there aren't any possible coordinates left
-                    if len(placement.possible_coordinates) == 0:
-                        break
-                        
-                    placement.random_amino
-                    protein.add_amino_info(placement.random_amino)
-                    protein.final_placement
-
-    print("final placement: ", best_placement)
-    print("Best score: ", score)
-    stop = timeit.default_timer()
-    print('Time: ', stop - start)
-    csvwriter = Csv(best_placement)
-    csvwriter.write_csv()
-    csvwriter.visualization_csv()
-    visualize('data/visualization.csv', user_input, best_stability, best_amino_stability_x, best_amino_stability_y)
-
-if algorithm == 2:
+elif algorithm == 2:
     """
     Threefold one step
     """
 
-    from code.algorithms.Threefoldonestep import *
+
     start = timeit.default_timer()
     score = 0
     for z in range(runamount):
@@ -162,7 +151,7 @@ if algorithm == 2:
                 # checks if last amino of sequence is reached
                 if len(protein.final_placement) == (len(user_input) - 1):
                     protein.add_last_amino_of_chunk_without_score(current_x, current_y, user_input)
-                    
+
                 # end of protein has been reached
                 if protein.final_placement[-1][1] == 0:
                     done = True
@@ -185,8 +174,8 @@ if algorithm == 2:
     csvwriter.write_csv()
     csvwriter.visualization_csv()
     visualize('data/visualization.csv', user_input, best_stability, best_amino_stability_x, best_amino_stability_y)
-    
-if algorithm == 3:
+
+elif algorithm == 3:
     """
     Threefold algorithm
     """
@@ -270,7 +259,7 @@ if algorithm == 3:
     csvwriter.visualization_csv()
     visualize('data/visualization.csv', user_input, best_stability, best_amino_stability_x, best_amino_stability_y)
 
-if algorithm == 4:
+elif algorithm == 4:
     """
     Fourfold algorithm
     """
