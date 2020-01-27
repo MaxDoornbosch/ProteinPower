@@ -34,8 +34,8 @@ while algorithm < 1 or algorithm > 7:
             print("Invalid input")
 
 # prompts the user for the runamount
-runamount = 0
 if algorithm > 0 and algorithm < 5:
+    runamount = 0
     while runamount < 1:
         try:
             runamount = int(input("How many times would you like to run this algorithm? "))
@@ -355,8 +355,6 @@ elif algorithm == 6:
         print("\nLowest score: ", branch_bound.best_score)
         print("\nBest protein: ", branch_bound.best_protein)
         #print("\nTime: ", depth.time)
-
-
 
 
 if algorithm == 7:
