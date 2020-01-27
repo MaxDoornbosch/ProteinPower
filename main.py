@@ -12,7 +12,6 @@ from code.classes.coordinateupdate import CoordinateUpdate
 from code.classes.csvwriter import Csv
 from code.visualization.visualization import visualize
 
-
 from code.algorithms.threefoldonestep import *
 from code.algorithms.threefold import *
 from code.algorithms.random import *
@@ -33,14 +32,15 @@ while algorithm < 1 or algorithm > 7:
             print("Invalid input")
 
 # prompts the user for the runamount
-runamount = 0
 if algorithm > 0 and algorithm < 5:
+    runamount = 0
     while runamount < 1:
         try:
             runamount = int(input("How many times would you like to run this algorithm? "))
             break
         except ValueError:
             print("Invalid input")
+
 user_input = input("Please enter your protein (minimum length is 3): ").upper()
 
 # minimum length of protein
