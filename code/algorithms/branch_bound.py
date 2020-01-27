@@ -17,9 +17,9 @@ import copy
 import random
 from timeit import default_timer as timer
 
-class DepthFirst:
+class BranchBound:
     """
-    Depth first search algorithm that folds a given protein
+    Branch and Bound algorithm that folds a given protein
     3 ^ (length of user input) times to find the best possible stability score.
     """
 
@@ -98,7 +98,7 @@ class DepthFirst:
 
             # calculates stability score for each protein
             if len(current_path) == len(self.user_input):
-                score, stability_connections = self.stability(current_path)
+                score, stability_connections = self.stability.get_stability_score(current_path)
 
                 if score < self.best_score:
                     self.stability_coordinates = stability_connections
@@ -106,7 +106,7 @@ class DepthFirst:
                     self.best_protein = current_path
 
             elif len(current_path) < len(self.user_input):
-                score, stability_connections = self.stability(current_path)
+                score, stability_connections = self.stability.get_stability_score(current_path)
                 average_score = self.average_score_thus_far(score)
                 #print("average score is ", average_score)
                 print("best score is ", current_best_score)

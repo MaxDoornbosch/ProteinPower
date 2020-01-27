@@ -13,14 +13,18 @@ from code.classes.csvwriter import Csv
 from code.visualization.visualization import visualize
 
 
-from code.algorithms.Threefoldonestep import *
+from code.algorithms.threefoldonestep import *
+from code.algorithms.threefold import *
 from code.algorithms.random import *
 from code.algorithms.depth_first import DepthFirst
+from code.algorithms.branch_bound import BranchBound
+from code.algorithms.fourfold import *
+
 
 # prompts the user for an algorithm
 algorithm = 0
 
-while algorithm < 1 or algorithm > 6:
+while algorithm < 1 or algorithm > 7:
     while True:
         try:
             algorithm = int(input("Which algorithm would you like to use? Enter 1 for random algorithm, 2 for three fold one step, 3 for three fold three steps and 4 for four fold algorithm: "))
@@ -31,12 +35,11 @@ while algorithm < 1 or algorithm > 6:
 # prompts the user for the runamount
 runamount = 0
 while runamount < 1:
-    while True:
-        try:
-            runamount = int(input("How many times would you like to run this algorithm? "))
-            break
-        except:
-            print("Invalid input")
+    try:
+        runamount = int(input("How many times would you like to run this algorithm? "))
+        break
+    except:
+        print("Invalid input")
 
 user_input = input("Please enter your protein (minimum length is 3): ").upper()
 
@@ -57,6 +60,7 @@ if algorithm == 1:
     """
     random = Random(user_input, runamount)
     random.run()
+    visualisation = random
 
     print("Final random placement: ", random.random_placement)
     # print("Best score: ", score)
@@ -71,7 +75,6 @@ elif algorithm == 2:
     """
     Threefold one step
     """
-
 
     start = timeit.default_timer()
     score = 0
@@ -156,7 +159,7 @@ elif algorithm == 3:
     Threefold algorithm
     """
 
-    from code.algorithms.threefold import *
+
     start = timeit.default_timer()
     score = 0
     for z in range(runamount):
@@ -239,7 +242,6 @@ elif algorithm == 4:
     """
     Fourfold algorithm
     """
-    from code.algorithms.fourfold import *
 
     start = timeit.default_timer()
     score = 0
@@ -319,31 +321,12 @@ elif algorithm == 4:
     visualize('data/visualization.csv', user_input, best_stability, best_amino_stability_x, best_amino_stability_y)
 
 
-
-if algorithm == 6:
-    branch_bound = BranchBound(user_input)
-    branch_bound.run()
-
-    if branch_bound.best_score == 0:
-        print("\nLowest score: 0")
-        #print("\nTime: ", depth.time)
-    else:
-        print("\nLowest score: ", branch_bound.best_score)
-        print("\nBest protein: ", branch_bound.best_protein)
-        #print("\nTime: ", depth.time)
-
-    csvwriter = Csv(depth.best_protein)
-    csvwriter.write_csv()
-    csvwriter.visualization_csv()
-    visualize('data/visualization.csv', user_input, depth.best_score, depth.amino_stability_x, depth.amino_stability_y)
-
-
-
-if algorithm == 5:
+elif algorithm == 5:
     """
     Runs depth first algorithm
     """
     depth = DepthFirst(user_input)
+    visualisation = depth
 
     try:
         depth.run()
@@ -357,7 +340,24 @@ if algorithm == 5:
         print("\nLowest score: ", depth.best_score)
         print("\nBest protein: ", depth.best_protein)
 
-    csvwriter = Csv(depth.best_protein)
-    csvwriter.write_csv()
-    csvwriter.visualization_csv()
-    visualize('data/visualization.csv', user_input, depth.best_score, depth.amino_stability_x, depth.amino_stability_y)
+elif algorithm == 6:
+    """
+    Branch and bound (depth first) algorithm
+    """
+    branch_bound = BranchBound(user_input)
+    branch_bound.run()
+    visualisation = branch_bound
+
+    if branch_bound.best_score == 0:
+        print("\nLowest score: 0")
+        #print("\nTime: ", depth.time)
+    else:
+        print("\nLowest score: ", branch_bound.best_score)
+        print("\nBest protein: ", branch_bound.best_protein)
+        #print("\nTime: ", depth.time)
+
+
+csvwriter = Csv(visualisation.best_protein)
+csvwriter.write_csv()
+csvwriter.visualization_csv()
+visualize('data/visualization.csv', user_input, visualisation.best_score, visualisation.amino_stability_x, visualisation.amino_stability_y)
