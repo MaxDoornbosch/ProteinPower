@@ -137,26 +137,3 @@ class DepthFirst:
         self.stability.stability_score_coordinates(self.stability_coordinates)
         self.amino_stability_x = self.stability.amino_stability_x
         self.amino_stability_y = self.stability.amino_stability_y
-
-
-
-
-
-"""
-Initialization for main.py
-"""
-
-depth = BranchBound(user_input)
-try:
-    depth.run()
-except (KeyboardInterrupt, SystemExit):
-    print("\nKeyboard Interrupt.\n")
-
-
-if depth.best_score == 0:
-    print("\nLowest score: 0")
-    #print("\nTime: ", depth.time)
-else:
-    print("\nLowest score: ", depth.best_score)
-    print("\nBest protein: ", depth.best_protein)
-    #print("\nTime: ", depth.time)

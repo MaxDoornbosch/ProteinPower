@@ -50,32 +50,6 @@ for i in range(len(user_input)):
     while user_input[i] != "H" and user_input[i] != "P" and user_input[i] !="C":
         user_input = input("Please enter your protein (minimum length is 3): ").upper()
 
-if algorithm == 6:
-    branch_bound = BranchBound()
-    branch_bound.run()
-
-if algorithm == 5:
-    """
-    Runs depth first algorithm
-    """
-    depth = DepthFirst(user_input)
-
-    try:
-        depth.run()
-    except (KeyboardInterrupt, SystemExit):
-        print("\nKeyboard Interrupt.\n")
-
-
-    if depth.best_score == 0:
-        print("\nLowest score: 0")
-    else:
-        print("\nLowest score: ", depth.best_score)
-        print("\nBest protein: ", depth.best_protein)
-
-    csvwriter = Csv(depth.best_protein)
-    csvwriter.write_csv()
-    csvwriter.visualization_csv()
-    visualize('data/visualization.csv', user_input, depth.best_score, depth.amino_stability_x, depth.amino_stability_y)
 
 
 elif algorithm == 1:
@@ -344,3 +318,47 @@ elif algorithm == 4:
     csvwriter.write_csv()
     csvwriter.visualization_csv()
     visualize('data/visualization.csv', user_input, best_stability, best_amino_stability_x, best_amino_stability_y)
+
+
+
+if algorithm == 6:
+    branch_bound = BranchBound(user_input)
+    branch_bound.run()
+
+    if branch_bound.best_score == 0:
+        print("\nLowest score: 0")
+        #print("\nTime: ", depth.time)
+    else:
+        print("\nLowest score: ", branch_bound.best_score)
+        print("\nBest protein: ", branch_bound.best_protein)
+        #print("\nTime: ", depth.time)
+
+    csvwriter = Csv(depth.best_protein)
+    csvwriter.write_csv()
+    csvwriter.visualization_csv()
+    visualize('data/visualization.csv', user_input, depth.best_score, depth.amino_stability_x, depth.amino_stability_y)
+
+
+
+if algorithm == 5:
+    """
+    Runs depth first algorithm
+    """
+    depth = DepthFirst(user_input)
+
+    try:
+        depth.run()
+    except (KeyboardInterrupt, SystemExit):
+        print("\nKeyboard Interrupt.\n")
+
+
+    if depth.best_score == 0:
+        print("\nLowest score: 0")
+    else:
+        print("\nLowest score: ", depth.best_score)
+        print("\nBest protein: ", depth.best_protein)
+
+    csvwriter = Csv(depth.best_protein)
+    csvwriter.write_csv()
+    csvwriter.visualization_csv()
+    visualize('data/visualization.csv', user_input, depth.best_score, depth.amino_stability_x, depth.amino_stability_y)
