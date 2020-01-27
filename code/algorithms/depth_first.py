@@ -18,14 +18,6 @@ import copy
 import random
 from timeit import default_timer as timer
 
-
-import matplotlib.pyplot as plt
-from matplotlib.ticker import MaxNLocator
-import numpy as np
-import pandas as pd
-import seaborn as sns
-import csv
-
 class DepthFirst:
     """
     Depth first search algorithm that folds a given protein
@@ -64,7 +56,7 @@ class DepthFirst:
         coordinate_update = CoordinateUpdate()
 
         # update coordinates for next amino based on current fold
-        current_x, current_y = coordinate_update.update_coordinates_path(current_path)
+        current_x, current_y = coordinate_update.update_coordinates(current_path)
 
         possible.define_folds(current_path)
         possible.define_coordinates(current_x, current_y)
