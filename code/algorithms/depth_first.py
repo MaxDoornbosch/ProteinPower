@@ -95,3 +95,12 @@ class DepthFirst:
         self.stability.stability_score_coordinates(self.stability_coordinates)
         self.amino_stability_x = self.stability.amino_stability_x
         self.amino_stability_y = self.stability.amino_stability_y
+
+
+                self.stability = Stability()
+
+            score, stability_connections = self.stability.get_stability_score(self.final_placement)
+            self.stability_coordinates = stability_connections
+            self.stability.stability_score_coordinates(self.stability_coordinates)
+            self.amino_stability_x = self.stability.amino_stability_x
+            self.amino_stability_y = self.stability.amino_stability_y
