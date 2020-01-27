@@ -70,5 +70,4 @@ class Random:
                         protein.add_amino_info(placement.random_amino)
                         protein.final_placement
 
-        self.random_placement = protein.final_placement
-        return self.random_placement
+        self.best_protein = protein.final_placement

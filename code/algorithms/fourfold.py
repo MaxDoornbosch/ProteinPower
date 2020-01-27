@@ -99,7 +99,10 @@ class FourFold:
                             self.best_stability = stability_score
                             self.best_amino_stability_x = amino_stability_x
                             self.best_amino_stability_y = amino_stability_y
-        return self.best_placement
+
+        self.best_score = score
+        self.best_protein = self.best_placement
+
 
 
 def four_fold(final_placement, user_input_split, current_fold, x_coordinate, y_coordinate, current_amino, i):

@@ -90,7 +90,9 @@ class ThreeFoldOneStep:
                             self.best_stability = stability_score
                             self.best_amino_stability_x = amino_stability_x
                             self.best_amino_stability_y = amino_stability_y
-        return self.best_placement
+
+        self.best_score = score
+        self.best_protein = self.best_placement
 
 def three_fold(final_placement, user_input_split, current_fold, x_coordinate, y_coordinate, current_amino, i):
     """
@@ -352,7 +354,7 @@ def choose_best_fold(best_options):
     for option in best_folds:
         current_frequency = best_folds.count(option)
         if (current_frequency > counter):
-            counter = current_frequency 
+            counter = current_frequency
             best_option = option
     best_option = fold_with_stability(best_options, best_option)
     return best_option

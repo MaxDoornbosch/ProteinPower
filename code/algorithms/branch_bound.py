@@ -15,7 +15,6 @@ from code.classes.stability_score import Stability
 
 import copy
 import random
-from timeit import default_timer as timer
 
 class BranchBound:
     """

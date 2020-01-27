@@ -13,9 +13,9 @@ from code.classes.possible_options import PossibleOptions
 from code.classes.csvwriter import Csv
 from code.classes.stability_score import Stability
 
+
 import copy
 import random
-from timeit import default_timer as timer
 
 class DepthFirst:
     """
