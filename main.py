@@ -66,10 +66,6 @@ if algorithm == 1:
     # print("Best score: ", score)
     # stop = timeit.default_timer()
     # print('Time: ', stop - start)
-    # csvwriter = Csv(best_placement)
-    # csvwriter.write_csv()
-    # csvwriter.visualization_csv()
-    # visualize('data/visualization.csv', user_input, best_stability, best_amino_stability_x, best_amino_stability_y)
 
 elif algorithm == 2:
     """
@@ -325,6 +321,7 @@ elif algorithm == 5:
     """
     Runs depth first algorithm
     """
+
     depth = DepthFirst(user_input)
     visualisation = depth
 
@@ -344,6 +341,7 @@ elif algorithm == 6:
     """
     Branch and bound (depth first) algorithm
     """
+
     branch_bound = BranchBound(user_input)
     branch_bound.run()
     visualisation = branch_bound
