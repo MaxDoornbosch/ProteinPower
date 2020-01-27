@@ -67,7 +67,7 @@ if algorithm == 1:
     # stop = timeit.default_timer()
     # print('Time: ', stop - start)
 
-elif algorithm == 2:
+#elif algorithm == 2:
     """
     Threefold one step
     """
@@ -150,7 +150,7 @@ elif algorithm == 2:
     csvwriter.visualization_csv()
     visualize('data/visualization.csv', user_input, best_stability, best_amino_stability_x, best_amino_stability_y)
 
-elif algorithm == 3:
+#elif algorithm == 3:
     """
     Threefold algorithm
     """
@@ -234,7 +234,7 @@ elif algorithm == 3:
     csvwriter.visualization_csv()
     visualize('data/visualization.csv', user_input, best_stability, best_amino_stability_x, best_amino_stability_y)
 
-elif algorithm == 4:
+#elif algorithm == 4:
     """
     Fourfold algorithm
     """
@@ -346,9 +346,10 @@ elif algorithm == 6:
     branch_bound.run()
     visualisation = branch_bound
 
-    if branch_bound.best_score == 0:
+    if branch_bound.best_score == 1:
         print("\nLowest score: 0")
-        #print("\nTime: ", depth.time)
+        exit()
+
     else:
         print("\nLowest score: ", branch_bound.best_score)
         print("\nBest protein: ", branch_bound.best_protein)

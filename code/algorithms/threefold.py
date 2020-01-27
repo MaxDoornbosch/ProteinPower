@@ -178,7 +178,7 @@ def stability_score(possible_options, final_placement, chunk):
                     # checks whether the last amino connects to itself
                     if pos == 3 and fold == True:
                         fold = False
-                        
+
                         # Looks for surrounding HH and CH aminos per fold and calculates the score
                         if (unit[pos][0] == "H" and unit[0][0] == "H") or (unit[pos][0] == "C" and unit[0][0] == "H") or (unit[pos][0] == "H" and unit[0][0] == "C"):
                             if unit[pos][2] + 1 == unit[0][2] and unit[pos][3] == unit[0][3]:
@@ -259,7 +259,7 @@ def choose_best_option(best_options):
     """
     Chooses random option from best options
     """
-    
+
     # Picks a random best option
     try:
         best_option = random.choice(best_options)
@@ -267,5 +267,3 @@ def choose_best_option(best_options):
         best_option = False
         return False
     return best_option
-
-def run():
