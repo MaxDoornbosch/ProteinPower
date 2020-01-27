@@ -1,8 +1,15 @@
-import random
-import timeit
+"""
+threefoldonestep.py
+
+"""
+
 from code.classes.protein import Protein
 from code.classes.coordinateupdate import CoordinateUpdate
 from code.classes.stability_score import Stability
+
+import random
+import timeit
+
 
 class ThreeFoldOneStep:
     """

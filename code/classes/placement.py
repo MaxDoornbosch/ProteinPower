@@ -109,4 +109,3 @@ class Placement:
         self.current_fold = self.new_fold
         if len(user_input) - 1 == len(self.final_placement):
             self.random_amino = [user_input[len(self.final_placement)], 0, self.current_x, self.current_y]
-        return self.random_amino, self.amino_stability_x, self.amino_stability_y, self.possible_coordinates

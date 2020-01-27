@@ -1,13 +1,16 @@
 """
 forcing.py
+
 Florien Altena, Emily van Veen, Max Doornbosch
 UvA, minor Programmeren
 2020
 """
+
 from code.classes.stability_score import Stability
 
+
 class Force:
-    def __init__(self,user_input):
+    def __init__(self, user_input):
         self.current_x = 0
         self.current_y = 0
         self.zijde_lengte = 1
@@ -29,7 +32,7 @@ class Force:
                             self.even(i)
             self.zijde_lengte += 1
 
-    def oneven(self,i):
+    def oneven(self, i):
         if i == 0:
             self.new_y = self.current_y + 1
             self.new_x = self.current_x
@@ -46,7 +49,7 @@ class Force:
         self.count += 1
         return self.final_placement, self.current_x, self.current_y, self.count
 
-    def even (self,i):
+    def even(self,i):
         if i == 0:
             self.new_x = self.current_x
             self.new_y = self.current_y -1

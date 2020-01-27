@@ -7,11 +7,13 @@ Functies TO DO:
 2. Als meerdere mogelijkheden: kiezen (welke is beter??)
 """
 
-import random
-import timeit
 from code.classes.protein import Protein
 from code.classes.coordinateupdate import CoordinateUpdate
 from code.classes.stability_score import Stability
+
+import random
+import timeit
+
 
 class ThreeFold:
     """

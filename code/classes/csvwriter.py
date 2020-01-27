@@ -22,8 +22,10 @@ class Csv:
             for fold in self.folds:
                 writer.writerow([fold[0], fold[1]])
 
-            # p = Popen('data/folds.csv', shell=True)
-        return True
+        self.visualization_csv()
+
+        # opens CSV file
+        # p = Popen('data/folds.csv', shell=True)
 
     def visualization_csv(self):
 
@@ -34,4 +36,3 @@ class Csv:
             # writes the information to the csv file
             for fold in self.folds:
                 writer.writerow([fold[0], fold[2], fold[3]])
-        return True

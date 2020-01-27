@@ -10,8 +10,6 @@ def visualize(visualization_data, user_input, stability_score, amino_stability_x
     y = []
     colors = []
 
-    print("VISUAL", amino_stability_x, amino_stability_y)
-
     # extracts amino acid x,y coordinates and determines corresponding colors
     with open(visualization_data,'r') as csvfile:
         plots = csv.reader(csvfile, delimiter=',')

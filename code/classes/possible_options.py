@@ -1,15 +1,17 @@
-class PossibleOptions:
-    """
-    Determines possible options based on current amino acid
-    """
+"""
+possible_options.py
 
+Determines possible options based on current amino acid
+"""
+
+class PossibleOptions:
     def __init__(self, user_input):
         self.user_input = user_input
-
-        # fold and coordinates of first amino are predetermined
         self.possible_folds = []
         self.final_possible_folds = []
         self.storage_list = []
+
+        # sets possible directions with given fold
         self.corresponding_folds = {
            1 : [1, -2, 2],
            -1 : [-1, -2, 2],
@@ -19,13 +21,16 @@ class PossibleOptions:
 
     def define_folds(self, current_path):
         """
-        Defines folds
+        Defines possible folds based on current fold or whether it is the last
+        amino of the protein sequence.
         """
 
         self.current_path = current_path
+
+        # current fold is the most recently placed amino
         current_fold = self.current_path[-1][1]
 
-        # last amino of sequence has a fold of 0
+        # last amino of sequence can only have a fold of 0
         if len(current_path) == len(self.user_input) - 1:
             self.possible_folds = [0, 0, 0]
 
@@ -36,7 +41,7 @@ class PossibleOptions:
 
     def define_coordinates(self, x_coordinate, y_coordinate):
         """
-        Determines x, y coordinates based on possible folds
+        Determines x, y coordinates based on possible folds.
         """
 
         self.possible_options = []
@@ -55,7 +60,8 @@ class PossibleOptions:
 
     def check_empty(self):
         """
-        Checks if possible options aren't already taken
+        Checks if possible options aren't already taken and returns the actual final
+        possible options.
         """
 
         final_possible_options = []

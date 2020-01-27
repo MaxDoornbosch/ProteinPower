@@ -6,10 +6,12 @@ Saves each amino acid of the protein sequence with corresponding coordinates.
 """
 
 class Protein:
+    """
+    Fold and coordinates of first amino are predetermined
+    """
+
     def __init__(self, user_input):
-        """
-        Fold and coordinates of first amino are predetermined
-        """
+
         self.h_coordinates = []
         self.c_coordinates = []
 
@@ -31,10 +33,12 @@ class Protein:
         """
         Fold of last amino is always 0
         """
+
         fold = 0
 
         last_amino = [user_input[-1], fold, x_coordinate, y_coordinate, current_score]
         self.final_placement.append(last_amino)
+
 
     def add_amino_info(self, amino_info):
         """
@@ -48,7 +52,6 @@ class Protein:
         elif amino_info[0] == "C":
             self.coordinates_of_C_aminos(amino_info)
 
-        return self.final_placement
 
     def coordinates_of_H_aminos(self, amino_info):
         """
@@ -57,9 +60,6 @@ class Protein:
 
         if amino_info[0] == "H":
             self.h_coordinates.append([amino_info[2], amino_info[3]])
-
-        print("H COOORDINATES", self.h_coordinates)
-        return self.h_coordinates
 
 
     def coordinates_of_C_aminos(self, amino_info):
@@ -70,12 +70,12 @@ class Protein:
         self.c_coordinates.append([amino_info[2], amino_info[3]])
 
         print("C COOORDINATES", self.c_coordinates)
-        return self.c_coordinates
 
     def add_last_amino_of_chunk_without_score(self, x_coordinate, y_coordinate, user_input):
         """
         Fold of last amino is always 0
         """
+
         fold = 0
 
         last_amino = [user_input[-1], fold, x_coordinate, y_coordinate]

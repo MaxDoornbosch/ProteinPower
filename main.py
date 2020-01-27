@@ -65,8 +65,8 @@ def main():
         random.run()
         visualisation = random
 
-        print("Final random placement: ", random.random_placement)
-        print("Best score: ", random.best_score)
+        print("Random placement: ", random.best_protein)
+        print("Score: ", random.best_score)
 
     elif algorithm == 2:
         """
@@ -101,6 +101,9 @@ def main():
 
         Oh en fourfold doet nog een beetje gek, best_placement kent 'ie niet en
         de visualisatie gaat ook niet goed.. weird
+
+
+        Mag
 
         groetjes
 
@@ -171,7 +174,6 @@ def main():
             print("\nBest protein: ", branch_bound.best_protein)
             #print("\nTime: ", depth.time)
 
-
     elif algorithm == 7:
         """
         Runs forcing algorithm
@@ -189,7 +191,6 @@ def main():
     # visualizes results of every algorithm
     csvwriter = Csv(visualisation.best_protein)
     csvwriter.write_csv()
-    csvwriter.visualization_csv()
     visualize('data/visualization.csv', user_input, visualisation.best_score, visualisation.amino_stability_x, visualisation.amino_stability_y)
 
 

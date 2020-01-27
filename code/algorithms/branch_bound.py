@@ -81,6 +81,16 @@ class BranchBound:
             if new_path not in self.stack:
                 self.stack.append(new_path)
 
+
+    def prepare_visualisation(self):
+        """
+        Creates needed lists for the visualisation of the final protein.
+        """
+
+        self.stability.stability_score_coordinates(self.stability_coordinates)
+        self.amino_stability_x = self.stability.amino_stability_x
+        self.amino_stability_y = self.stability.amino_stability_y
+
     def run(self):
         """
         Runs depth-first algorithm until all possible protein folds have between
@@ -98,19 +108,16 @@ class BranchBound:
 
             # calculates stability score for each protein
             if len(current_path) == len(self.user_input):
-                print("YES!!!")
                 score, stability_connections = self.stability.get_stability_score(current_path)
 
+                # updates current best protein option
                 if score < self.best_score:
-                    self.stability_coordinates = stability_connections
-                    self.stability.stability_score_coordinates(self.stability_coordinates)
-                    self.amino_stability_x = self.stability.amino_stability_x
-                    self.amino_stability_y = self.stability.amino_stability_y
                     self.best_score = score
                     self.best_protein = current_path
+                    self.stability_coordinates = stability_connections
+                    self.prepare_visualisation()
 
-                    print("!!!>>>>", self.best_protein)
-
+            # if the protein is not yet finished
             elif len(current_path) < len(self.user_input):
                 score, stability_connections = self.stability.get_stability_score(current_path)
                 average_score = self.average_score_thus_far(score)

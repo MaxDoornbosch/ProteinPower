@@ -1,18 +1,19 @@
 """
 fourfold.py
 
-
 Functies TO DO:
 1. Checken of het mag (niet bezet): prunen
     Als je één richting niet op mag, mogen alle corresponderende moves ook niet berekend te worden
 2. Als meerdere mogelijkheden: kiezen (welke is beter??)
 """
 
-import random
-import timeit
 from code.classes.protein import Protein
 from code.classes.coordinateupdate import CoordinateUpdate
 from code.classes.stability_score import Stability
+
+import random
+import timeit
+
 
 class FourFold:
     """
