@@ -26,8 +26,6 @@ class Stability:
                 stability_y_min = amino_properties[3] - 1
                 self.possible_stability_coordinates.append([amino_properties[2],stability_y_min])
 
-                # print(self.possible_stability_coordinates)
-
                 # total connections
                 for coordinates in final_placement:
 

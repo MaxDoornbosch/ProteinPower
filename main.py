@@ -52,7 +52,7 @@ for i in range(len(user_input)):
 
 
 
-elif algorithm == 1:
+if algorithm == 1:
     """
     Random algorithm
     """
@@ -63,10 +63,10 @@ elif algorithm == 1:
     # print("Best score: ", score)
     # stop = timeit.default_timer()
     # print('Time: ', stop - start)
-    # csvwriter = Csv(best_placement)
-    # csvwriter.write_csv()
-    # csvwriter.visualization_csv()
-    # visualize('data/visualization.csv', user_input, best_stability, best_amino_stability_x, best_amino_stability_y)
+    csvwriter = Csv(random.best_placement)
+    csvwriter.write_csv()
+    csvwriter.visualization_csv()
+    visualize('data/visualization.csv', user_input, random.best_stability, random.best_amino_stability_x, random.best_amino_stability_y)
 
 elif algorithm == 2:
     """

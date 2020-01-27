@@ -267,3 +267,5 @@ def choose_best_option(best_options):
         best_option = False
         return False
     return best_option
+
+def run():
