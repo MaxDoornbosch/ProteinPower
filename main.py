@@ -13,12 +13,13 @@ from code.classes.csvwriter import Csv
 from code.visualization.visualization import visualize
 
 
-from code.algorithms.threefoldonestep import *
+from code.algorithms.Threefoldonestep import *
 from code.algorithms.threefold import *
 from code.algorithms.random import *
 from code.algorithms.depth_first import DepthFirst
 from code.algorithms.branch_bound import BranchBound
 from code.algorithms.fourfold import *
+from code.algorithms.forcing import Force
 
 
 # prompts the user for an algorithm
@@ -356,6 +357,22 @@ elif algorithm == 6:
         #print("\nTime: ", depth.time)
 
 
+
+
+if algorithm == 7:
+    """
+    Runs forcing algorithm
+
+    """
+    force = Force(user_input)
+    visualisation = force
+    try:
+        force.run()
+    except (KeyboardInterrupt, SystemExit):
+        print("\nKeyboard Interrupt.\n")
+
+    print("final placement: ", force.placing())
+    
 csvwriter = Csv(visualisation.best_protein)
 csvwriter.write_csv()
 csvwriter.visualization_csv()
