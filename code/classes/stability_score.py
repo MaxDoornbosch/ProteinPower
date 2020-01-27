@@ -2,6 +2,7 @@ class Stability:
     """
     Calculates stability score of a (finished) protein.
     """
+
     def __init__(self):
         pass
 
@@ -102,3 +103,16 @@ class Stability:
                 self.h_coordinates.append([path[2], path[3]])
             elif path[0] == "C" and [path[2], path[3]] not in self.c_coordinates:
                 self.c_coordinates.append([path[2], path[3]])
+
+
+    def stability_score_coordinates(self, stability_coordinates):
+        """
+        Creates coordinate lists for the visualisation of the stability score.
+        """
+
+        self.amino_stability_x = []
+        self.amino_stability_y = []
+
+        for i in stability_coordinates:
+            self.amino_stability_x.append([i[0][0], i[1][0]])
+            self.amino_stability_y.append([i[0][1], i[1][1]])

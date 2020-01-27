@@ -78,19 +78,6 @@ class DepthFirst:
                 self.stack.append(new_path)
 
 
-    def stability_score_coordinates(self, stability_coordinates):
-        """
-        Creates coordinate lists for the visualisation of the stability score.
-        """
-
-        self.amino_stability_x = []
-        self.amino_stability_y = []
-
-        for i in stability_coordinates:
-            self.amino_stability_x.append([i[0][0], i[1][0]])
-            self.amino_stability_y.append([i[0][1], i[1][1]])
-
-
     def run(self):
         """
         Runs depth-first algorithm until all possible protein folds have between
@@ -113,5 +100,6 @@ class DepthFirst:
             else:
                 self.add_new_options_to_stack(current_path)
 
-
-        self.stability_score_coordinates(self.stability_coordinates)
+        self.stability.stability_score_coordinates(self.stability_coordinates)
+        self.amino_stability_x = self.stability.amino_stability_x
+        self.amino_stability_y = self.stability.amino_stability_y
