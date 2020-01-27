@@ -3,7 +3,6 @@ main.py
 
 TODO:
 
-- Uiteindelijke stability berekenen
 """
 import timeit
 from code.classes.placement import Placement
@@ -59,14 +58,14 @@ if algorithm == 1:
     random = Random(user_input, runamount)
     random.run()
 
-    print("final placement: ", random.best_placement)
+    print("Final random placement: ", random.random_placement)
     # print("Best score: ", score)
     # stop = timeit.default_timer()
     # print('Time: ', stop - start)
-    csvwriter = Csv(random.best_placement)
-    csvwriter.write_csv()
-    csvwriter.visualization_csv()
-    visualize('data/visualization.csv', user_input, random.best_stability, random.best_amino_stability_x, random.best_amino_stability_y)
+    # csvwriter = Csv(best_placement)
+    # csvwriter.write_csv()
+    # csvwriter.visualization_csv()
+    # visualize('data/visualization.csv', user_input, best_stability, best_amino_stability_x, best_amino_stability_y)
 
 elif algorithm == 2:
     """
