@@ -18,10 +18,11 @@ class Protein:
         fold = 2
         x_coordinate = 0
         y_coordinate = 0
+        score = 0
 
         self.user_input = user_input
 
-        first_amino = [user_input[0], fold, x_coordinate, y_coordinate]
+        first_amino = [user_input[0], fold, x_coordinate, y_coordinate, score]
         self.final_placement = [first_amino]
 
         if user_input[0] == "H":
@@ -79,21 +80,3 @@ class Protein:
 
         last_amino = [user_input[-1], fold, x_coordinate, y_coordinate]
         self.final_placement.append(last_amino)
-
-
-    def random_try_again(self):
-
-        self.h_coordinates = []
-        self.c_coordinates = []
-
-        fold = 2
-        x_coordinate = 0
-        y_coordinate = 0
-
-        first_amino = [self.user_input[0], fold, x_coordinate, y_coordinate]
-        self.final_placement = [first_amino]
-
-        if self.user_input[0] == "H":
-            self.coordinates_of_H_aminos(first_amino)
-        elif self.user_input[0] == "C":
-            self.coordinates_of_C_aminos(first_amino)
