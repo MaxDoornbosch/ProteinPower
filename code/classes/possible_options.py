@@ -2,6 +2,10 @@
 possible_options.py
 
 Determines possible options based on current amino acid
+
+Florien Altena, Emily van Veen, Max Doornbosch
+UvA, minor programmeren
+2020
 """
 
 class PossibleOptions:

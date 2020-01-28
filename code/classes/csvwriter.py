@@ -1,11 +1,12 @@
 """
 csvwriter.py
 
+Writes two different csv-files, one for the visualization and one for the
+required output.
+
 Florien Altena, Emily van Veen, Max Doornbosch
 UvA, minor Programmeren
 2020
-
-Writes two different csv-files, one for the visualization and one for the required output.
 """
 
 import csv

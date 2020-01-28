@@ -1,8 +1,15 @@
-class Stability:
-    """
-    Calculates stability score of a (finished) protein.
-    """
+"""
+stability_score.py
 
+Calculates stability score of a (finished) protein.
+
+Florien Altena, Emily van Veen, Max Doornbosch
+UvA, minor programmeren
+2020
+"""
+
+
+class Stability:
     def __init__(self):
         pass
 
@@ -53,7 +60,7 @@ class Stability:
                 surrounding_coordinates.remove([connected_x, connected_y])
         except ValueError:
             pass
-            
+
         return surrounding_coordinates, x, y
 
 

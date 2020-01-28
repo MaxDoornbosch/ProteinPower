@@ -1,11 +1,14 @@
 """
 forcing.py
+
+Naturally, proteins have a tendency to fold into spiral-like shapes; hence, this
+heuristic forces the protein into a spiral shape in order to be able to
+check and see how the stability scores produced by this program compare with
+those produced by the other algorithms.
+
 Florien Altena, Emily van Veen, Max Doornbosch
 UvA, minor Programmeren
 2020
-
-Forcing heuristiek: This algorithm will place the protein in a before hand decided pattern.
-
 """
 from code.classes.stability_score import Stability
 
@@ -23,7 +26,8 @@ class Force:
 
     def placing(self):
         """
-        Places de amino's on the right place by checking if the side length is odd or even.
+        Places de amino's on the right place by checking if the side length is
+        odd or even.
         """
 
         while len(self.user_input) > len(self.best_protein):
@@ -46,9 +50,10 @@ class Force:
                                 pass
             self.side_lenght += 1
 
+
     def odd(self,i):
         """
-        Determines the coordinates and the fold of the amino
+        Determines the coordinates and the fold of the amino.
         """
 
         # checks if is second step
@@ -77,14 +82,16 @@ class Force:
             self.current_amino = self.user_input[len(self.best_protein)]
         except IndexError:
             pass
+
         self.best_protein.append([self.current_amino, self.current_fold, self.new_x, self.new_y])
 
         return self.best_protein, self.current_x, self.current_y
 
     def even (self,i):
         """
-        Determines the coordinates
+        Determines the coordinates.
         """
+
         # checks if is first step
         if i == 0:
             self.new_x = self.current_x
@@ -117,21 +124,22 @@ class Force:
 
     def fold(self):
         """
-        Determines the fold
+        Determines the fold.
         """
+
         for i in range(len(self.best_protein) - 1):
             j = i + 1
 
-            # checks next amino
-            if self.best_protein[i][2] + 1 == self.best_protein[j][2]   and self.best_protein[i][3] == self.best_protein[j][3]:
+            # checks next amino and determines fold accordingly
+            if self.best_protein[i][2] + 1 == self.best_protein[j][2] and self.best_protein[i][3] == self.best_protein[j][3]:
                 self.fold = 1
                 self.best_protein[i][1] = self.fold
 
-            elif self.best_protein[i][2] - 1 == self.best_protein[j][2]  and self.best_protein[i][3] == self.best_protein[j][3]:
+            elif self.best_protein[i][2] - 1 == self.best_protein[j][2] and self.best_protein[i][3] == self.best_protein[j][3]:
                 self.fold =  - 1
                 self.best_protein[i][1] = self.fold
 
-            elif self.best_protein[i][2] == self.best_protein[j][2]  and self.best_protein[i][3] + 1 == self.best_protein[j][3] :
+            elif self.best_protein[i][2] == self.best_protein[j][2] and self.best_protein[i][3] + 1 == self.best_protein[j][3] :
                 self.fold = 2
                 self.best_protein[i][1] = self.fold
 
@@ -144,6 +152,7 @@ class Force:
         Runs forcing algorithm until all possible protein folds have between
         evaluated; determines best fold.
         """
+
         self.placing()
         self.fold()
         self.best_score, stability_connections = self.stability.get_stability_score(self.best_protein)

@@ -40,6 +40,8 @@ class DepthFirst:
         self.possible = PossibleOptions(user_input)
         self.coordinate_update = CoordinateUpdate()
 
+        self.best_score = 1
+
 
     def get_next_path(self):
         """
@@ -78,8 +80,6 @@ class DepthFirst:
         Runs depth-first algorithm until all possible protein folds have between
         evaluated; determines best fold.
         """
-
-        self.best_score = 1
 
         while self.stack:
             current_path = self.get_next_path()

@@ -1,15 +1,15 @@
 """
 threefold.py
 
+The algorithm looks at all the possibilities for the upcoming 3 moves, all the possibilities are 3^3 = 27.
+Then the score per possibility will be calculated. This algorithm will take three steps and will look at
+all the best possibilities. It chooses a random best possibility and the three amino's will be placed those
+coordinates. This method will reapeat itself until the end of the protein has been reached. If there are less
+than three amino's remaining it will look at all the remaining possibilities.
+
 Florien Altena, Emily van Veen, Max Doornbosch
 UvA, minor Programmeren
 2020
-
-The algorithm looks at all the possibilities for the upcoming 3 moves, all the possibilities are 3^3 = 27. 
-Then the score per possibility will be calculated. This algorithm will take three steps and will look at 
-all the best possibilities. It chooses a random best possibility and the three amino's will be placed those 
-coordinates. This method will reapeat itself until the end of the protein has been reached. If there are less 
-than three amino's remaining it will look at all the remaining possibilities.
 """
 
 from code.classes.protein import Protein

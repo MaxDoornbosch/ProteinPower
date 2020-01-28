@@ -2,6 +2,10 @@
 coordinateupdate.py
 
 Returns coordinates based on folds
+
+Florien Altena, Emily van Veen, Max Doornbosch
+UvA, minor Programmeren
+2020
 """
 
 

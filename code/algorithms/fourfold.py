@@ -1,14 +1,16 @@
 """
 fourfold.py
+
+The algorithm looks at all the possibilities for the upcoming 4 moves, all the possibilities are 3^4 = 81.
+Then the score per possibility will be calculated. This algorithm will take four steps and will look at
+all the best possibilities. It chooses a random best possibility and the four amino's will be placed at those
+coordinates. This method will reapeat itself until the end of the protein has been reached. If there are less
+than four amino's remaining it will look at all the remaining possibilities.
+
 Florien Altena, Emily van Veen, Max Doornbosch
 UvA, minor Programmeren
 2020
-The algorithm looks at all the possibilities for the upcoming 4 moves, all the possibilities are 3^4 = 81. 
-Then the score per possibility will be calculated. This algorithm will take four steps and will look at 
-all the best possibilities. It chooses a random best possibility and the four amino's will be placed at those 
-coordinates. This method will reapeat itself until the end of the protein has been reached. If there are less 
-than four amino's remaining it will look at all the remaining possibilities.
- """
+"""
 
 from code.classes.protein import Protein
 from code.classes.coordinateupdate import CoordinateUpdate

@@ -3,6 +3,9 @@ protein.py
 
 Saves each amino acid of the protein sequence with corresponding coordinates.
 
+Florien Altena, Emily van Veen, Max Doornbosch
+UvA, minor programmeren
+2020
 """
 
 class Protein:

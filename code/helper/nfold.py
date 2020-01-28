@@ -1,7 +1,7 @@
 """
-depth_first.py
+nfold.py
 
-Helper function for the n fold algorithms (threefold, fourfold, threefoldonestep)
+Helper function for threefold and threefoldonestep algorithm.
 
 Florien Altena, Emily van Veen, Max Doornbosch
 UvA, minor programmeren
@@ -10,7 +10,7 @@ UvA, minor programmeren
 
 def creating_folds(current_fold):
     """
-    Creates all the possible fold combinations
+    Determines all the possible fold combinations
     """
 
     possible_folds = []
