@@ -15,7 +15,7 @@ UvA, minor Programmeren
 from code.classes.protein import Protein
 from code.classes.coordinateupdate import CoordinateUpdate
 from code.classes.stability_score import Stability
-from code.helper.nfold import creating_coordinates, calculate_best_options, surrounding, connects_to_itself
+from code.helper.nfold import *
 import random
 
 class FourFold:
@@ -26,71 +26,62 @@ class FourFold:
     def __init__(self, user_input, runamount):
         self.user_input = user_input
         self.runamount = runamount
+
         self.best_placement = []
+        self.best_score = 1
+
+        self.coordinate_update = CoordinateUpdate()
+        self.stability = Stability()
+
+
+    def set_best_options_fourfold(self, i):
+        """
+        Sets coordinates, folds, and determines best options for three fold
+        algorithm.
+        """
+
+        # updates x,y coordinates based on most recently determined fold
+        self.current_x, self.current_y = self.coordinate_update.update_coordinates(self.protein.final_placement)
+        self.current_fold = self.protein.final_placement[-1][1]
+        self.current_amino = self.user_input[len(self.protein.final_placement)]
+        self.best_option = four_fold(self.protein.final_placement, self.user_input_split, self.current_fold, self.current_x, self.current_y, self.current_amino, i)
+
 
     def run(self):
         """
         Runs three fold one step
         """
 
-        self.best_score = 1
-
         # runs the program x times depending on the runamount
-        for z in range(self.runamount):
+        for times in range(self.runamount):
             done = False
 
             # restarts the program if an error occurs
             while done == False:
-
-                # sets first fold and adds to final
-                protein = Protein(self.user_input)
+                self.protein = Protein(self.user_input)
 
                 # splits protein sequence into chunks of three amino acids
-                user_input_split = split_protein(self.user_input)
+                self.user_input_split = split_protein(self.user_input)
 
-                # updates x,y coordinates based on most recently determined fold
-                coordinate_update = CoordinateUpdate()
-                coordinate_update.update_coordinates(protein.final_placement)
-
-                for i in range(len(user_input_split)):
-
-                    current_x, current_y  = coordinate_update.update_coordinates(protein.final_placement)
-                    current_fold = protein.final_placement[-1][1]
-                    current_amino = self.user_input[len(protein.final_placement)]
-                    best_option = four_fold(protein.final_placement, user_input_split, current_fold, current_x, current_y, current_amino, i)
+                for i in range(len(self.user_input_split)):
+                    self.set_best_options_fourfold(i)
 
                     # checks if an error has occured
-                    if best_option == False:
+                    if self.best_option == False:
                         break
 
                     # adds the amino's the final placement
-                    for i in range(len(best_option) - 1):
-                        protein.add_amino_info(best_option[i])
-
-                    # checks if the end of protein hasn't been reached
-                    if current_fold != 0:
-                        current_x, current_y = coordinate_update.update_coordinates(protein.final_placement)
+                    for i in range(len(self.best_option) - 1):
+                        self.protein.add_amino_info(self.best_option[i])
 
                     # checks if last amino of sequence is reached
-                    if len(protein.final_placement) == (len(self.user_input) - 1):
-                        protein.add_last_amino_of_chunk_without_score(current_x, current_y, self.user_input)
+                    if len(self.protein.final_placement) == (len(self.user_input) - 1):
+                        self.protein.add_last_amino_of_chunk_without_score(self.current_x, self.current_y, self.user_input)
 
-                    # end of protein has been reached
-                    if protein.final_placement[-1][1] == 0:
-                        done = True
-                        self.stability = Stability()
+                    # determines stability after each protein is finished
+                    if len(self.protein.final_placement) == len(self.user_input):
+                        done, self.protein.final_placement, self.best_score, self.best_protein, self.best_stability, self.amino_stability_x, self.amino_stability_y, self.stability_score = set_stability(self.best_score, self.protein.final_placement)
 
-                        stability_score, stability_connections = self.stability.get_stability_score(protein.final_placement)
-                        self.stability_coordinates = stability_connections
-                        self.stability.stability_score_coordinates(stability_connections)
-                        self.amino_stability_x = self.stability.amino_stability_x
-                        self.amino_stability_y = self.stability.amino_stability_y
-
-                        # checks if current score is lower than the current lowest score
-                        if stability_score < self.best_score:
-                            self.best_score = stability_score
-                            self.best_protein = protein.final_placement
-                            self.best_stability = stability_score
 
 def four_fold(final_placement, user_input_split, current_fold, x_coordinate, y_coordinate, current_amino, i):
     """

@@ -164,23 +164,6 @@ def connects_to_itself(i, unit, pos, previous_fold, score):
             score -= 5
     return score
 
-
-def set_best_options(user_input_split, final_placement, user_input, i):
-    """
-    Sets coordinates, folds, and determines best options for three fold
-    algorithm.
-    """
-
-    coordinate_update = CoordinateUpdate()
-
-    # updates x,y coordinates based on most recently determined fold
-    current_x, current_y = coordinate_update.update_coordinates(final_placement)
-    current_fold = final_placement[-1][1]
-    current_amino = user_input[len(final_placement)]
-    best_option = three_fold(final_placement, user_input_split, current_fold, current_x, current_y, current_amino, i)
-
-    return current_x, current_y, current_fold, current_amino, best_option
-
 def set_stability(best_score, final_placement):
     """
     When each potential final protein is finished, stability scores are
@@ -188,6 +171,8 @@ def set_stability(best_score, final_placement):
     """
 
     stability = Stability()
+    best_protein = []
+    best_stability = 0
 
     done = True
     stability_score, stability_connections = stability.get_stability_score(final_placement)

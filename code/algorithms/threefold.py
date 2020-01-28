@@ -55,11 +55,9 @@ class ThreeFold:
         for times in range(self.runamount):
             done = False
 
-            # sets first fold and adds to final
-            self.protein = Protein(self.user_input)
-
             # restarts the program if an error occurs
             while done == False:
+                self.protein = Protein(self.user_input)
 
                 # splits protein sequence into chunks of three amino acids
                 self.user_input_split = split_protein(self.user_input)
