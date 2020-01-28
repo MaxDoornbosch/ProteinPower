@@ -23,7 +23,6 @@ def visualize(visualization_data, user_input, stability_score, amino_stability_x
             x.append(int(row[1]))
             y.append(int(row[2]))
 
-
     # forces equal integer ticks
     ax = plt.figure().gca()
     ax.xaxis.set_major_locator(MaxNLocator(integer=True))
@@ -40,6 +39,7 @@ def visualize(visualization_data, user_input, stability_score, amino_stability_x
     # assigns corresponding colors to individual amino acids
     for i in range(len(x)):
         plt.plot(x[i], y[i], 'o', color=colors[i])
+
 
     # draws a line between each point
     plt.grid(linestyle='-')

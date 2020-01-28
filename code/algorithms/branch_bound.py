@@ -118,7 +118,7 @@ class BranchBound:
             # calculates stability score for each protein
             if len(current_path) == len(self.user_input):
                 score, stability_connections = self.stability.get_stability_score(current_path)
-                
+
                 # updates current best protein option
                 if score < self.best_score:
                     self.best_score = score
