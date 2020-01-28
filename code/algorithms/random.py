@@ -34,7 +34,7 @@ class Random:
         Runs random algorithm as many times as the user indicated.
         """
 
-        score = 1
+        self.best_score = 1
 
         for i in range(self.runamount):
 
@@ -59,9 +59,9 @@ class Random:
                         self.amino_stability_y = self.stability.amino_stability_y
 
                         # checks if current score is lower than the current lowest score
-                        if stability_score < score:
-                            score = stability_score
-                            self.best_placement = self.protein.final_placement
+                        if stability_score < self.best_score:
+                            self.best_score = stability_score
+                            self.best_protein = self.protein.final_placement
                             self.best_stability = stability_score
                             self.best_amino_stability_x = self.placement.amino_stability_x
                             self.best_amino_stability_y = self.placement.amino_stability_y
@@ -80,6 +80,3 @@ class Random:
                         self.placement.random_amino
                         self.protein.add_amino_info(self.placement.random_amino)
                         self.protein.final_placement
-
-        self.best_protein = self.protein.final_placement
-        self.best_score = score

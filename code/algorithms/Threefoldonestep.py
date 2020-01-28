@@ -25,7 +25,7 @@ class ThreeFoldOneStep:
         Runs three fold one step
         """
         start = timeit.default_timer()
-        score = 1
+        self.best_score = 1
         for z in range(self.runamount):
 
             done = False
@@ -44,9 +44,6 @@ class ThreeFoldOneStep:
                 coordinate_update = CoordinateUpdate()
                 coordinate_update.update_coordinates(protein.final_placement)
 
-                amino_stability_x = []
-                amino_stability_y = []
-
                 for i in range(len(user_input_split)):
 
                     current_x, current_y  = coordinate_update.update_coordinates(protein.final_placement)
@@ -62,12 +59,6 @@ class ThreeFoldOneStep:
                     # checks if an error has occured
                     if best_option == False:
                         break
-
-                    # ensures no empty lists are appended
-                    if best_option[-2]:
-                        amino_stability_x.extend(best_option[-2])
-                    if best_option[-1]:
-                        amino_stability_y.extend(best_option[-1])
 
                     placement = [current_amino, best_option[0], current_x, current_y]
                     protein.add_amino_info(placement)
@@ -87,19 +78,16 @@ class ThreeFoldOneStep:
                         stability_score, stability_connections = self.stability.get_stability_score(protein.final_placement)
                         self.stability_coordinates = stability_connections
                         self.stability.stability_score_coordinates(self.stability_coordinates)
-                        self.amino_stability_x = self.stability.amino_stability_x
-                        self.amino_stability_y = self.stability.amino_stability_y
+                        amino_stability_x = self.stability.amino_stability_x
+                        amino_stability_y = self.stability.amino_stability_y
 
                         # checks if current score is lower than the current lowest score
-                        if stability_score < score:
-                            score = stability_score
-                            self.best_placement = protein.final_placement
+                        if stability_score < self.best_score:
+                            self.best_score = stability_score
+                            self.best_protein = protein.final_placement
                             self.best_stability = stability_score
-                            self.best_amino_stability_x = amino_stability_x
-                            self.best_amino_stability_y = amino_stability_y
-
-        self.best_score = score
-        self.best_protein = self.best_placement
+                            self.amino_stability_x = amino_stability_x
+                            self.amino_stability_y = amino_stability_y
 
 def three_fold(final_placement, user_input_split, current_fold, x_coordinate, y_coordinate, current_amino, i):
     """
@@ -226,53 +214,29 @@ def stability_score(possible_options, final_placement, chunk):
                     if (i[0] == "H" and unit[pos][0] == "H") or (i[0] == "C" and unit[pos][0] == "H") or (i[0] == "H" and unit[pos][0] == "C"):
                         if i[2] == unit[pos][2] - 1 and i[3] == unit[pos][3] and previous_fold != 1:
                             score -=1
-                            if pos == 1:
-                                temporary_amino_stability_x.append([i[2], unit[pos][2]])
-                                temporary_amino_stability_y.append([i[3], unit[pos][3]])
 
                         if i[2] == unit[pos][2] and i[3] == unit[pos][3] + 1 and previous_fold != -2:
                             score -=1
-                            if pos == 1:
-                                temporary_amino_stability_x.append([i[2], unit[pos][2]])
-                                temporary_amino_stability_y.append([i[3], unit[pos][3]])
 
                         if i[2] == unit[pos][2] and i[3] == unit[pos][3] - 1 and previous_fold != 2:
                             score -=1
-                            if pos == 1:
-                                temporary_amino_stability_x.append([i[2], unit[pos][2]])
-                                temporary_amino_stability_y.append([i[3], unit[pos][3]])
 
                         if i[2] == unit[pos][2] + 1 and i[3] == unit[pos][3] and previous_fold != -1:
                             score -=1
-                            if pos == 1:
-                                temporary_amino_stability_x.append([i[2], unit[pos][2]])
-                                temporary_amino_stability_y.append([i[3], unit[pos][3]])
 
                     # Looks for surrounding CC aminos per fold and calculates the score
                     if i[0] == "C" and unit[pos][0] == "C":
                         if i[2] == unit[pos][2] - 1 and i[3] == unit[pos][3] and previous_fold != 1:
                             score -= 5
-                            if pos == 1:
-                                temporary_amino_stability_x.append([i[2], unit[pos][2]])
-                                temporary_amino_stability_y.append([i[3], unit[pos][3]])
 
                         if i[2] == unit[pos][2] and i[3] == unit[pos][3] + 1 and previous_fold != -2:
                             score -= 5
-                            if pos == 1:
-                                temporary_amino_stability_x.append([i[2], unit[pos][2]])
-                                temporary_amino_stability_y.append([i[3], unit[pos][3]])
 
                         if i[2] == unit[pos][2] and i[3] == unit[pos][3] - 1 and previous_fold != 2:
                             score -= 5
-                            if pos == 1:
-                                temporary_amino_stability_x.append([i[2], unit[pos][2]])
-                                temporary_amino_stability_y.append([i[3], unit[pos][3]])
 
                         if i[2] == unit[pos][2] + 1 and i[3] == unit[pos][3] and previous_fold != -1:
                             score -= 5
-                            if pos == 1:
-                                temporary_amino_stability_x.append([i[2], unit[pos][2]])
-                                temporary_amino_stability_y.append([i[3], unit[pos][3]])
 
                     # checks whether the last amino connects to itself
                     if pos == 3 and fold == True:
@@ -309,10 +273,9 @@ def stability_score(possible_options, final_placement, chunk):
         # saves all possible options with corresponding stability scores
         if checker == True:
             try:
-                possible_options_score.append([unit[0], unit[1], unit[2], score, temporary_amino_stability_x, temporary_amino_stability_y])
-
+                possible_options_score.append([unit[0], unit[1], unit[2], score])
             except IndexError:
-                possible_options_score.append([unit[0], unit[1], score, temporary_amino_stability_x, temporary_amino_stability_y])
+                possible_options_score.append([unit[0], unit[1], score])
 
     return possible_options_score
 
@@ -326,12 +289,12 @@ def best_options(possible_options_score):
 
     # finds lower bound
     for value in possible_options_score:
-        if value[len(value) - 3] < lowest_stability_score:
-            lowest_stability_score = value[len(value) - 3]
+        if value[len(value) - 1] < lowest_stability_score:
+            lowest_stability_score = value[len(value) - 1]
 
     # saves options with lower bound
     for value in possible_options_score:
-        if value[len(value) - 3] == lowest_stability_score:
+        if value[len(value) - 1] == lowest_stability_score:
             best_options.append(value)
 
     best_option = choose_best_fold(best_options)
@@ -385,6 +348,4 @@ def fold_with_stability(best_options, best_fold):
 
     best_option = []
     best_option.append(best_option_fold[0][1])
-    best_option.append(best_option_fold[-2])
-    best_option.append(best_option_fold[-1])
     return best_option
