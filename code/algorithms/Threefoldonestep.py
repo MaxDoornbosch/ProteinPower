@@ -1,6 +1,9 @@
 """
 threefoldonestep.py
 
+Florien Altena, Emily van Veen, Max Doornbosch
+UvA, minor Programmeren
+2020
 """
 
 from code.classes.protein import Protein
