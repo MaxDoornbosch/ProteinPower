@@ -15,7 +15,7 @@ than four amino's remaining it will look at all the remaining possibilities.
 from code.classes.protein import Protein
 from code.classes.coordinateupdate import CoordinateUpdate
 from code.classes.stability_score import Stability
-from code.helper.nfold import creating_coordinates, calculate_best_options
+from code.helper.nfold import creating_coordinates, calculate_best_options, surrounding, connects_to_itself
 import random
 
 class FourFold:
@@ -200,64 +200,14 @@ def stability_score(possible_options, final_placement, chunk):
                 if pos != 0 and checker == True:
                     previous_fold = unit[pos - 1][1]
 
-                    # looks for surrounding HH and CH aminos per fold and calculates the score
-                    if (i[0] == "H" and unit[pos][0] == "H") or (i[0] == "C" and unit[pos][0] == "H") or (i[0] == "H" and unit[pos][0] == "C"):
-                        if i[2] == unit[pos][2] - 1 and i[3] == unit[pos][3] and previous_fold != 1:
-                            score -=1
-
-                        if i[2] == unit[pos][2] and i[3] == unit[pos][3] + 1 and previous_fold != -2:
-                            score -=1
-
-                        if i[2] == unit[pos][2] and i[3] == unit[pos][3] - 1 and previous_fold != 2:
-                            score -=1
-
-                        if i[2] == unit[pos][2] + 1 and i[3] == unit[pos][3] and previous_fold != -1:
-                            score -=1
-
-                    # looks for surrounding CC aminos per fold and calculates the score
-                    if i[0] == "C" and unit[pos][0] == "C":
-                        if i[2] == unit[pos][2] - 1 and i[3] == unit[pos][3] and previous_fold != 1:
-                            score -= 5
-
-                        if i[2] == unit[pos][2] and i[3] == unit[pos][3] + 1 and previous_fold != -2:
-                            score -= 5
-
-                        if i[2] == unit[pos][2] and i[3] == unit[pos][3] - 1 and previous_fold != 2:
-                            score -= 5
-
-                        if i[2] == unit[pos][2] + 1 and i[3] == unit[pos][3] and previous_fold != -1:
-                            score -= 5
+                    # goes to a helpers function that looks for surrounding amino's
+                    score = surrounding(i, unit, pos, previous_fold, score)
 
                     # checks whether the last amino connects to itself
                     if pos >= 3:
 
-                        # looks for surrounding HH and CH aminos per fold and calculates the score
-                        if (unit[pos][0] == "H" and unit[0][0] == "H") or (unit[pos][0] == "C" and unit[0][0] == "H") or (unit[pos][0] == "H" and unit[0][0] == "C"):
-                            if unit[pos][2] + 1 == unit[0][2] and unit[pos][3] == unit[0][3]:
-                                score -= 1
-
-                            if unit[pos][2] - 1 == unit[0][2] and unit[pos][3] == unit[0][3]:
-                                score -= 1
-
-                            if unit[pos][2] == unit[0][2] and unit[pos][3] + 1 == unit[0][3]:
-                                score -= 1
-
-                            if unit[pos][2] == unit[0][2] and unit[pos][3] - 1 == unit[0][3]:
-                                score -= 1
-
-                        # looks for surrounding CC aminos per fold and calculates the score
-                        if unit[pos][0] == "C" and unit[0][0] == "C":
-                            if unit[pos][2] + 1 == unit[0][2] and unit[pos][3] == unit[0][3]:
-                                score -= 5
-
-                            if unit[pos][2] - 1 == unit[0][2] and unit[pos][3] == unit[0][3]:
-                                score -= 5
-
-                            if unit[pos][2] == unit[0][2] and unit[pos][3] + 1 == unit[0][3]:
-                                score -= 5
-
-                            if unit[pos][2] == unit[0][2] and unit[pos][3] - 1 == unit[0][3]:
-                                score -= 5
+                        # goes te a helpers functions
+                        score = connects_to_itself(i, unit, pos, previous_fold, score)
 
                     # checks whether the last amino connects to itself
                     if pos == 4:

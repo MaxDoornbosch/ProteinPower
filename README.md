@@ -1,6 +1,6 @@
 # ProteinPower
 
-ProteinPower is een case waarbij een proteïne op een zo optimaal mogelijke manier gevouwen moet worden. Een proteïne bestaat uit drie soorten amino's namelijk de H-amino (hydrofoob), C-amino (cysteine) en P-amino (polair). Amino's die naast elkaar liggen die niet aan elkaar verbonden zijn krijgen een waarde. Als twee C-amino's naast elkaar liggen gaat de waarde omlaag met -5. Als een H-amino naast een C of H-amino ligt dan gaat de waarde omlaag met 1. Amino's die naast een P-amino liggen beïnvloeden niet de waarde. Het uiteindelijke doel van de case is om een zo laag mogelijke waarde per proteïne te krijgen.
+ProteinPower is een case waarbij een proteïne op een zo optimaal mogelijke manier gevouwen moet worden. Een proteïne bestaat uit drie soorten amino's namelijk de H-amino (hydrofoob), C-amino (cysteine) en P-amino (polair). Amino's die naast elkaar liggen die niet aan elkaar verbonden zijn krijgen een waarde. Als twee C-amino's naast elkaar liggen gaat de waarde omlaag met 5. Als een H-amino naast een C of H-amino ligt dan gaat de waarde omlaag met 1. Amino's die naast een P-amino liggen beïnvloeden niet de waarde. Het uiteindelijke doel van de case is om een zo laag mogelijke waarde per proteïne te krijgen.
 
 ## Installatie
 
@@ -16,7 +16,7 @@ Alle code van dit project is terug te vinden in de folder Code. In de map Data s
 
 ## Testen
 
-Om het programma te runnen is de volgende command nodig
+Om het programma te runnen is de volgende command nodig.
 
 ```bash
 python3 main.py
