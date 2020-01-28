@@ -4,6 +4,12 @@ threefoldonestep.py
 Florien Altena, Emily van Veen, Max Doornbosch
 UvA, minor Programmeren
 2020
+
+The algorithm looks at all the possibilities for the upcoming 3 moves, all the possibilities are 3^3 = 27. 
+Then the score per possibility will be calculated. This algorithm will only take one step and will look at 
+all the first folds per best possibility. It chooses the most frequent fold and the amino will be placed
+in that direction. This method will reapeat itself until the end of the protein has been reached.
+If there are less than three amino's remaining it will look at all the remaining possibilities.
 """
 
 from code.classes.protein import Protein
@@ -11,7 +17,6 @@ from code.classes.coordinateupdate import CoordinateUpdate
 from code.classes.stability_score import Stability
 
 import random
-import timeit
 
 
 class ThreeFoldOneStep:
@@ -27,7 +32,7 @@ class ThreeFoldOneStep:
         """
         Runs three fold one step
         """
-        start = timeit.default_timer()
+
         self.best_score = 1
 
         # runs the program x times depending on the runamount
