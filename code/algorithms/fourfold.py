@@ -22,7 +22,7 @@ class FourFold:
     """
     Looks 4 steps forward and then takes 4 steps
     """
-    
+
     def __init__(self, user_input, runamount):
         self.user_input = user_input
         self.runamount = runamount
@@ -82,17 +82,15 @@ class FourFold:
 
                         stability_score, stability_connections = self.stability.get_stability_score(protein.final_placement)
                         self.stability_coordinates = stability_connections
-                        self.stability.stability_score_coordinates(self.stability_coordinates)
-                        amino_stability_x = self.stability.amino_stability_x
-                        amino_stability_y = self.stability.amino_stability_y
+                        self.stability.stability_score_coordinates(stability_connections)
+                        self.amino_stability_x = self.stability.amino_stability_x
+                        self.amino_stability_y = self.stability.amino_stability_y
 
                         # checks if current score is lower than the current lowest score
                         if stability_score < self.best_score:
                             self.best_score = stability_score
                             self.best_protein = protein.final_placement
                             self.best_stability = stability_score
-                            self.amino_stability_x = amino_stability_x
-                            self.amino_stability_y = amino_stability_y
 
 def four_fold(final_placement, user_input_split, current_fold, x_coordinate, y_coordinate, current_amino, i):
     """
@@ -180,8 +178,6 @@ def stability_score(possible_options, final_placement, chunk):
     for unit in possible_options:
         checker = True
         score = 0
-        temporary_amino_stability_x = []
-        temporary_amino_stability_y = []
 
         # loops over all the places aminos
         for i in final_placement:
@@ -196,61 +192,84 @@ def stability_score(possible_options, final_placement, chunk):
                 if pos > 0 and ((unit[0][2] == unit[pos][2] and unit[0][3] == unit[pos][3])) :
                     checker = False
 
-                # checks if the coordinates overlap
                 if pos != 0 and checker == True:
-                    previous_fold = unit[pos - 1][1]
+                    score, previous_fold = prevent_overlap(pos, checker, unit, i, score)
 
-                    # goes to a helpers function that looks for surrounding amino's
-                    score = surrounding(i, unit, pos, previous_fold, score)
-
-                    # checks whether the last amino connects to itself
-                    if pos >= 3:
-
-                        # goes te a helpers functions
-                        score = connects_to_itself(i, unit, pos, previous_fold, score)
-
-                    # checks whether the last amino connects to itself
-                    if pos == 4:
-
-                        # looks for surrounding HH and CH aminos per fold and calculates the score
-                        if (unit[pos][0] == "H" and unit[1][0] == "H") or (unit[pos][0] == "C" and unit[1][0] == "H") or (unit[pos][0] == "H" and unit[1][0] == "C"):
-                            if unit[pos][2] + 1 == unit[1][2] and unit[pos][3] == unit[1][3]:
-                                score -= 1
-
-                            if unit[pos][2] - 1 == unit[1][2] and unit[pos][3] == unit[1][3]:
-                                score -= 1
-
-                            if unit[pos][2] == unit[1][2] and unit[pos][3] + 1 == unit[1][3]:
-                                score -= 1
-
-                            if unit[pos][2] == unit[1][2] and unit[pos][3] - 1 == unit[1][3]:
-                                score -= 1
-
-                        # looks for surrounding CC aminos per fold and calculates the score
-                        if unit[pos][0] == "C" and unit[1][0] == "C":
-                            if unit[pos][2] + 1 == unit[1][2] and unit[pos][3] == unit[1][3]:
-                                score -= 5
-
-                            if unit[pos][2] - 1 == unit[1][2] and unit[pos][3] == unit[1][3]:
-                                score -= 5
-
-                            if unit[pos][2] == unit[1][2] and unit[pos][3] + 1 == unit[1][3]:
-                                score -= 5
-
-                            if unit[pos][2] == unit[1][2] and unit[pos][3] - 1 == unit[1][3]:
-                                score -= 5
-
-        # saves all possible options with corresponding stability scores
         if checker == True:
-            try:
-                 possible_options_score.append([unit[0], unit[1], unit[2], unit[3], score])
-            except IndexError:
-                try:
-                    possible_options_score.append([unit[0], unit[1], unit[2], score])
-                except IndexError:
-                    possible_options_score.append([unit[0], unit[1], score])
+            possible_options_score = save_possible_options(possible_options_score, unit, score)
 
     return possible_options_score
+
+
+def prevent_overlap(pos, checker, unit, i, score):
+    """
+    Ensures the coordinates do not overlap.
+    """
+
+    previous_fold = unit[pos - 1][1]
+
+    # check surrounding aminos
+    score = surrounding(i, unit, pos, previous_fold, score)
+
+    # ensures the last aminos do not connect to themselves
+    if pos >= 3:
+        score = connects_to_itself(i, unit, pos, previous_fold, score)
+
+    elif pos == 4:
+        score = connects_to_itself_fourfold(i, unit, pos, previous_fold, score)
+
+    return score, previous_fold
+
+def save_possible_options(possible_options_score, unit, score):
+    """
+    Saves all possible options with corresponding stability scores.
+    """
+
+    try:
+         possible_options_score.append([unit[0], unit[1], unit[2], unit[3], score])
+    except IndexError:
+        try:
+            possible_options_score.append([unit[0], unit[1], unit[2], score])
+        except IndexError:
+            possible_options_score.append([unit[0], unit[1], score])
+
+    return possible_options_score
+
+
+def connects_to_itself_fourfold(i, unit, pos, previous_fold, score):
+    """
+    Looks for surrounding HH and CH aminos per fold and calculates the score.
+    """
+
+    if (unit[pos][0] == "H" and unit[1][0] == "H") or (unit[pos][0] == "C" and unit[1][0] == "H") or (unit[pos][0] == "H" and unit[1][0] == "C"):
+        if unit[pos][2] + 1 == unit[1][2] and unit[pos][3] == unit[1][3]:
+            score -= 1
+
+        if unit[pos][2] - 1 == unit[1][2] and unit[pos][3] == unit[1][3]:
+            score -= 1
+
+        if unit[pos][2] == unit[1][2] and unit[pos][3] + 1 == unit[1][3]:
+            score -= 1
+
+        if unit[pos][2] == unit[1][2] and unit[pos][3] - 1 == unit[1][3]:
+            score -= 1
+
+    # looks for surrounding CC aminos per fold and calculates the score
+    if unit[pos][0] == "C" and unit[1][0] == "C":
+        if unit[pos][2] + 1 == unit[1][2] and unit[pos][3] == unit[1][3]:
+            score -= 5
+
+        if unit[pos][2] - 1 == unit[1][2] and unit[pos][3] == unit[1][3]:
+            score -= 5
+
+        if unit[pos][2] == unit[1][2] and unit[pos][3] + 1 == unit[1][3]:
+            score -= 5
+
+        if unit[pos][2] == unit[1][2] and unit[pos][3] - 1 == unit[1][3]:
+            score -= 5
+
+    return score
+
 
 def best_options(possible_options_score):
     """
