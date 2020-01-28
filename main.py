@@ -191,6 +191,8 @@ def main():
     # visualizes results of every algorithm
     csvwriter = Csv(visualisation.best_protein)
     csvwriter.write_csv()
+    print(visualisation.amino_stability_x)
+    print(visualisation.amino_stability_y)
     visualize('data/visualization.csv', user_input, visualisation.best_score, visualisation.amino_stability_x, visualisation.amino_stability_y)
 
 

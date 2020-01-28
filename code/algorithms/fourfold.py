@@ -67,10 +67,10 @@ class FourFold:
                         break
 
                     # ensures no empty lists are appended
-                    if best_option[-2]:
-                        amino_stability_x.extend(best_option[-2])
-                    if best_option[-1]:
-                        amino_stability_y.extend(best_option[-1])
+                    # if best_option[-2]:
+                    #     amino_stability_x.extend(best_option[-2])
+                    # if best_option[-1]:
+                    #     amino_stability_y.extend(best_option[-1])
 
                     for i in range(len(best_option) - 3):
                         protein.add_amino_info(best_option[i])
@@ -90,20 +90,19 @@ class FourFold:
                         stability_score, stability_connections = self.stability.get_stability_score(protein.final_placement)
                         self.stability_coordinates = stability_connections
                         self.stability.stability_score_coordinates(self.stability_coordinates)
-                        self.amino_stability_x = self.stability.amino_stability_x
-                        self.amino_stability_y = self.stability.amino_stability_y
+                        amino_stability_x = self.stability.amino_stability_x
+                        amino_stability_y = self.stability.amino_stability_y
 
                         # checks if current score is lower than the current lowest score
                         if stability_score < score:
                             score = stability_score
                             self.best_placement = protein.final_placement
                             self.best_stability = stability_score
-                            self.best_amino_stability_x = amino_stability_x
-                            self.best_amino_stability_y = amino_stability_y
+                            self.amino_stability_x = amino_stability_x
+                            self.amino_stability_y = amino_stability_y
 
         self.best_score = score
         self.best_protein = self.best_placement
-
 
 
 def four_fold(final_placement, user_input_split, current_fold, x_coordinate, y_coordinate, current_amino, i):
