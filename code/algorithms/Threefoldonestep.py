@@ -15,6 +15,7 @@ If there are less than three amino's remaining it will look at all the remaining
 from code.classes.protein import Protein
 from code.classes.coordinateupdate import CoordinateUpdate
 from code.classes.stability_score import Stability
+from code.helper.nfold import creating_coordinates, creating_folds
 
 import random
 
@@ -125,32 +126,9 @@ def define_folds(current_fold, x_coordinate, y_coordinate, current_amino, possib
     """
     Defines all possible folds for every move within
     """
-    possible_folds = []
-    final_possible_folds = []
-    corresponding_folds = {
-       1 : [1, -2, 2],
-       -1 : [-1, -2, 2],
-       2 : [-1, 1, 2],
-       -2 : [-1, 1, -2]
-    }
 
-    # determines corresponding folds based on current fold
-    if current_fold in corresponding_folds.keys():
-        possible_folds.append(corresponding_folds.get(current_fold))
-
-    for i in (possible_folds[0]):
-        current_fold = i
-        if i in corresponding_folds.keys():
-            possible_folds.append(corresponding_folds.get(current_fold))
-
-        # saves every possible fold for each amino
-        for j in (possible_folds[1]):
-            current_fold = j
-            if j in corresponding_folds.keys():
-                final_possible_folds.append([i, j, corresponding_folds.get(current_fold)[0]])
-                final_possible_folds.append([i, j, corresponding_folds.get(current_fold)[1]])
-                final_possible_folds.append([i, j, corresponding_folds.get(current_fold)[2]])
-        possible_folds.pop(1)
+    # goes to a helper function
+    possible_folds, final_possible_folds = creating_folds(current_fold)
 
     possible_options = set_coordinates(final_possible_folds, x_coordinate, y_coordinate, current_amino, possible_options, chunk)
     return possible_folds, final_possible_folds, possible_options
@@ -160,29 +138,8 @@ def set_coordinates(final_possible_folds, x_coordinate, y_coordinate, current_am
     Takes possible folds and attaches corresponding coordinates
     """
 
-    # saves all possible folds with corresponding amino and coordinates
-    for i in final_possible_folds:
-        current_x = x_coordinate
-        current_y = y_coordinate
-        storage_list = []
-        storage_list.append([current_amino, i[0], x_coordinate, y_coordinate])
-
-        # finds the folds
-        for j in range(len(chunk)):
-            if abs(i[j]) == 1:
-                current_x += i[j]
-            elif abs(i[j]) == 2:
-                current_y += i[j] // 2
-
-            # adds a zero fold to the last coordinates
-            if j >= len(chunk) - 1:
-                storage_list.append([chunk[j], 0, current_x, current_y])
-            elif j < len(chunk) - 1:
-                storage_list.append([chunk[j], i[j + 1], current_x, current_y])
-
-            # prevents duplicates and saves aminos with corresponding information
-            if storage_list not in possible_options:
-                possible_options.append(storage_list)
+    # goes to a helper function
+    possible_options = creating_coordinates(final_possible_folds, x_coordinate, y_coordinate, current_amino, possible_options, chunk)
 
     return possible_options
 

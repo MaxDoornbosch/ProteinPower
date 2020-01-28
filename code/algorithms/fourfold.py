@@ -15,7 +15,7 @@ than four amino's remaining it will look at all the remaining possibilities.
 from code.classes.protein import Protein
 from code.classes.coordinateupdate import CoordinateUpdate
 from code.classes.stability_score import Stability
-
+from code.helper.nfold import creating_coordinates, calculate_best_options
 import random
 
 class FourFold:
@@ -164,30 +164,8 @@ def set_coordinates(final_possible_folds, x_coordinate, y_coordinate, current_am
     Takes possible folds and attaches corresponding coordinates
     """
 
-    # saves all possible folds with corresponding amino and coordinates
-    for i in final_possible_folds:
-        current_x = x_coordinate
-        current_y = y_coordinate
-        storage_list = []
-        storage_list.append([current_amino, i[0], x_coordinate, y_coordinate])
-
-        # finds the folds
-        for j in range(len(chunk)):
-            if abs(i[j]) == 1:
-                current_x += i[j]
-            elif abs(i[j]) == 2:
-                current_y += i[j] // 2
-
-            # adds a zero fold to the last coordinates
-            if j >= len(chunk) - 1:
-                storage_list.append([chunk[j], 0, current_x, current_y])
-            elif j < len(chunk) - 1:
-                storage_list.append([chunk[j], i[j + 1], current_x, current_y])
-
-            # prevents duplicates and saves aminos with corresponding information
-            if storage_list not in possible_options:
-                possible_options.append(storage_list)
-
+    # goes to a helper function
+    possible_options = creating_coordinates(final_possible_folds, x_coordinate, y_coordinate, current_amino, possible_options, chunk)
     return possible_options
 
 
@@ -329,18 +307,8 @@ def best_options(possible_options_score):
     Prunes possible options with lowest values
     """
 
-    lowest_stability_score = 0
-    best_options = []
-
-    # finds lower bound
-    for value in possible_options_score:
-        if value[len(value) - 1] < lowest_stability_score:
-            lowest_stability_score = value[len(value) - 1]
-
-    # saves options with lower bound
-    for value in possible_options_score:
-        if value[len(value) - 1] == lowest_stability_score:
-            best_options.append(value)
+    # goes to a helper function
+    best_options = calculate_best_options(possible_options_score)
 
     best_option = choose_best_option(best_options)
     return best_option
