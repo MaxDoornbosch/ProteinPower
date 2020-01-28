@@ -1,6 +1,11 @@
 """
 depth_first.py
 
+A depth first search algorithm for choosing the best folds that produce the
+lowest stability score for a given protein. This algorithm defines all the
+possible folds and calculates every possible stability score in order to
+return the best possible solution.
+
 Florien Altena, Emily van Veen, Max Doornbosch
 UvA, minor Programmeren
 2020
@@ -24,7 +29,6 @@ class DepthFirst:
     """
 
     def __init__(self, user_input):
-
         self.user_input = user_input
 
         # format: [amino, fold, x, y]
@@ -32,9 +36,9 @@ class DepthFirst:
         self.stack = []
         self.stack.append(first_amino)
 
-        self.best_score = 1
-
         self.stability = Stability()
+        self.possible = PossibleOptions(user_input)
+        self.coordinate_update = CoordinateUpdate()
 
 
     def get_next_path(self):
@@ -51,22 +55,21 @@ class DepthFirst:
         Determines possible options for every amino acid and appends them to stack.
         """
 
-        possible = PossibleOptions(self.user_input)
-        coordinate_update = CoordinateUpdate()
+        # updates coordinates for next amino based on current fold
+        current_x, current_y = self.coordinate_update.update_coordinates(current_path)
 
-        # update coordinates for next amino based on current fold
-        current_x, current_y = coordinate_update.update_coordinates(current_path)
+        # finds possible options
+        self.possible.define_folds(current_path)
+        self.possible.define_coordinates(current_x, current_y)
+        final_possible_options = self.possible.check_empty()
 
-        possible.define_folds(current_path)
-        possible.define_coordinates(current_x, current_y)
-        final_possible_options = possible.check_empty()
-
+        # adds new option to stack if not appended already
         for option in final_possible_options:
-            new_path = copy.deepcopy(current_path)
-            new_path.append(option)
+            new_option = copy.deepcopy(current_path)
+            new_option.append(option)
 
-            if new_path not in self.stack:
-                self.stack.append(new_path)
+            if new_option not in self.stack:
+                self.stack.append(new_option)
 
 
     def prepare_visualisation(self):
@@ -78,26 +81,39 @@ class DepthFirst:
         self.amino_stability_x = self.stability.amino_stability_x
         self.amino_stability_y = self.stability.amino_stability_y
 
+
+    def finish_protein(self, current_path):
+        """
+        Calculates final stability score for each protein, checks for new best
+        scores and prepares data for the visualization of the final best protein
+        folds.
+        """
+
+        score, stability_connections = self.stability.get_stability_score(current_path)
+
+        # updates current best protein option
+        if score < self.best_score:
+            self.best_score = score
+            self.best_protein = current_path
+            self.stability_coordinates = stability_connections
+            self.prepare_visualisation()
+
+
     def run(self):
         """
         Runs depth-first algorithm until all possible protein folds have between
         evaluated; determines best fold.
         """
 
+        self.best_score = 1
+
         while self.stack:
             current_path = self.get_next_path()
 
             # calculates stability score for each protein
             if len(current_path) == len(self.user_input):
-                score, stability_connections = self.stability.get_stability_score(current_path)
-
-                if score < self.best_score:
-                    self.stability_coordinates = stability_connections
-                    self.best_score = score
-                    self.best_protein = current_path
+                self.finish_protein(current_path)
 
             # creates new options if protein is not yet finished
             else:
                 self.add_new_options_to_stack(current_path)
-
-        self.prepare_visualisation()

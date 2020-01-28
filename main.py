@@ -172,7 +172,6 @@ def main():
         else:
             print("\nLowest score: ", branch_bound.best_score)
             print("\nBest protein: ", branch_bound.best_protein)
-            #print("\nTime: ", depth.time)
 
     elif algorithm == 7:
         """
