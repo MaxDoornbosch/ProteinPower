@@ -10,6 +10,7 @@ Florien Altena, Emily van Veen, Max Doornbosch
 UvA, minor Programmeren
 2020
 """
+
 from code.classes.stability_score import Stability
 
 class Force:
@@ -75,6 +76,7 @@ class Force:
             if len(self.user_input)- 1 == len(self.best_protein):
                 self.current_fold = 0
                 self.end = True
+
         self.current_x = self.new_x
         self.current_y = self.new_y
 
@@ -87,7 +89,7 @@ class Force:
 
         return self.best_protein, self.current_x, self.current_y
 
-    def even (self,i):
+    def even(self,i):
         """
         Determines the coordinates.
         """
@@ -111,12 +113,15 @@ class Force:
             if len(self.user_input) - 1 == len(self.best_protein):
                 self.current_fold = 0
                 self.end = True
+
         self.current_x = self.new_x
         self.current_y = self.new_y
+
         try:
             self.current_amino = self.user_input[len(self.best_protein)]
         except IndexError:
             pass
+
         self.best_protein.append([self.current_amino, self.current_fold, self.new_x, self.new_y])
 
         return self.best_protein, self.current_x, self.current_y
@@ -155,8 +160,8 @@ class Force:
 
         self.placing()
         self.fold()
+        
         self.best_score, stability_connections = self.stability.get_stability_score(self.best_protein)
-        self.stability_coordinates = stability_connections
-        self.stability.stability_score_coordinates(self.stability_coordinates)
+        self.stability.stability_score_coordinates(stability_connections)
         self.amino_stability_x = self.stability.amino_stability_x
         self.amino_stability_y = self.stability.amino_stability_y
