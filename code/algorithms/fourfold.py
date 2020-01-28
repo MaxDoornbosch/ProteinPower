@@ -30,9 +30,6 @@ class FourFold:
         self.best_placement = []
         self.best_score = 1
 
-        self.coordinate_update = CoordinateUpdate()
-        self.stability = Stability()
-
 
     def set_best_options_fourfold(self, i):
         """
@@ -55,10 +52,12 @@ class FourFold:
         # runs the program x times depending on the runamount
         for times in range(self.runamount):
             done = False
+            self.protein = Protein(self.user_input)
+            self.coordinate_update = CoordinateUpdate()
+            self.stability = Stability()
 
             # restarts the program if an error occurs
             while done == False:
-                self.protein = Protein(self.user_input)
 
                 # splits protein sequence into chunks of three amino acids
                 self.user_input_split = split_protein(self.user_input)
