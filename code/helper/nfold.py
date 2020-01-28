@@ -8,6 +8,10 @@ UvA, minor programmeren
 2020
 """
 
+from code.classes.stability_score import Stability
+from code.classes.coordinateupdate import CoordinateUpdate
+
+
 def creating_folds(current_fold):
     """
     Determines all the possible fold combinations
@@ -44,8 +48,9 @@ def creating_folds(current_fold):
 
 def creating_coordinates(final_possible_folds, x_coordinate, y_coordinate, current_amino, possible_options, chunk):
     """
-    Creates all coordinates
+    Creates all coordinates.
     """
+
     # saves all possible folds with corresponding amino and coordinates
     for i in final_possible_folds:
         current_x = x_coordinate
@@ -73,8 +78,9 @@ def creating_coordinates(final_possible_folds, x_coordinate, y_coordinate, curre
 
 def calculate_best_options(possible_options_score):
     """
-    Finds all the best options
+    Finds all the best options.
     """
+
     lowest_stability_score = 0
     best_options = []
 
@@ -89,10 +95,12 @@ def calculate_best_options(possible_options_score):
             best_options.append(value)
     return best_options
 
+
 def surrounding(i, unit, pos, previous_fold, score):
     """
-    Looks for surrounding amino's
+    Looks for surrounding aminos.
     """
+
     # looks for surrounding HH and CH aminos per fold and calculates the score
     if (i[0] == "H" and unit[pos][0] == "H") or (i[0] == "C" and unit[pos][0] == "H") or (i[0] == "H" and unit[pos][0] == "C"):
         if i[2] == unit[pos][2] - 1 and i[3] == unit[pos][3] and previous_fold != 1:
@@ -124,8 +132,9 @@ def surrounding(i, unit, pos, previous_fold, score):
 
 def connects_to_itself(i, unit, pos, previous_fold, score):
     """
-    Checks if the first amino connects with itself
+    Checks if the first amino connects with itself.
     """
+
     # looks for surrounding HH and CH aminos per fold and calculates the score
     if (unit[pos][0] == "H" and unit[0][0] == "H") or (unit[pos][0] == "C" and unit[0][0] == "H") or (unit[pos][0] == "H" and unit[0][0] == "C"):
         if unit[pos][2] + 1 == unit[0][2] and unit[pos][3] == unit[0][3]:
@@ -140,7 +149,7 @@ def connects_to_itself(i, unit, pos, previous_fold, score):
         if unit[pos][2] == unit[0][2] and unit[pos][3] - 1 == unit[0][3]:
             score -= 1
 
-    # looks for surrounding CC aminos per fold and calculates the score
+    # looks for surrounding C aminos per fold and calculates the score
     if unit[pos][0] == "C" and unit[0][0] == "C":
         if unit[pos][2] + 1 == unit[0][2] and unit[pos][3] == unit[0][3]:
             score -= 5
@@ -154,3 +163,42 @@ def connects_to_itself(i, unit, pos, previous_fold, score):
         if unit[pos][2] == unit[0][2] and unit[pos][3] - 1 == unit[0][3]:
             score -= 5
     return score
+
+
+def set_best_options(user_input_split, final_placement, user_input, i):
+    """
+    Sets coordinates, folds, and determines best options for three fold
+    algorithm.
+    """
+
+    coordinate_update = CoordinateUpdate()
+
+    # updates x,y coordinates based on most recently determined fold
+    current_x, current_y = coordinate_update.update_coordinates(final_placement)
+    current_fold = final_placement[-1][1]
+    current_amino = user_input[len(final_placement)]
+    best_option = three_fold(final_placement, user_input_split, current_fold, current_x, current_y, current_amino, i)
+
+    return current_x, current_y, current_fold, current_amino, best_option
+
+def set_stability(best_score, final_placement):
+    """
+    When each potential final protein is finished, stability scores are
+    determined and the best score is saved.
+    """
+
+    stability = Stability()
+
+    done = True
+    stability_score, stability_connections = stability.get_stability_score(final_placement)
+    stability.stability_score_coordinates(stability_connections)
+    amino_stability_x = stability.amino_stability_x
+    amino_stability_y = stability.amino_stability_y
+
+    # checks if current score is lower than the current lowest score
+    if stability_score < best_score:
+        best_score = stability_score
+        best_protein = final_placement
+        best_stability = stability_score
+
+    return done, final_placement, best_score, best_protein, best_stability, amino_stability_x, amino_stability_y, stability_score

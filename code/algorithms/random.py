@@ -77,7 +77,7 @@ class Random:
                 if final_possible_options == []:
                     self.initialize()
                 else:
-                    
+
                     # randomly chooses an option and continues
                     self.random_amino = random.choice(final_possible_options)
                     self.protein.add_amino_info(self.random_amino)

@@ -17,7 +17,7 @@ class CoordinateUpdate:
         """
         Updates coordinates based on folds
         """
-
+        
         self.final_placement = final_placement
         self.current_x = self.final_placement[-1][2]
         self.current_y = self.final_placement[-1][3]

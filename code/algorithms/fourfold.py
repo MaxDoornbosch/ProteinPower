@@ -22,6 +22,7 @@ class FourFold:
     """
     Looks 4 steps forward and then takes 4 steps
     """
+    
     def __init__(self, user_input, runamount):
         self.user_input = user_input
         self.runamount = runamount

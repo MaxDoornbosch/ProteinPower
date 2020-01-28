@@ -1,10 +1,12 @@
 """
 main.py
 
-TODO:
+Runs all algorithms.
 
+Florien Altena, Emily van Veen, Max Doornbosch
+UvA, minor programmeren
+2020
 """
-import timeit
 
 from code.classes.protein import Protein
 from code.classes.coordinateupdate import CoordinateUpdate
@@ -20,6 +22,7 @@ from code.algorithms.forcing import Force
 
 from code.visualization.visualization import visualize
 
+
 def main():
     """
     Prompts user to choose an algorithm, runs chosen algorithm.
@@ -30,7 +33,7 @@ def main():
     while algorithm < 1 or algorithm > 7:
         while True:
             try:
-                algorithm = int(input("Which algorithm would you like to use? \n1 for random algorithm \n2 for three fold one step \n3 for three fold three steps \n4 for four fold algorithm \n5 for depth first searh algorithm \n6 for branch and bound algorithm \n7 for the forcing algorithm\n"))
+                algorithm = int(input("Which algorithm would you like to use? \n1 for random algorithm \n3 for three fold three steps \n4 for four fold algorithm \n5 for depth first searh algorithm \n6 for branch and bound algorithm \n7 for the forcing algorithm\n"))
                 break
             except ValueError:
                 print("Invalid input")
@@ -57,24 +60,16 @@ def main():
 
     if algorithm == 1:
         """
-        Random algorithm
+        Random algorithm.
         """
         random = Random(user_input, runamount)
         random.run()
         visualisation = random
 
-    elif algorithm == 2:
-        """
-        Threefold one step
-        """
-
-        three_fold_one_step = ThreeFoldOneStep(user_input, runamount)
-        three_fold_one_step.run()
-        visualisation = three_fold_one_step
 
     elif algorithm == 3:
         """
-        Threefold algorithm
+        Threefold algorithm.
         """
 
         three_fold = ThreeFold(user_input, runamount)
@@ -83,7 +78,7 @@ def main():
 
     elif algorithm == 4:
         """
-        Fourfold algorithm
+        Fourfold algorithm.
         """
 
         four_fold = FourFold(user_input, runamount)
@@ -92,7 +87,7 @@ def main():
 
     elif algorithm == 5:
         """
-        Runs depth first algorithm
+        Runs depth first algorithm.
         """
 
         depth = DepthFirst(user_input)
@@ -106,7 +101,7 @@ def main():
 
     elif algorithm == 6:
         """
-        Branch and bound (depth first search) algorithm
+        Branch and bound (depth first search) algorithm.
         """
 
         branch_bound = BranchBound(user_input)
@@ -119,11 +114,12 @@ def main():
 
     elif algorithm == 7:
         """
-        Runs forcing algorithm
-
+        Runs forcing algorithm.
         """
+
         force = Force(user_input)
         visualisation = force
+
         try:
             force.run()
         except (KeyboardInterrupt, SystemExit):
