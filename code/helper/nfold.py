@@ -43,6 +43,9 @@ def creating_folds(current_fold):
     return possible_folds, final_possible_folds
 
 def creating_coordinates(final_possible_folds, x_coordinate, y_coordinate, current_amino, possible_options, chunk):
+    """
+    Creates all coordinates
+    """
     # saves all possible folds with corresponding amino and coordinates
     for i in final_possible_folds:
         current_x = x_coordinate
@@ -69,6 +72,9 @@ def creating_coordinates(final_possible_folds, x_coordinate, y_coordinate, curre
     return possible_options
 
 def calculate_best_options(possible_options_score):
+    """
+    Finds all the best options
+    """
     lowest_stability_score = 0
     best_options = []
 
