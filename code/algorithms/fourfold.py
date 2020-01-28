@@ -15,8 +15,11 @@ than four amino's remaining it will look at all the remaining possibilities.
 from code.classes.protein import Protein
 from code.classes.coordinateupdate import CoordinateUpdate
 from code.classes.stability_score import Stability
+from code.classes.coordinateupdate import CoordinateUpdate
+from code.classes.possible_options import PossibleOptions
 from code.helper.nfold import creating_coordinates, calculate_best_options, surrounding, connects_to_itself
 import random
+import copy
 
 class FourFold:
     """
@@ -56,7 +59,7 @@ class FourFold:
                     current_x, current_y  = coordinate_update.update_coordinates(protein.final_placement)
                     current_fold = protein.final_placement[-1][1]
                     current_amino = self.user_input[len(protein.final_placement)]
-                    best_option = four_fold(protein.final_placement, user_input_split, current_fold, current_x, current_y, current_amino, i)
+                    best_option = four_fold(protein.final_placement, user_input_split, current_fold, current_x, current_y, current_amino, i, self.user_input)
 
                     # checks if an error has occured
                     if best_option == False:
@@ -93,7 +96,7 @@ class FourFold:
                             self.amino_stability_x = amino_stability_x
                             self.amino_stability_y = amino_stability_y
 
-def four_fold(final_placement, user_input_split, current_fold, x_coordinate, y_coordinate, current_amino, i):
+def four_fold(final_placement, user_input_split, current_fold, x_coordinate, y_coordinate, current_amino, i, user_input):
     """
     Determines best possible folds and coordinates for each amino (in each chunk)
     """
@@ -101,8 +104,18 @@ def four_fold(final_placement, user_input_split, current_fold, x_coordinate, y_c
     possible_options = []
 
     chunk = user_input_split[i]
-    possible_folds, final_possible_folds, possible_options = define_folds(current_fold, x_coordinate, y_coordinate, current_amino, possible_options, chunk)
-    possible_options_score = stability_score(possible_options, final_placement, chunk)
+    # possible_folds, final_possible_folds, possible_options = define_folds(current_fold, x_coordinate, y_coordinate, current_amino, possible_options, chunk)
+    
+    possible = PossibleOptions(user_input)
+    coordinate_update = CoordinateUpdate()
+    current_x, current_y = coordinate_update.update_coordinates(final_placement)
+
+    # finds possible options
+    possible.define_folds(final_placement)
+    possible.define_coordinates(current_x, current_y)
+    final_possible_options = possible.check_empty()
+
+    possible_options_score = stability_score(final_possible_options, final_placement, chunk)
     best_option = best_options(possible_options_score)
     return best_option
 
@@ -177,77 +190,22 @@ def stability_score(possible_options, final_placement, chunk):
 
     # loops over all the possible options
     for unit in possible_options:
-        checker = True
-        score = 0
-        temporary_amino_stability_x = []
-        temporary_amino_stability_y = []
+        new_option = copy.deepcopy(final_placement)
 
-        # loops over all the places aminos
-        for i in final_placement:
+        for option in unit:
+            new_option.append(option)
 
-            # loops over all the coordinates and folds separately
-            for pos in range(len(chunk) + 1):
-
-                # checks if the coordinates aren't already taken
-                if i[2] == unit[pos][2] and i[3] == unit[pos][3]:
-                    checker = False
-
-                if pos > 0 and ((unit[0][2] == unit[pos][2] and unit[0][3] == unit[pos][3])) :
-                    checker = False
-
-                # checks if the coordinates overlap
-                if pos != 0 and checker == True:
-                    previous_fold = unit[pos - 1][1]
-
-                    # goes to a helpers function that looks for surrounding amino's
-                    score = surrounding(i, unit, pos, previous_fold, score)
-
-                    # checks whether the last amino connects to itself
-                    if pos >= 3:
-
-                        # goes te a helpers functions
-                        score = connects_to_itself(i, unit, pos, previous_fold, score)
-
-                    # checks whether the last amino connects to itself
-                    if pos == 4:
-
-                        # looks for surrounding HH and CH aminos per fold and calculates the score
-                        if (unit[pos][0] == "H" and unit[1][0] == "H") or (unit[pos][0] == "C" and unit[1][0] == "H") or (unit[pos][0] == "H" and unit[1][0] == "C"):
-                            if unit[pos][2] + 1 == unit[1][2] and unit[pos][3] == unit[1][3]:
-                                score -= 1
-
-                            if unit[pos][2] - 1 == unit[1][2] and unit[pos][3] == unit[1][3]:
-                                score -= 1
-
-                            if unit[pos][2] == unit[1][2] and unit[pos][3] + 1 == unit[1][3]:
-                                score -= 1
-
-                            if unit[pos][2] == unit[1][2] and unit[pos][3] - 1 == unit[1][3]:
-                                score -= 1
-
-                        # looks for surrounding CC aminos per fold and calculates the score
-                        if unit[pos][0] == "C" and unit[1][0] == "C":
-                            if unit[pos][2] + 1 == unit[1][2] and unit[pos][3] == unit[1][3]:
-                                score -= 5
-
-                            if unit[pos][2] - 1 == unit[1][2] and unit[pos][3] == unit[1][3]:
-                                score -= 5
-
-                            if unit[pos][2] == unit[1][2] and unit[pos][3] + 1 == unit[1][3]:
-                                score -= 5
-
-                            if unit[pos][2] == unit[1][2] and unit[pos][3] - 1 == unit[1][3]:
-                                score -= 5
+        stability = Stability()
+        score, stability_connections = stability.get_stability_score(new_option)
 
         # saves all possible options with corresponding stability scores
-        if checker == True:
+        try:
+            possible_options_score.append([unit[0], unit[1], unit[2], unit[3], score])
+        except IndexError:
             try:
-                 possible_options_score.append([unit[0], unit[1], unit[2], unit[3], score])
+                possible_options_score.append([unit[0], unit[1], unit[2], score])
             except IndexError:
-                try:
-                    possible_options_score.append([unit[0], unit[1], unit[2], score])
-                except IndexError:
-                    possible_options_score.append([unit[0], unit[1], score])
+                possible_options_score.append([unit[0], unit[1], score])
 
     return possible_options_score
 
