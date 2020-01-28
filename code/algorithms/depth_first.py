@@ -7,9 +7,8 @@ possible folds and calculates every possible stability score in order to
 return the best possible solution.
 
 Florien Altena, Emily van Veen, Max Doornbosch
-UvA, minor Programmeren
+UvA, minor programmeren
 2020
-
 """
 
 from code.classes.protein import Protein
@@ -18,9 +17,9 @@ from code.classes.possible_options import PossibleOptions
 from code.classes.csvwriter import Csv
 from code.classes.stability_score import Stability
 
-
 import copy
 import random
+
 
 class DepthFirst:
     """
