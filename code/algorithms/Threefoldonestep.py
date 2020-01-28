@@ -104,7 +104,6 @@ def three_fold(final_placement, user_input_split, current_fold, x_coordinate, y_
     possible_options = []
 
     chunk = user_input_split[i]
-    print(chunk)
     possible_folds, final_possible_folds, possible_options = define_folds(current_fold, x_coordinate, y_coordinate, current_amino, possible_options, chunk)
     possible_options_score = stability_score(possible_options, final_placement, chunk)
     best_option = best_options(possible_options_score)
