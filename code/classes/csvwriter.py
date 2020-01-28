@@ -1,17 +1,23 @@
 """
 csvwriter.py
 
+Florien Altena, Emily van Veen, Max Doornbosch
+UvA, minor Programmeren
+2020
 
+Writes two different csv-files, one for the visualization and one for the required output.
 """
 
 import csv
-from subprocess import Popen
 
 class Csv:
     def __init__(self, folds):
         self.folds = folds
 
     def write_csv(self):
+        """
+        Writes a csv file with the amino and fold
+        """
 
         # opens the file
         with open('data/folds.csv', 'w', newline='') as file:
@@ -24,10 +30,10 @@ class Csv:
 
         self.visualization_csv()
 
-        # opens CSV file
-        # p = Popen('data/folds.csv', shell=True)
-
     def visualization_csv(self):
+        """
+        Writes a csv file with the amino and the coordinates for the visualization
+        """
 
         # opens the file
         with open('data/visualization.csv', 'w', newline='') as file:
