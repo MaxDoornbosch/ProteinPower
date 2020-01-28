@@ -55,16 +55,16 @@ class Random:
                         stability_score, stability_connections = self.stability.get_stability_score(self.protein.final_placement)
                         self.stability_coordinates = stability_connections
                         self.stability.stability_score_coordinates(self.stability_coordinates)
-                        self.amino_stability_x = self.stability.amino_stability_x
-                        self.amino_stability_y = self.stability.amino_stability_y
+                        amino_stability_x = self.stability.amino_stability_x
+                        amino_stability_y = self.stability.amino_stability_y
 
                         # checks if current score is lower than the current lowest score
                         if stability_score < self.best_score:
                             self.best_score = stability_score
                             self.best_protein = self.protein.final_placement
                             self.best_stability = stability_score
-                            self.best_amino_stability_x = self.placement.amino_stability_x
-                            self.best_amino_stability_y = self.placement.amino_stability_y
+                            self.amino_stability_x = amino_stability_x
+                            self.amino_stability_y = amino_stability_y
 
                         finished = True
 
