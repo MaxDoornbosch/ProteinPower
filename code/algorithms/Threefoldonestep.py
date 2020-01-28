@@ -101,12 +101,11 @@ def three_fold(final_placement, user_input_split, current_fold, x_coordinate, y_
     Determines best possible folds and coordinates for each amino (in each chunk)
     """
 
-    storage_list = []
     possible_options = []
 
     chunk = user_input_split[i]
     print(chunk)
-    possible_folds, final_possible_folds, possible_options = define_folds(current_fold, x_coordinate, y_coordinate, current_amino, possible_options, storage_list, chunk)
+    possible_folds, final_possible_folds, possible_options = define_folds(current_fold, x_coordinate, y_coordinate, current_amino, possible_options, chunk)
     possible_options_score = stability_score(possible_options, final_placement, chunk)
     best_option = best_options(possible_options_score)
     return best_option
@@ -122,7 +121,7 @@ def split_protein(user_input):
     user_input_split = [user_input[i:i+3] for i in range(0, len(user_input), 1)]
     return user_input_split
 
-def define_folds(current_fold, x_coordinate, y_coordinate, current_amino, possible_options, storage_list, chunk):
+def define_folds(current_fold, x_coordinate, y_coordinate, current_amino, possible_options, chunk):
     """
     Defines all possible folds for every move within
     """
