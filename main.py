@@ -63,9 +63,6 @@ def main():
         random.run()
         visualisation = random
 
-        print("Random placement: ", random.best_protein)
-        print("Score: ", random.best_score)
-
     elif algorithm == 2:
         """
         Threefold one step
@@ -74,39 +71,6 @@ def main():
         three_fold_one_step = ThreeFoldOneStep(user_input, runamount)
         three_fold_one_step.run()
         visualisation = three_fold_one_step
-
-        print("final placement: ", three_fold_one_step.best_placement)
-        print("Best score: ", three_fold_one_step.best_score)
-
-
-        """
-
-
-        Hoiiiii
-
-        Dit moet nog even gebeurd worden:
-
-        .best_placement vervangen door .best_protein
-        Scheelt weer regels code, dan hoeft visualisatie niet overal.
-        Heb nu dit gedaan (hij werkt ook gewoon nu):
-
-        self.best_score = score
-        self.best_protein = self.best_placement
-
-        Maar beter om dit in 1 keer te doen natuurlijk.
-        oh en self.variabelen hoeven niet gereturned :)
-
-
-        Oh en fourfold doet nog een beetje gek, best_placement kent 'ie niet en
-        de visualisatie gaat ook niet goed.. weird
-
-
-        Mag
-
-        groetjes
-
-
-        """
 
     elif algorithm == 3:
         """
@@ -117,10 +81,6 @@ def main():
         three_fold.run()
         visualisation = three_fold
 
-        print("final placement: ", three_fold.best_placement)
-        print("Best score: ", three_fold.best_score)
-
-
     elif algorithm == 4:
         """
         Fourfold algorithm
@@ -129,9 +89,6 @@ def main():
         four_fold = FourFold(user_input, runamount)
         four_fold.run()
         visualisation = four_fold
-
-        print("final placement: ", four_fold.best_placement)
-        print("Best score: ", four_fold.best_score)
 
     elif algorithm == 5:
         """
@@ -147,13 +104,6 @@ def main():
         except (KeyboardInterrupt, SystemExit):
             print("\nKeyboard Interrupt.\n")
 
-
-        if depth.best_score == 0:
-            print("\nLowest score: 0")
-        else:
-            print("\nLowest score: ", depth.best_score)
-            print("\nBest protein: ", depth.best_protein)
-
     elif algorithm == 6:
         """
         Branch and bound (depth first search) algorithm
@@ -167,10 +117,6 @@ def main():
             print("\nLowest score: 0")
             exit()
 
-        else:
-            print("\nLowest score: ", branch_bound.best_score)
-            print("\nBest protein: ", branch_bound.best_protein)
-
     elif algorithm == 7:
         """
         Runs forcing algorithm
@@ -182,8 +128,6 @@ def main():
             force.run()
         except (KeyboardInterrupt, SystemExit):
             print("\nKeyboard Interrupt.\n")
-
-        print("final placement: ", force.placing())
 
     # visualizes results of every algorithm
     csvwriter = Csv(visualisation.best_protein)
