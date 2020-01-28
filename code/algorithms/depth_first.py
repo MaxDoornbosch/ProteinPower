@@ -17,6 +17,8 @@ from code.classes.possible_options import PossibleOptions
 from code.classes.csvwriter import Csv
 from code.classes.stability_score import Stability
 
+from code.helper.depth_first import finish_protein
+
 import copy
 import random
 
@@ -40,14 +42,14 @@ class DepthFirst:
         self.coordinate_update = CoordinateUpdate()
 
 
-    def get_next_path(self):
+    def get_next_path(self, stack):
         """
         Gets the current path out of the stack of paths: the (partial) protein with
         corresponding information (fold and x,y coordinates).
         """
 
-        current_path = self.stack.pop()
-        return current_path
+        current_path = stack.pop()
+        return current_path, stack
 
     def add_new_options_to_stack(self, current_path):
         """
@@ -71,33 +73,6 @@ class DepthFirst:
                 self.stack.append(new_option)
 
 
-    def prepare_visualisation(self):
-        """
-        Creates needed lists for the visualisation of the final protein.
-        """
-
-        self.stability.stability_score_coordinates(self.stability_coordinates)
-        self.amino_stability_x = self.stability.amino_stability_x
-        self.amino_stability_y = self.stability.amino_stability_y
-
-
-    def finish_protein(self, current_path):
-        """
-        Calculates final stability score for each protein, checks for new best
-        scores and prepares data for the visualization of the final best protein
-        folds.
-        """
-
-        score, stability_connections = self.stability.get_stability_score(current_path)
-
-        # updates current best protein option
-        if score < self.best_score:
-            self.best_score = score
-            self.best_protein = current_path
-            self.stability_coordinates = stability_connections
-            self.prepare_visualisation()
-
-
     def run(self):
         """
         Runs depth-first algorithm until all possible protein folds have between
@@ -111,7 +86,13 @@ class DepthFirst:
 
             # calculates stability score for each protein
             if len(current_path) == len(self.user_input):
-                self.finish_protein(current_path)
+                score, stability_connections = self.stability.get_stability_score(current_path)
+
+                # updates current best protein option
+                if score < self.best_score:
+                    self.best_score = score
+                    self.best_protein = current_path
+                    self.amino_stability_x, self.amino_stability_y = finish_protein(score, stability_connections)
 
             # creates new options if protein is not yet finished
             else:

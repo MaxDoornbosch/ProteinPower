@@ -19,7 +19,6 @@ def finish_protein(score, stability_connections):
     """
 
     stability = Stability()
-
     stability_coordinates = stability_connections
 
     # creates needed lists for the visualisation of the final protein
