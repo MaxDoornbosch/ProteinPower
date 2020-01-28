@@ -6,9 +6,7 @@ TODO:
 """
 import timeit
 
-from code.classes.placement import Placement
 from code.classes.protein import Protein
-from code.classes.stability import Stability
 from code.classes.coordinateupdate import CoordinateUpdate
 from code.classes.csvwriter import Csv
 

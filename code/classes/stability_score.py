@@ -41,16 +41,19 @@ class Stability:
         y = amino[3]
         surrounding_coordinates = [[x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]]
 
-        if amino != current_path[0]:
-            connected_x = current_path[i - 1][2]
-            connected_y = current_path[i - 1][3]
-            surrounding_coordinates.remove([connected_x, connected_y])
+        try:
+            if amino != current_path[0]:
+                connected_x = current_path[i - 1][2]
+                connected_y = current_path[i - 1][3]
+                surrounding_coordinates.remove([connected_x, connected_y])
 
-        if amino != current_path[-1]:
-            connected_x = current_path[i + 1][2]
-            connected_y = current_path[i + 1][3]
-            surrounding_coordinates.remove([connected_x, connected_y])
-
+            if amino != current_path[-1]:
+                connected_x = current_path[i + 1][2]
+                connected_y = current_path[i + 1][3]
+                surrounding_coordinates.remove([connected_x, connected_y])
+        except ValueError:
+            pass
+            
         return surrounding_coordinates, x, y
 
 

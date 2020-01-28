@@ -20,7 +20,6 @@ from code.classes.stability_score import Stability
 from code.helper.depth_first import finish_protein
 
 import copy
-import random
 
 
 class DepthFirst:
@@ -50,6 +49,7 @@ class DepthFirst:
 
         current_path = stack.pop()
         return current_path, stack
+
 
     def add_new_options_to_stack(self, current_path):
         """
