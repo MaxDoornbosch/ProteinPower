@@ -88,3 +88,69 @@ def calculate_best_options(possible_options_score):
         if value[len(value) - 1] == lowest_stability_score:
             best_options.append(value)
     return best_options
+
+def surrounding(i, unit, pos, previous_fold, score):
+    """
+    Looks for surrounding amino's
+    """
+    # looks for surrounding HH and CH aminos per fold and calculates the score
+    if (i[0] == "H" and unit[pos][0] == "H") or (i[0] == "C" and unit[pos][0] == "H") or (i[0] == "H" and unit[pos][0] == "C"):
+        if i[2] == unit[pos][2] - 1 and i[3] == unit[pos][3] and previous_fold != 1:
+            score -=1
+
+        if i[2] == unit[pos][2] and i[3] == unit[pos][3] + 1 and previous_fold != -2:
+            score -=1
+
+        if i[2] == unit[pos][2] and i[3] == unit[pos][3] - 1 and previous_fold != 2:
+            score -=1
+
+        if i[2] == unit[pos][2] + 1 and i[3] == unit[pos][3] and previous_fold != -1:
+            score -=1
+
+    # looks for surrounding CC aminos per fold and calculates the score
+    if i[0] == "C" and unit[pos][0] == "C":
+        if i[2] == unit[pos][2] - 1 and i[3] == unit[pos][3] and previous_fold != 1:
+            score -= 5
+
+        if i[2] == unit[pos][2] and i[3] == unit[pos][3] + 1 and previous_fold != -2:
+            score -= 5
+
+        if i[2] == unit[pos][2] and i[3] == unit[pos][3] - 1 and previous_fold != 2:
+            score -= 5
+
+        if i[2] == unit[pos][2] + 1 and i[3] == unit[pos][3] and previous_fold != -1:
+            score -= 5
+    return score
+
+def connects_to_itself(i, unit, pos, previous_fold, score):
+    """
+    Checks if the first amino connects with itself
+    """
+    # looks for surrounding HH and CH aminos per fold and calculates the score
+    if (unit[pos][0] == "H" and unit[0][0] == "H") or (unit[pos][0] == "C" and unit[0][0] == "H") or (unit[pos][0] == "H" and unit[0][0] == "C"):
+        if unit[pos][2] + 1 == unit[0][2] and unit[pos][3] == unit[0][3]:
+            score -= 1
+
+        if unit[pos][2] - 1 == unit[0][2] and unit[pos][3] == unit[0][3]:
+            score -= 1
+
+        if unit[pos][2] == unit[0][2] and unit[pos][3] + 1 == unit[0][3]:
+            score -= 1
+
+        if unit[pos][2] == unit[0][2] and unit[pos][3] - 1 == unit[0][3]:
+            score -= 1
+
+    # looks for surrounding CC aminos per fold and calculates the score
+    if unit[pos][0] == "C" and unit[0][0] == "C":
+        if unit[pos][2] + 1 == unit[0][2] and unit[pos][3] == unit[0][3]:
+            score -= 5
+
+        if unit[pos][2] - 1 == unit[0][2] and unit[pos][3] == unit[0][3]:
+            score -= 5
+
+        if unit[pos][2] == unit[0][2] and unit[pos][3] + 1 == unit[0][3]:
+            score -= 5
+
+        if unit[pos][2] == unit[0][2] and unit[pos][3] - 1 == unit[0][3]:
+            score -= 5
+    return score

@@ -1,79 +1,152 @@
 """
 forcing.py
-
 Florien Altena, Emily van Veen, Max Doornbosch
 UvA, minor Programmeren
 2020
-"""
 
+Forcing heuristiek: This algorithm will place the protein in a before hand decided pattern.
+
+"""
 from code.classes.stability_score import Stability
 
-
 class Force:
-    def __init__(self, user_input):
+    def __init__(self,user_input):
         self.current_x = 0
         self.current_y = 0
-        self.zijde_lengte = 1
-        self.final_placement = []
+        self.side_lenght = 1
+        self.best_protein = [[user_input[0], 2, 0, 0]]
         self.user_input = user_input
-        self.count = 0
+        self.stability = Stability()
+        self.end = False
+        self.current_fold = 0
+
 
     def placing(self):
-        while len(self.user_input) != len(self.final_placement):
-            for i in range(2):
-                for j in range(self.zijde_lengte):
-                    if self.count != len(self.user_input):
-                        if (self.zijde_lengte % 2) != 0 :
-                            """ oneven """
-                            self.oneven(i)
-                        if (self.zijde_lengte % 2) == 0:
-                            """ even """
-                            print("even")
-                            self.even(i)
-            self.zijde_lengte += 1
+        """
+        Places de amino's on the right place by checking if the side length is odd or even.
+        """
 
-    def oneven(self, i):
-        if i == 0:
-            self.new_y = self.current_y + 1
-            self.new_x = self.current_x
-            self.current_fold = 2
+        while len(self.user_input) > len(self.best_protein):
+
+            # checks step
+            for i in range(2):
+                for j in range(self.side_lenght):
+                    if self.end == False:
+                        # checks if is odd number
+                        if (self.side_lenght % 2) != 0 :
+                            self.odd(i)
+
+                        # checks if is even number
+                        elif (self.side_lenght % 2) == 0:
+
+                            # ensure the last amino isn't appended twice
+                            try:
+                                self.even(i)
+                            except IndexError:
+                                pass
+            self.side_lenght += 1
+
+    def odd(self,i):
+        """
+        Determines the coordinates and the fold of the amino
+        """
+
+        # checks if is second step
         if i == 1:
             self.new_x = self.current_x + 1
             self.new_y = self.current_y
-            self.current_fold = 1
+
+            # check if is last amino
+            if len(self.user_input) -1 == len(self.best_protein):
+                self.current_fold = 0
+                self.end = True
+
+        # checks if is first step
+        elif i == 0:
+            self.new_y = self.current_y + 1
+            self.new_x = self.current_x
+
+            # check if is last amino
+            if len(self.user_input)- 1 == len(self.best_protein):
+                self.current_fold = 0
+                self.end = True
         self.current_x = self.new_x
         self.current_y = self.new_y
-        self.current_amino = self.user_input[len(self.final_placement)]
-        self.final_placement.append([self.current_amino,self.current_fold,self.new_x,self.new_y])
-        print(self.final_placement)
-        self.count += 1
-        return self.final_placement, self.current_x, self.current_y, self.count
 
-    def even(self,i):
+        try:
+            self.current_amino = self.user_input[len(self.best_protein)]
+        except IndexError:
+            pass
+        self.best_protein.append([self.current_amino, self.current_fold, self.new_x, self.new_y])
+
+        return self.best_protein, self.current_x, self.current_y
+
+    def even (self,i):
+        """
+        Determines the coordinates
+        """
+        # checks if is first step
         if i == 0:
             self.new_x = self.current_x
             self.new_y = self.current_y -1
-            self.current_fold = -2
+
+            # check if is last amino
+            if len(self.user_input) - 1 == len(self.best_protein):
+                self.current_fold = 0
+                self.end = True
+
+        # checks if is second step
         if i == 1:
             self.new_y = self.current_y
             self.new_x = self.current_x - 1
-            self.current_fold = -1
+
+            # check if is last amino
+            if len(self.user_input) - 1 == len(self.best_protein):
+                self.current_fold = 0
+                self.end = True
         self.current_x = self.new_x
         self.current_y = self.new_y
-        self.current_amino = self.user_input[len(self.final_placement)]
-        self.final_placement.append([self.current_amino,self.current_fold,self.new_x,self.new_y])
-        print(self.final_placement)
-        self.count += 1
-        return self.final_placement, self.current_x, self.current_y, self.count
+        try:
+            self.current_amino = self.user_input[len(self.best_protein)]
+        except IndexError:
+            pass
+        self.best_protein.append([self.current_amino, self.current_fold, self.new_x, self.new_y])
+
+        return self.best_protein, self.current_x, self.current_y
+
+
+    def fold(self):
+        """
+        Determines the fold
+        """
+        for i in range(len(self.best_protein) - 1):
+            j = i + 1
+
+            # checks next amino
+            if self.best_protein[i][2] + 1 == self.best_protein[j][2]   and self.best_protein[i][3] == self.best_protein[j][3]:
+                self.fold = 1
+                self.best_protein[i][1] = self.fold
+
+            elif self.best_protein[i][2] - 1 == self.best_protein[j][2]  and self.best_protein[i][3] == self.best_protein[j][3]:
+                self.fold =  - 1
+                self.best_protein[i][1] = self.fold
+
+            elif self.best_protein[i][2] == self.best_protein[j][2]  and self.best_protein[i][3] + 1 == self.best_protein[j][3] :
+                self.fold = 2
+                self.best_protein[i][1] = self.fold
+
+            elif self.best_protein[i][2] == self.best_protein[j][2] and self.best_protein[i][3] - 1 == self.best_protein[j][3] :
+                self.fold = -2
+                self.best_protein[i][1] = self.fold
 
     def run(self):
         """
         Runs forcing algorithm until all possible protein folds have between
         evaluated; determines best fold.
         """
-        self.stability = Stability()
-
-        score, stability_connections = self.stability.get_stability_score(self.final_placement)
+        self.placing()
+        self.fold()
+        self.best_score, stability_connections = self.stability.get_stability_score(self.best_protein)
         self.stability_coordinates = stability_connections
         self.stability.stability_score_coordinates(self.stability_coordinates)
         self.amino_stability_x = self.stability.amino_stability_x
