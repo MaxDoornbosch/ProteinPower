@@ -11,7 +11,7 @@ UvA, minor programmeren
 from code.classes.stability_score import Stability
 
 
-def finish_protein(score, stability_connections, best_score):
+def finish_protein(score, stability_connections):
     """
     Calculates final stability score for each protein, checks for new best
     scores and prepares data for the visualization of the final best protein
@@ -20,8 +20,6 @@ def finish_protein(score, stability_connections, best_score):
 
     stability = Stability()
 
-    best_score = score
-
     stability_coordinates = stability_connections
 
     # creates needed lists for the visualisation of the final protein
@@ -29,4 +27,4 @@ def finish_protein(score, stability_connections, best_score):
     amino_stability_x = stability.amino_stability_x
     amino_stability_y = stability.amino_stability_y
 
-    return amino_stability_x, amino_stability_y, best_score
+    return amino_stability_x, amino_stability_y

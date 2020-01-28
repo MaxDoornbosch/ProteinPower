@@ -32,7 +32,7 @@ def main():
     while algorithm < 1 or algorithm > 7:
         while True:
             try:
-                algorithm = int(input("Which algorithm would you like to use? Enter 1 for random algorithm, 2 for three fold one step, 3 for three fold three steps and 4 for four fold algorithm: "))
+                algorithm = int(input("Which algorithm would you like to use? \n1 for random algorithm \n2 for three fold one step \n3 for three fold three steps \n4 for four fold algorithm \n5 for depth first searh algorithm \n6 for branch and bound algorithm \n7 for the forcing algorithm\n"))
                 break
             except ValueError:
                 print("Invalid input")

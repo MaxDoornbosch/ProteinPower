@@ -118,17 +118,15 @@ class BranchBound:
             # calculates stability score for each protein
             if len(current_path) == len(self.user_input):
                 score, stability_connections = self.stability.get_stability_score(current_path)
-
-                print("1", score)
-                print("2", self.best_score)
-
+                
                 # updates current best protein option
                 if score < self.best_score:
-                    self.best_score, self.amino_stability_x, self.amino_stability_y = finish_protein(score, stability_connections, self.best_score)
+                    self.best_score = score
                     self.best_protein = current_path
+                    self.amino_stability_x, self.amino_stability_y = finish_protein(score, stability_connections)
 
             # if the protein is not yet finished
-            elif len(current_path) < len(self.user_input):
+            else:
                 score, stability_connections = self.stability.get_stability_score(current_path)
                 average_score = self.average_score_thus_far(score, current_path)
 
@@ -139,17 +137,14 @@ class BranchBound:
 
                 # if current score is worse than average score, prune 70%
                 elif score > average_score:
-                    r = random.uniform(0, 1)
-
-                    if r > 0.7:
+                    if random.uniform(0, 1) > 0.7:
                         self.add_new_options_to_stack(current_path)
 
                 # if current score is between the best and average score, prune 30%
                 elif self.best_score < score < average_score:
-                    r = random.uniform(0, 1)
-
-                    if r > 0.3:
+                    if random.uniform(0, 1) > 0.3:
                         self.add_new_options_to_stack(current_path)
 
                 # always create new options if score hasn't changed or amino is a P amino
-                self.add_new_options_to_stack(current_path)
+                else:
+                    self.add_new_options_to_stack(current_path)
