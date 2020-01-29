@@ -111,40 +111,51 @@ class BranchBound:
         evaluated; determines best fold.
         """
 
-        while self.stack:
-            current_path = self.get_next_path()
-            current_amino = current_path[-1][0]
+        # runs the program x times depending on the runamount
+        for z in range(self.runamount):
 
-            # calculates stability score for each protein
-            if len(current_path) == len(self.user_input):
-                score, stability_connections = self.stability.get_stability_score(current_path)
+            done = False
 
-                # updates current best protein option
-                if score < self.best_score:
-                    self.best_score = score
-                    self.best_protein = current_path
-                    self.amino_stability_x, self.amino_stability_y = finish_protein(score, stability_connections)
+            # restarts the program if an error occurs
+            while done == False:
 
-            # if the protein is not yet finished
-            else:
-                score, stability_connections = self.stability.get_stability_score(current_path)
-                average_score = self.average_score_thus_far(score, current_path)
+                while self.stack:
+                    current_path = self.get_next_path()
+                    current_amino = current_path[-1][0]
 
-                # keep all branches if score is same or better than best score
-                if score < self.best_score:
-                    self.best_score = score
-                    self.add_new_options_to_stack(current_path)
+                    # calculates stability score for each protein
+                    if len(current_path) == len(self.user_input):
+                        score, stability_connections = self.stability.get_stability_score(current_path)
 
-                # if current score is worse than average score, prune 70%
-                elif score > average_score:
-                    if random.uniform(0, 1) > 0.7:
-                        self.add_new_options_to_stack(current_path)
+                        # updates current best protein option
+                        if score < self.best_score:
+                            self.best_score = score
+                            self.best_protein = current_path
+                            self.amino_stability_x, self.amino_stability_y = finish_protein(score, stability_connections)
 
-                # if current score is between the best and average score, prune 30%
-                elif self.best_score < score < average_score:
-                    if random.uniform(0, 1) > 0.3:
-                        self.add_new_options_to_stack(current_path)
+                        if self.stack = []:
+                            done = True
 
-                # always create new options if score hasn't changed or amino is a P amino
-                else:
-                    self.add_new_options_to_stack(current_path)
+                    # if the protein is not yet finished
+                    else:
+                        score, stability_connections = self.stability.get_stability_score(current_path)
+                        average_score = self.average_score_thus_far(score, current_path)
+
+                        # keep all branches if score is same or better than best score
+                        if score < self.best_score:
+                            self.best_score = score
+                            self.add_new_options_to_stack(current_path)
+
+                        # if current score is worse than average score, prune 70%
+                        elif score > average_score:
+                            if random.uniform(0, 1) > 0.7:
+                                self.add_new_options_to_stack(current_path)
+
+                        # if current score is between the best and average score, prune 30%
+                        elif self.best_score < score < average_score:
+                            if random.uniform(0, 1) > 0.3:
+                                self.add_new_options_to_stack(current_path)
+
+                        # always create new options if score hasn't changed or amino is a P amino
+                        else:
+                            self.add_new_options_to_stack(current_path)

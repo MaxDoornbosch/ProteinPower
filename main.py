@@ -37,7 +37,7 @@ def main():
                 print("Invalid input")
 
     # prompts the user for the runamount for algorithms 1-4
-    if algorithm > 0 and algorithm < 5:
+    if algorithm > 0 and algorithm < 5 or algorithm == 6:
         runamount = 0
         while runamount < 1:
             try:
