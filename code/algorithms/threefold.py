@@ -1,90 +1,102 @@
 """
 threefold.py
 
+Florien Altena, Emily van Veen, Max Doornbosch
+UvA, minor Programmeren
+2020
+
 The algorithm looks at all the possibilities for the upcoming 3 moves, all the possibilities are 3^3 = 27.
 Then the score per possibility will be calculated. This algorithm will take three steps and will look at
 all the best possibilities. It chooses a random best possibility and the three amino's will be placed those
 coordinates. This method will reapeat itself until the end of the protein has been reached. If there are less
 than three amino's remaining it will look at all the remaining possibilities.
-
-Florien Altena, Emily van Veen, Max Doornbosch
-UvA, minor Programmeren
-2020
 """
 
 from code.classes.protein import Protein
 from code.classes.coordinateupdate import CoordinateUpdate
 from code.classes.stability_score import Stability
-from code.helper.nfold import *
+from code.helper.nfold import creating_folds, creating_coordinates, calculate_best_options, surrounding, connects_to_itself
 import random
 
 class ThreeFold:
     """
-    Looks 3 steps forward and then takes three steps.
+    Looks 3 steps forward and then takes three steps
     """
-
     def __init__(self, user_input, runamount):
         self.user_input = user_input
         self.runamount = runamount
-
         self.best_placement = []
-        self.best_score = 1
-
-        self.coordinate_update = CoordinateUpdate()
-        self.stability = Stability()
-
-
-    def set_best_options(self, i):
-        """
-        Sets coordinates, folds, and determines best options for three fold
-        algorithm.
-        """
-
-        # updates x,y coordinates based on most recently determined fold
-        self.current_x, self.current_y = self.coordinate_update.update_coordinates(self.protein.final_placement)
-        self.current_fold = self.protein.final_placement[-1][1]
-        self.current_amino = self.user_input[len(self.protein.final_placement)]
-        self.best_option = three_fold(self.protein.final_placement, self.user_input_split, self.current_fold, self.current_x, self.current_y, self.current_amino, i)
 
     def run(self):
         """
-        Runs three fold one step.
+        Runs three fold one step
         """
 
+        self.best_score = 1
+
         # runs the program x times depending on the runamount
-        for times in range(self.runamount):
+        for z in range(self.runamount):
+
             done = False
 
             # restarts the program if an error occurs
             while done == False:
-                self.protein = Protein(self.user_input)
+
+                # sets first fold and adds to final
+                protein = Protein(self.user_input)
 
                 # splits protein sequence into chunks of three amino acids
-                self.user_input_split = split_protein(self.user_input)
+                user_input_split = split_protein(self.user_input)
 
-                for i in range(len(self.user_input_split)):
-                    self.set_best_options(i)
+                # updates x,y coordinates based on most recently determined fold
+                coordinate_update = CoordinateUpdate()
+                coordinate_update.update_coordinates(protein.final_placement)
+
+                for i in range(len(user_input_split)):
+
+                    current_x, current_y  = coordinate_update.update_coordinates(protein.final_placement)
+                    current_fold = protein.final_placement[-1][1]
+                    current_amino = self.user_input[len(protein.final_placement)]
+                    best_option = three_fold(protein.final_placement, user_input_split, current_fold, current_x, current_y, current_amino, i)
 
                     # checks if an error has occured
-                    if self.best_option == False:
+                    if best_option == False:
                         break
 
-                    # places the amino acids
-                    for i in range(len(self.best_option) - 1):
-                        self.protein.add_amino_info(self.best_option[i])
+                    # adds the amino's the final placement
+                    for i in range(len(best_option) - 1):
+                        protein.add_amino_info(best_option[i])
 
-                    # adds last amino of sequence
-                    if len(self.protein.final_placement) == (len(self.user_input) - 1):
-                        self.protein.add_last_amino_of_chunk_without_score(self.current_x, self.current_y, self.user_input)
+                    # checks if the end of protein hasn't been reached
+                    if current_fold != 0:
+                        current_x, current_y = coordinate_update.update_coordinates(protein.final_placement)
 
-                    # determines stability after each protein is finished
-                    if len(self.protein.final_placement) == len(self.user_input):
-                        done, self.protein.final_placement, self.best_score, self.best_protein, self.best_stability, self.amino_stability_x, self.amino_stability_y, self.stability_score = set_stability(self.best_score, self.protein.final_placement)
+                    # checks if last amino of sequence is reached
+                    if len(protein.final_placement) == (len(self.user_input) - 1):
+                        protein.add_last_amino_of_chunk_without_score(current_x, current_y, self.user_input)
 
+                    # end of protein has been reached
+                    if protein.final_placement[-1][1] == 0:
+                        done = True
+                        self.stability = Stability()
+
+                        stability_score, stability_connections = self.stability.get_stability_score(protein.final_placement)
+                        self.stability_coordinates = stability_connections
+                        self.stability.stability_score_coordinates(self.stability_coordinates)
+                        amino_stability_x = self.stability.amino_stability_x
+                        amino_stability_y = self.stability.amino_stability_y
+
+                        # checks if current score is lower than the current lowest score
+                        if stability_score < self.best_score:
+                            self.best_score = stability_score
+                            self.best_protein = protein.final_placement
+                            self.best_stability = stability_score
+                            self.amino_stability_x = amino_stability_x
+                            self.amino_stability_y = amino_stability_y
 
 def three_fold(final_placement, user_input_split, current_fold, x_coordinate, y_coordinate, current_amino, i):
     """
-    Determines best possible folds and coordinates for each amino (in each chunk).
+    Determines best possible folds and coordinates for each amino (in each chunk)
     """
 
     possible_options = []
@@ -107,7 +119,7 @@ def split_protein(user_input):
 
 def define_folds(current_fold, x_coordinate, y_coordinate, current_amino, possible_options, chunk):
     """
-    Defines all possible folds for every move within.
+    Defines all possible folds for every move within
     """
 
     # goes to a helper function
@@ -117,16 +129,16 @@ def define_folds(current_fold, x_coordinate, y_coordinate, current_amino, possib
 
 def set_coordinates(final_possible_folds, x_coordinate, y_coordinate, current_amino, possible_options, chunk):
     """
-    Takes possible folds and attaches corresponding coordinates.
+    Takes possible folds and attaches corresponding coordinates
     """
 
-    # helper function for determining the possible options
+    # goes to a helper function
     possible_options = creating_coordinates(final_possible_folds, x_coordinate, y_coordinate, current_amino, possible_options, chunk)
     return possible_options
 
 def stability_score(possible_options, final_placement, chunk):
     """
-    Calculates the stability score for every three fold.
+    Calculates the stability score for every three fold
     """
 
     possible_options_score = []
@@ -135,6 +147,8 @@ def stability_score(possible_options, final_placement, chunk):
     for unit in possible_options:
         checker = True
         score = 0
+        temporary_amino_stability_x = []
+        temporary_amino_stability_y = []
 
         # loops over all the places aminos
         for i in final_placement:
@@ -163,6 +177,7 @@ def stability_score(possible_options, final_placement, chunk):
         if checker == True:
             try:
                 possible_options_score.append([unit[0], unit[1], unit[2], score])
+
             except IndexError:
                 possible_options_score.append([unit[0], unit[1], score])
 
@@ -170,18 +185,18 @@ def stability_score(possible_options, final_placement, chunk):
 
 def best_options(possible_options_score):
     """
-    Prunes possible options with lowest values.
+    Prunes possible options with lowest values
     """
 
     # goes to a helper function
     best_options = calculate_best_options(possible_options_score)
-    best_option = choose_best_option(best_options)
 
+    best_option = choose_best_option(best_options)
     return best_option
 
 def choose_best_option(best_options):
     """
-    Chooses random option from best options.
+    Chooses random option from best options
     """
 
     # picks a random best option
@@ -190,5 +205,4 @@ def choose_best_option(best_options):
     except:
         best_option = False
         return False
-
     return best_option
