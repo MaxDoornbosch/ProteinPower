@@ -110,9 +110,13 @@ def main():
         Branch and bound (depth first search) algorithm.
         """
 
-        branch_bound = BranchBound(user_input)
+        branch_bound = BranchBound(user_input, runamount)
         branch_bound.run()
+        print("FINAL BEST SCORE = ", branch_bound.very_best_score)
+        branch_bound.very_best_score = branch_bound.best_score
+        branch_bound.very_best_protein = branch_bound.best_protein
         visualisation = branch_bound
+
 
         if branch_bound.best_score == 1:
             print("\nLowest score: 0")

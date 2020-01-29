@@ -41,22 +41,10 @@ class BranchBound:
     3 ^ (length of user input) times to find the best possible stability score.
     """
 
-    def __init__(self, user_input):
+    def __init__(self, user_input, runamount):
         self.user_input = user_input
-
-        # format: [amino acid, fold, x, y]
-        first_amino = [[self.user_input[0], 2, 0, 0]]
-        self.stack = []
-        self.stack.append(first_amino)
-
-        self.stability = Stability()
-        self.best_score = 1
-        self.average_score_per_depth = {}
-
-        # average score for every depth starts at 0
-        for i in range(1, (len(self.user_input))):
-            self.average_score_per_depth[i] = list()
-
+        self.runamount = runamount
+        self.very_best_score = 1
 
     def average_score_thus_far(self, score, current_path):
         """
@@ -115,11 +103,25 @@ class BranchBound:
         for z in range(self.runamount):
 
             done = False
+            self.best_score = 1
+
+            # format: [amino acid, fold, x, y]
+            first_amino = [[self.user_input[0], 2, 0, 0]]
+            self.stack = []
+            self.stack.append(first_amino)
+
+            self.stability = Stability()
+            self.average_score_per_depth = {}
+
+            # average score for every depth starts at 0
+            for i in range(1, (len(self.user_input))):
+                self.average_score_per_depth[i] = list()
 
             # restarts the program if an error occurs
             while done == False:
 
                 while self.stack:
+                    print(len(self.stack))
                     current_path = self.get_next_path()
                     current_amino = current_path[-1][0]
 
@@ -127,14 +129,6 @@ class BranchBound:
                     if len(current_path) == len(self.user_input):
                         score, stability_connections = self.stability.get_stability_score(current_path)
 
-                        # updates current best protein option
-                        if score < self.best_score:
-                            self.best_score = score
-                            self.best_protein = current_path
-                            self.amino_stability_x, self.amino_stability_y = finish_protein(score, stability_connections)
-
-                        if self.stack = []:
-                            done = True
 
                     # if the protein is not yet finished
                     else:
@@ -144,18 +138,29 @@ class BranchBound:
                         # keep all branches if score is same or better than best score
                         if score < self.best_score:
                             self.best_score = score
+                            self.best_protein = current_path
                             self.add_new_options_to_stack(current_path)
+                            self.amino_stability_x, self.amino_stability_y = finish_protein(score, stability_connections)
 
                         # if current score is worse than average score, prune 70%
                         elif score > average_score:
-                            if random.uniform(0, 1) > 0.7:
+                            if random.uniform(0, 1) > 0.9:
                                 self.add_new_options_to_stack(current_path)
 
                         # if current score is between the best and average score, prune 30%
                         elif self.best_score < score < average_score:
-                            if random.uniform(0, 1) > 0.3:
+                            if random.uniform(0, 1) > 0.6:
                                 self.add_new_options_to_stack(current_path)
 
                         # always create new options if score hasn't changed or amino is a P amino
                         else:
                             self.add_new_options_to_stack(current_path)
+
+                if self.best_score < self.very_best_score:
+                    self.very_best_score = self.best_score
+                    self.very_best_protein = self.best_protein
+
+                if z == 99 or z == 199 or z == 299 or z == 399 or z == 499 or z == 599 or z == 699 or z == 799 or z == 899 or z == 999:
+                    print("Score: ", self.best_score)
+
+                done = True
