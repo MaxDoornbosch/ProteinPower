@@ -2,7 +2,6 @@
 main.py
 
 Runs all algorithms.
-
 Florien Altena, Emily van Veen, Max Doornbosch
 UvA, minor programmeren
 2020
@@ -22,7 +21,6 @@ from code.algorithms.forcing import Force
 
 from code.visualization.visualization import visualize
 
-
 def main():
     """
     Prompts user to choose an algorithm, runs chosen algorithm.
@@ -33,14 +31,20 @@ def main():
     while algorithm < 1 or algorithm > 7:
         while True:
             try:
-                algorithm = int(input("Which algorithm would you like to use? \n1 for random algorithm \n3 for three fold three steps \n4 for four fold algorithm \n5 for depth first searh algorithm \n6 for branch and bound algorithm \n7 for the forcing algorithm\n"))
+                algorithm = int(input("Which algorithm would you like to use? \n1 for random algorithm \n2 for three fold one step \n3 for three fold three steps \n4 for four fold algorithm \n5 for depth first searh algorithm \n6 for branch and bound algorithm \n7 for the forcing algorithm\n"))
                 break
             except ValueError:
                 print("Invalid input")
 
-    runamount = 1
-
-
+    # prompts the user for the runamount for algorithms 1-4
+    if algorithm > 0 and algorithm < 5:
+        runamount = 0
+        while runamount < 1:
+            try:
+                runamount = int(input("How many times would you like to run this algorithm? "))
+                break
+            except ValueError:
+                print("Invalid input")
     user_input = input("Please enter your protein (minimum length is 3): ").upper()
 
     # minimum length of protein
@@ -60,6 +64,14 @@ def main():
         random.run()
         visualisation = random
 
+    elif algorithm == 2:
+        """
+        Threefold one step.
+        """
+
+        three_fold_one_step = ThreeFoldOneStep(user_input, runamount)
+        three_fold_one_step.run()
+        visualisation = three_fold_one_step
 
     elif algorithm == 3:
         """

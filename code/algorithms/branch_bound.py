@@ -97,8 +97,6 @@ class BranchBound:
         possible.define_coordinates(current_x, current_y)
         final_possible_options = possible.check_empty()
 
-
-
         for option in final_possible_options:
             new_path = copy.deepcopy(current_path)
             new_path.append(option)
