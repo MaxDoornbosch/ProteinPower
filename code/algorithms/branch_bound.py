@@ -121,7 +121,6 @@ class BranchBound:
             while done == False:
 
                 while self.stack:
-                    print(len(self.stack))
                     current_path = self.get_next_path()
                     current_amino = current_path[-1][0]
 
@@ -161,6 +160,6 @@ class BranchBound:
                     self.very_best_protein = self.best_protein
 
                 if z == 99 or z == 199 or z == 299 or z == 399 or z == 499 or z == 599 or z == 699 or z == 799 or z == 899 or z == 999:
-                    print("Score: ", self.best_score)
+                    print("Score: ", self.very_best_score)
 
                 done = True

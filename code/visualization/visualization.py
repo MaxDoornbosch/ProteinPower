@@ -5,6 +5,7 @@ import pandas as pd
 import seaborn as sns
 import csv
 
+
 def visualize(visualization_data, user_input, stability_score, amino_stability_x, amino_stability_y):
     x = []
     y = []

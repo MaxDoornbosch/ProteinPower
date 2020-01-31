@@ -135,6 +135,16 @@ def main():
         except (KeyboardInterrupt, SystemExit):
             print("\nKeyboard Interrupt.\n")
 
+    elif algorithm == 8:
+        """
+        Runs beam search algorithm.
+        """
+
+        beam = BeamSearch(user_input)
+        visualisation = beam
+        beam.run()
+
+
     # visualizes results of every algorithm
     csvwriter = Csv(visualisation.best_protein)
     csvwriter.write_csv()

@@ -1,8 +1,6 @@
 """
 random.py
-
 Random search algorithm: determines random (legal) folds for a given protein.
-
 Florien Altena, Emily van Veen, Max Doornbosch
 UvA, minor Programmeren
 2020
@@ -84,21 +82,19 @@ class Random:
                     if final_possible_options == []:
                         self.initialize()
                     else:
-
                         # randomly chooses an option and continues
                         self.random_amino = random.choice(final_possible_options)
                         self.protein.add_amino_info(self.random_amino)
 
-                    # when protein is finished, calculates stability score for each protein
-                    if len(self.final_placement) == len(self.user_input):
-                        stability_score, stability_connections = self.stability.get_stability_score(self.final_placement)
-                        print("YES")
-                        # updates current best protein option
-                        if stability_score < self.best_score:
-                            self.best_score = stability_score
-                            self.best_protein = self.final_placement
-                            self.amino_stability_x, self.amino_stability_y = finish_protein(stability_score, stability_connections)
+                # when protein is finished, calculates stability score for each protein
+                if len(self.final_placement) == len(self.user_input):
+                    stability_score, stability_connections = self.stability.get_stability_score(self.final_placement)
+                    print("YES")
+                    # updates current best protein option
+                    if stability_score < self.best_score:
+                        self.best_score = stability_score
+                        self.best_protein = self.final_placement
+                        self.amino_stability_x, self.amino_stability_y = finish_protein(stability_score, stability_connections)
 
-                        done = True
-                        print("score", self.best_score)
-                        break
+                    done = True
+                    print("score", self.best_score)
